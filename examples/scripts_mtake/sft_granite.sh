@@ -23,7 +23,7 @@ fi
 
 ENV=""
 ENV="TOKENIZERS_PARALLELISM=false ${ENV}"
-ENV="PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True ${ENV}"  # deprecated
+#ENV="PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True ${ENV}"  # deprecated
 ENV="PYTORCH_ALLOC_CONF=expandable_segments:True ${ENV}"
 ENV="NCCL_DEBUG=INFO ${ENV}"
 
@@ -46,7 +46,9 @@ ENV="TORCH_NCCL_ASYNC_ERROR_HANDLING=1 ${ENV}"
 #ENV="NCCL_IB_DISABLE=1 ${ENV}"
 fi
 
-cmd="${ENV}accelerate launch --config_file ../../examples/accelerate_configs/single_gpu.yaml ${BASENAME}.py"
+# @@@ahoaho XXX
+#cmd="${ENV}accelerate launch --config_file ../../examples/accelerate_configs/single_gpu.yaml ${BASENAME}.py"
+cmd="${ENV}accelerate launch --config_file 2_gpu.yaml ${BASENAME}.py"
 echo "$cmd" | tee -a ${LOGFILE}
 eval "$cmd" 2>&1 | tee -a ${LOGFILE}
 

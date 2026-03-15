@@ -28,7 +28,7 @@ accelerate launch --config_file examples/accelerate_configs/single_gpu.yaml exam
 """
 
 from datasets import load_dataset
-# from transformers import AutoModelForCausalLM
+from transformers import AutoModelForCausalLM
 
 from trl import SFTConfig, SFTTrainer
 
@@ -37,7 +37,7 @@ def main():
     data_name = "jfe-technical-report_r5"
 
     # Load dataset
-    train_dataset = load_dataset("json", data_files=f"messages_data_{data_name}.jsonl")
+    train_dataset = load_dataset("json", data_files=f"messages_data_{data_name}.jsonl", split="train")
 
     # Load model
     model_id = "ibm-granite/granite-3.3-8b-instruct"
@@ -48,6 +48,8 @@ def main():
 
     # Train model
     training_args = SFTConfig(
+        # chat_template_path=model_id,  # harmless
+        # dataset_text_field="messages",  # harmless
         output_dir=f"{model_id_short}__{data_name}",
         bf16=True,
         # use_liger_kernel=True,
