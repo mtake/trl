@@ -47,22 +47,19 @@ def main():
 
     # Train model
     training_args = SFTConfig(
-        output_dir=f"{model_id_short}__{data_name}",
+        output_dir=f"trainer_output__{model_id_short}__{data_name}",  # default: trainer_output
+        # @@@ahoaho XXX
         # per_device_train_batch_size=1,  # default: 8
         # @@@ahoaho XXX
-        per_device_train_batch_size=1,  # default: 8
-        # num_train_epochs=1,  # default: 3
-        # @@@ahoaho XXX
         num_train_epochs=1,  # default: 3
+        # @@@ahoaho XXX
         # gradient_accumulation_steps=8,  # default: 1
         bf16=True,  # default: None
         # use_liger_kernel=True,
         # @@@ahoaho XXX
-        model_init_kwargs={"dtype": torch.bfloat16},
-        dataset_num_proc=32,  # default: None
-        # @@@ahoaho XXX
-        #max_length=8192,
-        max_length=256,
+        # model_init_kwargs={"dtype": torch.bfloat16},
+        dataset_num_proc=8,  # default: None
+        max_length=8192,
     )
 
     trainer = SFTTrainer(
