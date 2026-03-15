@@ -44,7 +44,9 @@ ENV="TORCH_NCCL_ASYNC_ERROR_HANDLING=1 ${ENV}"
 fi
 
 # ACCELERATE_CONFIG=../../examples/accelerate_configs/single_gpu.yaml
-ACCELERATE_CONFIG=2_gpu.yaml
+# ACCELERATE_CONFIG=2_gpu.yaml
+# ACCELERATE_CONFIG=4_gpu.yaml
+ACCELERATE_CONFIG=../../examples/accelerate_configs/multi_gpu.yaml
 
 cmd="${ENV}accelerate launch --config_file ${ACCELERATE_CONFIG} ${BASENAME}.py"
 echo "$cmd" | tee -a ${LOGFILE}

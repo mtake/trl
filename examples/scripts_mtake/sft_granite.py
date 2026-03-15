@@ -55,6 +55,7 @@ def main():
         # use_liger_kernel=True,
         # @@@ahoaho XXX
         #max_length=8192,
+        max_length=256,
         # per_device_train_batch_size=1,  # default: 8
         # @@@ahoaho XXX
         per_device_train_batch_size=1,  # default: 8
