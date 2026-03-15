@@ -43,10 +43,11 @@ ENV="TORCH_NCCL_ASYNC_ERROR_HANDLING=1 ${ENV}"
 #ENV="NCCL_IB_DISABLE=1 ${ENV}"
 fi
 
-# ACCELERATE_CONFIG=../../examples/accelerate_configs/single_gpu.yaml
-# ACCELERATE_CONFIG=2_gpu.yaml
-# ACCELERATE_CONFIG=4_gpu.yaml
-ACCELERATE_CONFIG=../../examples/accelerate_configs/multi_gpu.yaml
+#ACCELERATE_CONFIG=../../examples/accelerate_configs/fsdp1.yaml
+#ACCELERATE_CONFIG=fsdp1_1node_1proc.yaml
+ACCELERATE_CONFIG=fsdp1_1node_2proc.yaml
+#ACCELERATE_CONFIG=fsdp1_1node_4proc.yaml
+#ACCELERATE_CONFIG=fsdp1_1node_8proc.yaml
 
 cmd="${ENV}accelerate launch --config_file ${ACCELERATE_CONFIG} ${BASENAME}.py"
 echo "$cmd" | tee -a ${LOGFILE}
