@@ -53,11 +53,16 @@ def main():
         output_dir=f"{model_id_short}__{data_name}",
         bf16=True,
         # use_liger_kernel=True,
-        max_length=8192,
+        # @@@ahoaho XXX
+        #max_length=8192,
         # per_device_train_batch_size=1,  # default: 8
+        # @@@ahoaho XXX
+        per_device_train_batch_size=1,  # default: 8
         # gradient_accumulation_steps=8,  # default: 1
         dataset_num_proc=32,  # default: None
         # num_train_epochs=1,  # default: 3
+        # @@@ahoaho XXX
+        num_train_epochs=1,  # default: 3
     )
 
     trainer = SFTTrainer(
