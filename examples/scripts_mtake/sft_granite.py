@@ -28,7 +28,7 @@ accelerate launch --config_file examples/accelerate_configs/single_gpu.yaml exam
 """
 
 from datasets import load_dataset
-from transformers import AutoModelForCausalLM
+import torch
 
 from trl import SFTConfig, SFTTrainer
 
@@ -42,34 +42,32 @@ def main():
     # Load model
     model_id = "ibm-granite/granite-3.3-8b-instruct"
     # model_id = "ibm-granite/granite-4.0-micro"
-    # model = AutoModelForCausalLM.from_pretrained(model_id)
 
     model_id_short = model_id[model_id.rfind("/")+1:]
 
     # Train model
     training_args = SFTConfig(
-        # chat_template_path=model_id,  # harmless
-        # dataset_text_field="messages",  # harmless
         output_dir=f"{model_id_short}__{data_name}",
-        bf16=True,
-        # use_liger_kernel=True,
-        # @@@ahoaho XXX
-        #max_length=8192,
-        max_length=256,
         # per_device_train_batch_size=1,  # default: 8
         # @@@ahoaho XXX
         per_device_train_batch_size=1,  # default: 8
-        # gradient_accumulation_steps=8,  # default: 1
-        dataset_num_proc=32,  # default: None
         # num_train_epochs=1,  # default: 3
         # @@@ahoaho XXX
         num_train_epochs=1,  # default: 3
+        # gradient_accumulation_steps=8,  # default: 1
+        bf16=True,  # default: None
+        # use_liger_kernel=True,
+        # @@@ahoaho XXX
+        model_init_kwargs={"dtype": torch.bfloat16},
+        dataset_num_proc=32,  # default: None
+        # @@@ahoaho XXX
+        #max_length=8192,
+        max_length=256,
     )
 
     trainer = SFTTrainer(
-        args=training_args,
-        # model=model,
         model=model_id,
+        args=training_args,
         train_dataset=train_dataset,
     )
     trainer.train()
