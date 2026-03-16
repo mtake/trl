@@ -24,11 +24,10 @@
 """
 Train Granite on a dataset.
 
-accelerate launch --config_file examples/accelerate_configs/single_gpu.yaml examples/scripts_mtake/sft_granite.py
+accelerate launch --config_file examples/accelerate_configs/fsdp1.yaml examples/scripts_mtake/sft_granite.py
 """
 
 from datasets import load_dataset
-import torch
 
 from trl import SFTConfig, SFTTrainer
 
@@ -45,9 +44,11 @@ def main():
 
     model_id_short = model_id[model_id.rfind("/")+1:]
 
+    output_dir = f"trainer_output__{model_id_short}__{data_name}"
+
     # Train model
     training_args = SFTConfig(
-        output_dir=f"trainer_output__{model_id_short}__{data_name}",  # default: trainer_output
+        output_dir=output_dir,  # default: trainer_output
         # @@@ahoaho XXX
         # per_device_train_batch_size=1,  # default: 8
         # @@@ahoaho XXX
@@ -56,8 +57,6 @@ def main():
         # gradient_accumulation_steps=8,  # default: 1
         bf16=True,  # default: None
         # use_liger_kernel=True,
-        # @@@ahoaho XXX
-        # model_init_kwargs={"dtype": torch.bfloat16},
         dataset_num_proc=8,  # default: None
         max_length=8192,
     )
