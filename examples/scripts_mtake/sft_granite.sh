@@ -48,9 +48,17 @@ fi
 #ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_4proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_8proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_1proc.yaml
-ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_2proc.yaml  # WIP
+ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_2proc.yaml  # OK
 #ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_4proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_8proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero1_1node_1proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero1_1node_2proc.yaml  # CUDA OOM
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero1_1node_4proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero1_1node_8proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero2_1node_1proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero2_1node_2proc.yaml  # CUDA OOM
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero2_1node_4proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero2_1node_8proc.yaml
 
 cmd="${ENV}accelerate launch --config_file ${ACCELERATE_CONFIG} ${BASENAME}.py"
 echo "$cmd" | tee -a ${LOGFILE}
