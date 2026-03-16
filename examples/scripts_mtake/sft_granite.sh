@@ -43,11 +43,14 @@ ENV="TORCH_NCCL_ASYNC_ERROR_HANDLING=1 ${ENV}"
 #ENV="NCCL_IB_DISABLE=1 ${ENV}"
 fi
 
-#ACCELERATE_CONFIG=../../examples/accelerate_configs/fsdp1.yaml
-#ACCELERATE_CONFIG=fsdp1_1node_1proc.yaml
-ACCELERATE_CONFIG=fsdp1_1node_2proc.yaml
-#ACCELERATE_CONFIG=fsdp1_1node_4proc.yaml
-#ACCELERATE_CONFIG=fsdp1_1node_8proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_1proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_2proc.yaml  # OK
+#ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_4proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_8proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_1proc.yaml
+ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_2proc.yaml  # WIP
+#ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_4proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_8proc.yaml
 
 cmd="${ENV}accelerate launch --config_file ${ACCELERATE_CONFIG} ${BASENAME}.py"
 echo "$cmd" | tee -a ${LOGFILE}
