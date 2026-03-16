@@ -23,7 +23,7 @@ fi
 
 ENV=""
 ENV="TOKENIZERS_PARALLELISM=false ${ENV}"
-#ENV="PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True ${ENV}"  # deprecated
+ENV="PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True ${ENV}"  # deprecated
 ENV="PYTORCH_ALLOC_CONF=expandable_segments:True ${ENV}"
 ENV="NCCL_DEBUG=INFO ${ENV}"
 
@@ -48,7 +48,7 @@ fi
 #ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_4proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_8proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_1proc.yaml
-ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_2proc.yaml  # OK
+ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_2proc.yaml  # OK use this
 #ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_4proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_8proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero1_1node_1proc.yaml
@@ -59,6 +59,10 @@ ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_2proc.yaml  # OK
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero2_1node_2proc.yaml  # CUDA OOM
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero2_1node_4proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero2_1node_8proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_1proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_2proc.yaml  # CUDA OOM
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_4proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_8proc.yaml
 
 cmd="${ENV}accelerate launch --config_file ${ACCELERATE_CONFIG} ${BASENAME}.py"
 echo "$cmd" | tee -a ${LOGFILE}
