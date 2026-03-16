@@ -39,8 +39,8 @@ def main():
     train_dataset = load_dataset("json", data_files=f"messages_data_{data_name}.jsonl", split="train")
 
     # Load model
-    model_id = "ibm-granite/granite-3.3-8b-instruct"
-    # model_id = "ibm-granite/granite-4.0-micro"
+    # model_id = "ibm-granite/granite-3.3-8b-instruct"
+    model_id = "ibm-granite/granite-4.0-micro"
 
     model_id_short = model_id[model_id.rfind("/")+1:]
 
