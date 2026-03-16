@@ -24,7 +24,7 @@
 """
 Train Granite on a dataset.
 
-accelerate launch --config_file examples/accelerate_configs/fsdp1.yaml examples/scripts_mtake/sft_granite.py
+accelerate launch --config_file examples/accelerate_configs/fsdp2.yaml examples/scripts_mtake/sft_granite.py
 """
 
 from datasets import load_dataset
@@ -50,15 +50,15 @@ def main():
     training_args = SFTConfig(
         output_dir=output_dir,  # default: trainer_output
         # @@@ahoaho XXX
-        # per_device_train_batch_size=1,  # default: 8
-        # @@@ahoaho XXX
-        num_train_epochs=1,  # default: 3
-        # @@@ahoaho XXX
+        # per_device_train_batch_size=128,  # default: 8 CUDA OOM with max_length=8192 fsdp2_1node_2proc.yaml
+        per_device_train_batch_size=32,  # default: 8 OK with max_length=20000 fsdp2_1node_2proc.yaml
+        # num_train_epochs=1,  # default: 3
         # gradient_accumulation_steps=8,  # default: 1
         bf16=True,  # default: None
         # use_liger_kernel=True,
         dataset_num_proc=8,  # default: None
-        max_length=8192,
+        # max_length=8192,  # default: 1024
+        max_length=20000,  # default: 1024
     )
 
     trainer = SFTTrainer(
