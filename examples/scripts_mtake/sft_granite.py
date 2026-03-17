@@ -47,7 +47,8 @@ def main():
     # Load model
     # model_id = "ibm-granite/granite-3.3-8b-instruct"
     # model_id = "ibm-granite/granite-4.0-micro"
-    model_id = "ibm-granite/granite-4.0-h-micro"
+    # model_id = "ibm-granite/granite-4.0-h-micro"
+    model_id = "ibm-granite/granite-4.0-h-tiny"
 
     model_id_short = model_id[model_id.rfind("/")+1:]
 
