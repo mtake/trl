@@ -45,10 +45,11 @@ def main():
     train_dataset = load_dataset("json", data_files=f"messages_data{_data_name}.jsonl", split="train")
 
     # Load model
-    # model_id = "ibm-granite/granite-3.3-8b-instruct"
-    # model_id = "ibm-granite/granite-4.0-micro"
-    # model_id = "ibm-granite/granite-4.0-h-micro"
-    model_id = "ibm-granite/granite-4.0-h-tiny"
+    # model_id = "ibm-granite/granite-3.3-8b-instruct"  # OK with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_2proc.yaml
+    # model_id = "ibm-granite/granite-4.0-micro"  # OK with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_2proc.yaml
+    # model_id = "ibm-granite/granite-4.0-h-micro"  # OK with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_2proc.yaml
+    # model_id = "ibm-granite/granite-4.0-h-tiny"  # OK with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_2proc.yaml
+    model_id = "ibm-granite/granite-4.0-h-small"  # WIP with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_4proc.yaml
 
     model_id_short = model_id[model_id.rfind("/")+1:]
 
@@ -59,7 +60,7 @@ def main():
     # Train model
     training_args = SFTConfig(
         output_dir=output_dir,  # default: trainer_output
-        per_device_train_batch_size=32,  # default: 8 OK with max_length=20000 fsdp2_1node_2proc.yaml
+        per_device_train_batch_size=32,  # default: 8
         # num_train_epochs=1,  # default: 3
         # gradient_accumulation_steps=8,  # default: 1
         bf16=True,  # default: None
