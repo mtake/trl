@@ -49,7 +49,7 @@ def main():
     # model_id = "ibm-granite/granite-4.0-micro"  # OK with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_2proc.yaml
     # model_id = "ibm-granite/granite-4.0-h-micro"  # OK with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_2proc.yaml
     # model_id = "ibm-granite/granite-4.0-h-tiny"  # OK with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_2proc.yaml
-    model_id = "ibm-granite/granite-4.0-h-small"  # WIP with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_4proc.yaml
+    model_id = "ibm-granite/granite-4.0-h-small"  # WIP with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_8proc.yaml
 
     model_id_short = model_id[model_id.rfind("/")+1:]
 
