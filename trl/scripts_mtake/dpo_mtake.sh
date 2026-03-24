@@ -103,6 +103,7 @@ cmd="$cmd --eval_strategy no"
 ##cmd="$cmd --eval_steps 50"
 cmd="$cmd --output_dir ${OUTPUT_DIR}"
 cmd="$cmd --no_remove_unused_columns"
+#cmd="$cmd --device_map auto"  # unused parameter error
 echo "$cmd" | tee -a ${LOGFILE}
 eval "$cmd" 2>&1 | tee -a ${LOGFILE}
 
