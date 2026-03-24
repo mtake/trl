@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+
+# for macOS
+if command -v gdate &> /dev/null
+then
+    DATE_CMD=gdate
+else
+    DATE_CMD=date
+fi
+
+START_TIME="$(${DATE_CMD} +%s)"
+START_TIME_STR="$(${DATE_CMD} -d @${START_TIME} +%Y%m%d-%H%M%S)"
+BASENAME="$(basename "${BASH_SOURCE}" .sh)"
+HOSTNAME_S="$(hostname -s)"
+LOGFILE="${BASENAME}-${START_TIME_STR}-${HOSTNAME_S}.log"
+echo "XXX LOGFILE ${LOGFILE}" | tee -a ${LOGFILE}
+echo "XXX DATETIME ${START_TIME_STR}" | tee -a ${LOGFILE}
+
+VENV=../../.venv
+if [[ -d "${VENV}" ]]; then
+    source "${VENV}/bin/activate"
+fi
+
+ENV=""
+ENV="TOKENIZERS_PARALLELISM=false ${ENV}"
+ENV="PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True ${ENV}"  # deprecated
+ENV="PYTORCH_ALLOC_CONF=expandable_segments:True ${ENV}"
+ENV="NCCL_DEBUG=INFO ${ENV}"
+
+if true; then
+ENV="CUDA_LAUNCH_BLOCKING=1 ${ENV}"
+ENV="TORCH_USE_CUDA_DSA=1 ${ENV}"
+fi
+
+if false; then
+ENV="TORCH_CPP_LOG_LEVEL=INFO ${ENV}"
+ENV="TORCH_DISTRIBUTED_DEBUG=DETAIL ${ENV}"
+
+ENV="NCCL_DEBUG_SUBSYS=ALL ${ENV}"
+
+ENV="NCCL_ASYNC_ERROR_HANDLING=1 ${ENV}"  # deprecated
+
+ENV="TORCH_NCCL_ASYNC_ERROR_HANDLING=1 ${ENV}"
+
+#ENV="NCCL_P2P_DISABLE=1 ${ENV}"
+#ENV="NCCL_SHM_DISABLE=1 ${ENV}"
+#ENV="NCCL_IB_DISABLE=1 ${ENV}"
+fi
+
+DATASET=trl-lib/ultrafeedback_binarized
+
+# @@@ahoaho XXX
+MODEL=Qwen/Qwen2-0.5B-Instruct
+#MODEL=ibm-granite/granite-3.3-8b-instruct
+#MODEL=ibm-granite/granite-4.0-micro
+#MODEL=ibm-granite/granite-4.0-h-micro
+#MODEL=ibm-granite/granite-4.0-h-tiny
+#MODEL=ibm-granite/granite-4.0-h-small
+
+#ACCELERATE_CONFIG=accelerate_configs/multi_gpu_2proc.yaml  # DPO OK for q205b, DPO CUDA OOM for g338b, DPO CUDA OOM for g4m
+#ACCELERATE_CONFIG=accelerate_configs/multi_gpu_4proc.yaml  # DPO CUDA OOM for g338b
+#ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_1proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_2proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_4proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_8proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_1proc.yaml
+ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_2proc.yaml  # SFT OK for g338b, g4m, g4hm, g4ht, DPO WIP for q205b torch.AcceleratorError: CUDA error: CUDA-capable device(s) is/are busy or unavailable
+#ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_4proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_8proc.yaml  # SFT OK for g4hs
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero1_1node_1proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero1_1node_2proc.yaml  # SFT CUDA OOM
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero1_1node_4proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero1_1node_8proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero2_1node_1proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero2_1node_2proc.yaml  # SFT CUDA OOM
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero2_1node_4proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero2_1node_8proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_1proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_2proc.yaml  # SFT CUDA OOM
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_4proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_8proc.yaml
+
+# See https://github.com/mtake/trl/blob/main/trl/scripts/dpo.py
+cmd="${ENV}accelerate launch --config_file ${ACCELERATE_CONFIG} ${BASENAME}.py --dataset_name ${DATASET} --model_name_or_path ${MODEL}"
+# @@@ahoaho XXX
+#cmd="$cmd --learning_rate 5.0e-7"
+cmd="$cmd --num_train_epochs 1"
+cmd="$cmd --per_device_train_batch_size 2"
+cmd="$cmd --max_steps 1000"
+cmd="$cmd --gradient_accumulation_steps 8"
+cmd="$cmd --eval_strategy steps"
+cmd="$cmd --eval_steps 50"
+#cmd="$cmd --output_dir Qwen2-0.5B-DPO"
+cmd="$cmd --no_remove_unused_columns"
+echo "$cmd" | tee -a ${LOGFILE}
+eval "$cmd" 2>&1 | tee -a ${LOGFILE}
+
+END_TIME="$(${DATE_CMD} +%s)"
+END_TIME_STR="$(${DATE_CMD} -d @${END_TIME} +%Y%m%d-%H%M%S)"
+echo "XXX DATETIME ${END_TIME_STR}" | tee -a ${LOGFILE}
+echo "XXX ELAPSED_SECS $((END_TIME - START_TIME))" | tee -a ${LOGFILE}
