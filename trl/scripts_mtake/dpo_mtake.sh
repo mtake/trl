@@ -80,7 +80,7 @@ ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_2proc.yaml  # SFT OK for g338b,
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_4proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_8proc.yaml
 
-OUTPUT_DIR="trainer_output/${MODEL#*/}__dpo__${START_TIME_STR}"
+OUTPUT_DIR="trainer_output/${MODEL##*/}-${DATASET##*/}-dpo-${START_TIME_STR}-${HOSTNAME_S}"
 
 # @@@ahoaho XXX
 echo "================== ENVIRONMENT VARIABLES ===================" | tee -a ${LOGFILE}
