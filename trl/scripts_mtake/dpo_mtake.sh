@@ -60,11 +60,11 @@ MODEL=Qwen/Qwen2-0.5B-Instruct
 #ACCELERATE_CONFIG=accelerate_configs/multi_gpu_2proc.yaml  # DPO OK for q205b, DPO CUDA OOM for g338b, DPO CUDA OOM for g4m
 #ACCELERATE_CONFIG=accelerate_configs/multi_gpu_4proc.yaml  # DPO CUDA OOM for g338b
 #ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_1proc.yaml
-#ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_2proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_2proc.yaml  # DPO ERR for q205b torch.AcceleratorError: CUDA error: CUDA-capable device(s) is/are busy or unavailable
 #ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_4proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_8proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_1proc.yaml
-ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_2proc.yaml  # SFT OK for g338b, g4m, g4hm, g4ht, DPO WIP for q205b torch.AcceleratorError: CUDA error: CUDA-capable device(s) is/are busy or unavailable
+ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_2proc.yaml  # SFT OK for g338b, g4m, g4hm, g4ht, DPO ERR for q205b torch.AcceleratorError: CUDA error: CUDA-capable device(s) is/are busy or unavailable
 #ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_4proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_8proc.yaml  # SFT OK for g4hs
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero1_1node_1proc.yaml
@@ -80,17 +80,27 @@ ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_2proc.yaml  # SFT OK for g338b,
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_4proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_8proc.yaml
 
+OUTPUT_DIR="trainer_output/${MODEL#*/}__dpo__${START_TIME_STR}"
+
+# @@@ahoaho XXX
+echo "================== ENVIRONMENT VARIABLES ===================" | tee -a ${LOGFILE}
+env 2>&1 | tee -a ${LOGFILE}
+echo "============================================================" | tee -a ${LOGFILE}
+
 # See https://github.com/mtake/trl/blob/main/trl/scripts/dpo.py
 cmd="${ENV}accelerate launch --config_file ${ACCELERATE_CONFIG} ${BASENAME}.py --dataset_name ${DATASET} --model_name_or_path ${MODEL}"
 # @@@ahoaho XXX
+cmd="$cmd --bf16 True"
 #cmd="$cmd --learning_rate 5.0e-7"
 cmd="$cmd --num_train_epochs 1"
 cmd="$cmd --per_device_train_batch_size 2"
 cmd="$cmd --max_steps 1000"
 cmd="$cmd --gradient_accumulation_steps 8"
-cmd="$cmd --eval_strategy steps"
-cmd="$cmd --eval_steps 50"
-#cmd="$cmd --output_dir Qwen2-0.5B-DPO"
+# @@@ahoaho XXX
+cmd="$cmd --eval_strategy no"
+##cmd="$cmd --eval_strategy steps"
+##cmd="$cmd --eval_steps 50"
+cmd="$cmd --output_dir ${OUTPUT_DIR}"
 cmd="$cmd --no_remove_unused_columns"
 echo "$cmd" | tee -a ${LOGFILE}
 eval "$cmd" 2>&1 | tee -a ${LOGFILE}

@@ -159,5 +159,12 @@ def make_parser(subparsers: argparse._SubParsersAction | None = None, prog: str 
 
 if __name__ == "__main__":
     parser = make_parser()
-    script_args, training_args, model_args, dataset_args = parser.parse_args_and_config(fail_with_unknown_args=False)
+    # @@@ahoaho XXX
+    # script_args, training_args, model_args, dataset_args = parser.parse_args_and_config(fail_with_unknown_args=False)
+    script_args, training_args, model_args, dataset_args = parser.parse_args_and_config(fail_with_unknown_args=True)
+    # @@@ahoaho XXX
+    print(f"XXX script_args: {script_args} XXX")
+    print(f"XXX training_args: {training_args} XXX")
+    print(f"XXX model_args: {model_args} XXX")
+    print(f"XXX dataset_args: {dataset_args} XXX")
     main(script_args, training_args, model_args, dataset_args)
