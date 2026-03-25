@@ -46,10 +46,10 @@ def main():
 
     # Load model
     # model_id = "ibm-granite/granite-3.3-8b-instruct"  # OK with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_2proc.yaml
-    # model_id = "ibm-granite/granite-4.0-micro"  # OK with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_2proc.yaml
+    model_id = "ibm-granite/granite-4.0-micro"  # OK with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_2proc.yaml
     # model_id = "ibm-granite/granite-4.0-h-micro"  # OK with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_2proc.yaml
     # model_id = "ibm-granite/granite-4.0-h-tiny"  # OK with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_2proc.yaml
-    model_id = "ibm-granite/granite-4.0-h-small"  # CUDA OOM with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_8proc.yaml  # WIP OOM with per_device_train_batch_size=16, max_length=20000, fsdp2_1node_8proc.yaml
+    # model_id = "ibm-granite/granite-4.0-h-small"  # OK with per_device_train_batch_size=16, max_length=20000, fsdp2_1node_8proc.yaml  # CUDA OOM with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_8proc.yaml
 
     model_id_short = model_id[model_id.rfind("/")+1:]
 
