@@ -61,7 +61,7 @@ def main():
     training_args = SFTConfig(
         output_dir=output_dir,  # default: trainer_output
         per_device_train_batch_size=32,  # default: 8  # OK for g338b, g4m, g4hm, g4ht
-        # per_device_train_batch_size=16,  # default: 8  # WIP for g4hs
+        # per_device_train_batch_size=16,  # default: 8  # OK for g4hs
         # num_train_epochs=1,  # default: 3
         # gradient_accumulation_steps=8,  # default: 1
         bf16=True,  # default: None
