@@ -50,22 +50,22 @@ fi
 DATASET=trl-lib/ultrafeedback_binarized
 
 # @@@ahoaho XXX
-#MODEL=Qwen/Qwen2-0.5B-Instruct
+MODEL=Qwen/Qwen2-0.5B-Instruct
 #MODEL=ibm-granite/granite-3.3-8b-instruct
-MODEL=ibm-granite/granite-4.0-micro
+#MODEL=ibm-granite/granite-4.0-micro
 #MODEL=ibm-granite/granite-4.0-h-micro
 #MODEL=ibm-granite/granite-4.0-h-tiny
 #MODEL=ibm-granite/granite-4.0-h-small
 
 #ACCELERATE_CONFIG=accelerate_configs/multi_gpu_2proc.yaml  # DPO OK for q205b, DPO CUDA OOM for g338b, DPO CUDA OOM for g4m
 #ACCELERATE_CONFIG=accelerate_configs/multi_gpu_4proc.yaml  # DPO CUDA OOM for g338b
-ACCELERATE_CONFIG=accelerate_configs/multi_gpu_8proc.yaml  # DPO CUDA OOM for g338b, DPO CUDA OOM for g4m
+#ACCELERATE_CONFIG=accelerate_configs/multi_gpu_8proc.yaml  # DPO CUDA OOM for g338b, DPO CUDA OOM for g4m
 #ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_1proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_2proc.yaml  # DPO ERR for q205b torch.AcceleratorError: CUDA error: CUDA-capable device(s) is/are busy or unavailable
 #ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_4proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_8proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_1proc.yaml
-#ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_2proc.yaml  # SFT OK for g338b, g4m, g4hm, g4ht, DPO ERR for q205b torch.AcceleratorError: CUDA error: CUDA-capable device(s) is/are busy or unavailable
+ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_2proc.yaml  # SFT OK for g338b, g4m, g4hm, g4ht, DPO ERR for q205b torch.AcceleratorError: CUDA error: CUDA-capable device(s) is/are busy or unavailable
 #ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_4proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_8proc.yaml  # SFT OK for g4hs
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero1_1node_1proc.yaml
@@ -102,7 +102,8 @@ cmd="$cmd --eval_strategy no"
 ##cmd="$cmd --eval_strategy steps"
 ##cmd="$cmd --eval_steps 50"
 cmd="$cmd --output_dir ${OUTPUT_DIR}"
-cmd="$cmd --no_remove_unused_columns"
+# @@@ahoaho XXX
+#cmd="$cmd --no_remove_unused_columns"
 #cmd="$cmd --device_map auto"  # unused parameter error
 echo "$cmd" | tee -a ${LOGFILE}
 eval "$cmd" 2>&1 | tee -a ${LOGFILE}
