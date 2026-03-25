@@ -45,8 +45,8 @@ def main():
     train_dataset = load_dataset("json", data_files=f"messages_data{_data_name}.jsonl", split="train")
 
     # Load model
-    # model_id = "ibm-granite/granite-3.3-8b-instruct"  # OK with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_2proc.yaml
-    model_id = "ibm-granite/granite-4.0-micro"  # OK with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_2proc.yaml
+    model_id = "ibm-granite/granite-3.3-8b-instruct"  # OK with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_2proc.yaml
+    # model_id = "ibm-granite/granite-4.0-micro"  # OK with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_2proc.yaml
     # model_id = "ibm-granite/granite-4.0-h-micro"  # OK with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_2proc.yaml
     # model_id = "ibm-granite/granite-4.0-h-tiny"  # OK with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_2proc.yaml
     # model_id = "ibm-granite/granite-4.0-h-small"  # OK with per_device_train_batch_size=16, max_length=20000, fsdp2_1node_8proc.yaml  # CUDA OOM with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_8proc.yaml
@@ -60,8 +60,8 @@ def main():
     # Train model
     training_args = SFTConfig(
         output_dir=output_dir,  # default: trainer_output
-        # per_device_train_batch_size=32,  # default: 8  # OK for g338b, g4m, g4hm, g4ht
-        per_device_train_batch_size=16,  # default: 8  # WIP for g4hs
+        per_device_train_batch_size=32,  # default: 8  # OK for g338b, g4m, g4hm, g4ht
+        # per_device_train_batch_size=16,  # default: 8  # WIP for g4hs
         # num_train_epochs=1,  # default: 3
         # gradient_accumulation_steps=8,  # default: 1
         bf16=True,  # default: None
