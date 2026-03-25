@@ -43,12 +43,15 @@ ENV="TORCH_NCCL_ASYNC_ERROR_HANDLING=1 ${ENV}"
 #ENV="NCCL_IB_DISABLE=1 ${ENV}"
 fi
 
+ACCELERATE_CONFIG=accelerate_configs/multi_gpu_2proc.yaml  # WIP for g338b
+#ACCELERATE_CONFIG=accelerate_configs/multi_gpu_4proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/multi_gpu_8proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_1proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_2proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_4proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_8proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_1proc.yaml
-ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_2proc.yaml  # OK for g338b, g4m, g4hm, g4ht
+#ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_2proc.yaml  # OK for g338b, g4m, g4hm, g4ht
 #ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_4proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_8proc.yaml  # OK for g4hs
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero1_1node_1proc.yaml
@@ -60,8 +63,8 @@ ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_2proc.yaml  # OK for g338b, g4m
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero2_1node_4proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero2_1node_8proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_1proc.yaml
-#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_2proc.yaml  # CUDA OOM
-#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_4proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_2proc.yaml  # CUDA OOM for g338b
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_4proc.yaml  # OK for g338b
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_8proc.yaml
 
 cmd="${ENV}accelerate launch --config_file ${ACCELERATE_CONFIG} ${BASENAME}.py"
