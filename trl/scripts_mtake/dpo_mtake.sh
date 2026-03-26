@@ -50,22 +50,22 @@ fi
 DATASET=trl-lib/ultrafeedback_binarized
 
 # @@@ahoaho XXX
-MODEL=Qwen/Qwen2-0.5B-Instruct
+#MODEL=Qwen/Qwen2-0.5B-Instruct
 #MODEL=ibm-granite/granite-3.3-8b-instruct
 #MODEL=ibm-granite/granite-4.0-micro
 #MODEL=ibm-granite/granite-4.0-h-micro
-#MODEL=ibm-granite/granite-4.0-h-tiny
+MODEL=ibm-granite/granite-4.0-h-tiny
 #MODEL=ibm-granite/granite-4.0-h-small
 
-#ACCELERATE_CONFIG=accelerate_configs/multi_gpu_2proc.yaml  # SFT CUDA OOM for g338b, DPO OK for q205b, DPO CUDA OOM for g338b, g4m
-#ACCELERATE_CONFIG=accelerate_configs/multi_gpu_4proc.yaml  # SFT CUDA OOM for g338b, DPO CUDA OOM for g338b
-#ACCELERATE_CONFIG=accelerate_configs/multi_gpu_8proc.yaml  # DPO CUDA OOM for g338b, g4m
+#ACCELERATE_CONFIG=accelerate_configs/multi_gpu_2proc.yaml  # SFT CUDA OOM for g338b, DPO OK for q205b, DPO CUDA OOM for g338b, g4m, DPO CUDA OOM for g338b dtype=bfloat16, DPO OK for g4m, g4hm dtype=bfloat16
+#ACCELERATE_CONFIG=accelerate_configs/multi_gpu_4proc.yaml  # SFT CUDA OOM for g338b, DPO CUDA OOM for g338b, g4m, DPO CUDA OOM for g338b, g4ht dtype=bfloat16, DPO OK for g4m, g4hm dtype=bfloat16
+ACCELERATE_CONFIG=accelerate_configs/multi_gpu_8proc.yaml  # DPO CUDA OOM for g338b, g4m, DPO CUDA OOM for g338b, g4ht dtype=bfloat16
 #ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_1proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_2proc.yaml  # DPO CUDA BUSY for q205b
 #ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_4proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_8proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_1proc.yaml
-ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_2proc.yaml  # SFT OK for g338b, g4m, g4hm, g4ht, DPO CUDA BUSY for q205b
+#ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_2proc.yaml  # SFT OK for g338b, g4m, g4hm, g4ht, DPO CUDA BUSY for q205b, DPO CUDA BUSY for q205b dtype=bfloat16 dataset_num_proc=8
 #ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_4proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_8proc.yaml  # SFT OK for g4hs
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero1_1node_1proc.yaml
@@ -91,11 +91,14 @@ echo "============================================================" | tee -a ${L
 # See https://github.com/mtake/trl/blob/main/trl/scripts/dpo.py
 cmd="${ENV}accelerate launch --config_file ${ACCELERATE_CONFIG} ${BASENAME}.py --dataset_name ${DATASET} --model_name_or_path ${MODEL}"
 # @@@ahoaho XXX
+cmd="$cmd --dataset_num_proc 8"
+cmd="$cmd --dtype bfloat16"
 cmd="$cmd --bf16 True"
 #cmd="$cmd --learning_rate 5.0e-7"
 cmd="$cmd --num_train_epochs 1"
 cmd="$cmd --per_device_train_batch_size 2"
-cmd="$cmd --max_steps 1000"
+####cmd="$cmd --max_steps 1000"
+cmd="$cmd --max_steps 10"  # for test
 cmd="$cmd --gradient_accumulation_steps 8"
 # @@@ahoaho XXX
 cmd="$cmd --eval_strategy no"
