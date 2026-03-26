@@ -77,9 +77,9 @@ MODEL=ibm-granite/granite-4.0-h-small
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero2_1node_4proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero2_1node_8proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_1proc.yaml
-#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_2proc.yaml  # SFT CUDA OOM for g338b
-#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_4proc.yaml  # SFT OK for g338b, DPO OK for q205b, g4m, g4hm, g4ht dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16
-ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_8proc.yaml  # DPO CUDA OOM for g4hs dtype=bfloat16
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_2proc.yaml  # SFT CUDA OOM for g338b, DPO OK for g4m, g4hm, g4ht dtype=bfloat16
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_4proc.yaml  # SFT OK for g338b, DPO OK for q205b, g338b, g4m, g4hm, g4ht dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16
+ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_8proc.yaml  # DPO OK for g338b dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16 per_device_train_batch_size=1, DPO CUDA OOM for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
 
 OUTPUT_DIR="trainer_output/${MODEL##*/}-${DATASET##*/}-dpo-${START_TIME_STR}-${HOSTNAME_S}"
 
@@ -97,9 +97,11 @@ cmd="$cmd --bf16 True"
 #cmd="$cmd --learning_rate 5.0e-7"
 cmd="$cmd --num_train_epochs 1"
 cmd="$cmd --per_device_train_batch_size 2"
+####cmd="$cmd --per_device_train_batch_size 1"  # DPO WIP for g4hs dtype=bfloat16 per_device_train_batch_size=1
 ####cmd="$cmd --max_steps 1000"
 cmd="$cmd --max_steps 10"  # for test
 cmd="$cmd --gradient_accumulation_steps 8"
+####cmd="$cmd --gradient_accumulation_steps 1"  # DPO WIP for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
 # @@@ahoaho XXX
 cmd="$cmd --eval_strategy no"
 ##cmd="$cmd --eval_strategy steps"
@@ -107,7 +109,6 @@ cmd="$cmd --eval_strategy no"
 cmd="$cmd --output_dir ${OUTPUT_DIR}"
 # @@@ahoaho XXX
 #cmd="$cmd --no_remove_unused_columns"
-#cmd="$cmd --device_map auto"  # unused parameter error
 echo "$cmd" | tee -a ${LOGFILE}
 eval "$cmd" 2>&1 | tee -a ${LOGFILE}
 
