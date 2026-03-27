@@ -111,9 +111,18 @@ def main(script_args, training_args, model_args, dataset_args):
     elif dataset_args.datasets and not script_args.dataset_name:
         dataset = get_dataset(dataset_args)
     elif not dataset_args.datasets and script_args.dataset_name:
-        dataset = load_dataset(
-            script_args.dataset_name, name=script_args.dataset_config, streaming=script_args.dataset_streaming
-        )
+        # @@@ahoaho XXX
+        # dataset = load_dataset(
+        #     script_args.dataset_name, name=script_args.dataset_config, streaming=script_args.dataset_streaming
+        # )
+        if script_args.dataset_name.endswith((".json",".jsonl")):
+            dataset = load_dataset(
+                "json", name=script_args.dataset_config, data_files={"train":script_args.dataset_name}, streaming=script_args.dataset_streaming
+            )
+        else:
+            dataset = load_dataset(
+                script_args.dataset_name, name=script_args.dataset_config, streaming=script_args.dataset_streaming
+            )
     else:
         raise ValueError("Either `datasets` or `dataset_name` must be provided.")
 
