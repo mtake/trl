@@ -79,16 +79,15 @@ MODEL=ibm-granite/granite-4.0-h-small
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_1proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_2proc.yaml  # SFT CUDA OOM for g338b, DPO OK for g4m, g4hm, g4ht dtype=bfloat16
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_4proc.yaml  # SFT OK for g338b, DPO OK for q205b, g338b, g4m, g4hm, g4ht dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16
-#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_8proc.yaml  # DPO OK for g338b dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16 per_device_train_batch_size=1, DPO CUDA OOM for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO OS ERROR for g4hs dtype=bfloat16 per_device_train_batch_size=1 max_length=512, DPO CUDA OOM for g4hs dtype=bfloat16 per_device_train_batch_size=1 max_length=256, DPO OS ERROR for g4hs dtype=bfloat16 per_device_train_batch_size=1 max_length=128, DPO CUDA OOM for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1 max_length=64, DPO OS ERROR for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1 max_length=32, DPO CUDA OOM for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1 max_length=16, DPO CUDA OOM for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1 max_length=8, DPO OS ERROR for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1 activation_offloading=True, DPO WIP for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1 activation_offloading=True max_length=128
-#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_8proc_cpuoffload.yaml  # DPO OK for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
-ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_8proc.yaml  # DPO OK for g4hs offload_optimizer_device=cpu offload_param_device=cpu dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO OK for g4hs num_processes=8 offload_optimizer_device=cpu offload_param_device=cpu dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO OK (slow) for g4hs num_processes=8 offload_optimizer_device=cpu offload_param_device=cpu dtype=bfloat16
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_8proc.yaml  # DPO OK for g338b dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO OK for g4hs offload_optimizer_device=cpu offload_param_device=cpu dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
+ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_8proc_offload.yaml  # DPO OK for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
 
 ACCELERATE_OPT=""
 #ACCELERATE_OPT="${ACCELERATE_OPT} --num_processes 2"
 #ACCELERATE_OPT="${ACCELERATE_OPT} --num_processes 4"
-ACCELERATE_OPT="${ACCELERATE_OPT} --num_processes 8"
-ACCELERATE_OPT="${ACCELERATE_OPT} --offload_optimizer_device cpu"  # for zero_stage>=2  # DPO OK for g4hs offload_optimizer_device=cpu offload_param_device=cpu dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
-ACCELERATE_OPT="${ACCELERATE_OPT} --offload_param_device cpu"  # for zero_stage>=3  # DPO OK for g4hs offload_optimizer_device=cpu offload_param_device=cpu dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
+#ACCELERATE_OPT="${ACCELERATE_OPT} --num_processes 8"
+#ACCELERATE_OPT="${ACCELERATE_OPT} --offload_optimizer_device cpu"  # for zero_stage>=2  # DPO OK for g4hs
+#ACCELERATE_OPT="${ACCELERATE_OPT} --offload_param_device cpu"  # for zero_stage>=3  # DPO OK for g4hs
 
 OUTPUT_DIR="trainer_output/${MODEL##*/}-${DATASET##*/}-dpo-${START_TIME_STR}-${HOSTNAME_S}"
 
@@ -96,8 +95,6 @@ OUTPUT_DIR="trainer_output/${MODEL##*/}-${DATASET##*/}-dpo-${START_TIME_STR}-${H
 echo "================== ENVIRONMENT VARIABLES ===================" | tee -a ${LOGFILE}
 env 2>&1 | tee -a ${LOGFILE}
 echo "============================================================" | tee -a ${LOGFILE}
-
-
 
 
 # See https://github.com/mtake/trl/blob/main/trl/scripts/dpo.py
@@ -110,11 +107,11 @@ cmd="$cmd --bf16 True"
 #cmd="$cmd --learning_rate 5.0e-7"
 cmd="$cmd --num_train_epochs 1"
 ####cmd="$cmd --per_device_train_batch_size 2"  # default is 8
-cmd="$cmd --per_device_train_batch_size 1"  # default is 8  # DPO WIP for g4hs dtype=bfloat16 per_device_train_batch_size=1
+cmd="$cmd --per_device_train_batch_size 1"  # default is 8  # DPO OK for g4hs
 ####cmd="$cmd --max_steps 1000"
 cmd="$cmd --max_steps 10"  # for test
 ####cmd="$cmd --gradient_accumulation_steps 8"
-cmd="$cmd --gradient_accumulation_steps 1"  # default is 1  # DPO WIP for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
+cmd="$cmd --gradient_accumulation_steps 1"  # default is 1  # DPO OK for g4hs
 # @@@ahoaho XXX
 cmd="$cmd --eval_strategy no"
 ##cmd="$cmd --eval_strategy steps"
@@ -122,7 +119,6 @@ cmd="$cmd --eval_strategy no"
 cmd="$cmd --output_dir ${OUTPUT_DIR}"
 # @@@ahoaho XXX
 #cmd="$cmd --no_remove_unused_columns"
-
 # @@@ahoaho XXX
 ####cmd="$cmd --max_length 512"  # default is 1024
 ####cmd="$cmd --max_length 256"  # default is 1024
