@@ -107,11 +107,10 @@ cmd="$cmd --dataset_num_proc 8"
 cmd="$cmd --dtype bfloat16"
 cmd="$cmd --bf16 True"
 #cmd="$cmd --learning_rate 5.0e-7"
-cmd="$cmd --num_train_epochs 1"
+cmd="$cmd --num_train_epochs 1"  # default is 3
 ####cmd="$cmd --per_device_train_batch_size 2"  # default is 8
 cmd="$cmd --per_device_train_batch_size 1"  # default is 8  # DPO OK for g4hs
-####cmd="$cmd --max_steps 1000"
-cmd="$cmd --max_steps 10"  # for test
+####cmd="$cmd --max_steps 10"  # default is -1 (len(train split) * num_train_epochs)
 ####cmd="$cmd --gradient_accumulation_steps 8"
 cmd="$cmd --gradient_accumulation_steps 1"  # default is 1  # DPO OK for g4hs
 # @@@ahoaho XXX
