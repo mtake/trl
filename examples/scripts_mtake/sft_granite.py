@@ -42,7 +42,7 @@ def main():
     _data_name = f"__{data_name}" if data_name is not None and len(data_name) > 0 else ""
 
     # Load dataset
-    train_dataset = load_dataset("json", data_files=f"messages_data{_data_name}.jsonl", split="train")
+    train_dataset = load_dataset("json", data_files=f"datasets/messages_data{_data_name}.jsonl", split="train")
 
     # Load model
     model_id = "ibm-granite/granite-3.3-8b-instruct"  # OK with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_2proc.yaml
