@@ -101,7 +101,6 @@ echo "============================================================" | tee -a ${L
 
 
 # See https://github.com/mtake/trl/blob/main/trl/scripts/dpo.py
-####cmd="${ENV}accelerate launch --config_file ${ACCELERATE_CONFIG} ${BASENAME}.py --dataset_name ${DATASET} --model_name_or_path ${MODEL}"
 cmd="${ENV}accelerate launch --config_file ${ACCELERATE_CONFIG}${ACCELERATE_OPT} ${BASENAME}.py --dataset_name ${DATASET} --model_name_or_path ${MODEL}"
 # @@@ahoaho XXX
 cmd="$cmd --dataset_num_proc 8"
