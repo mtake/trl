@@ -48,8 +48,8 @@ ENV="TORCH_NCCL_ASYNC_ERROR_HANDLING=1 ${ENV}"
 fi
 
 # @@@ahoaho XXX
-DATASET=trl-lib/ultrafeedback_binarized
-#DATASET=datasets/retriever_call_train_data.granite4_8b.jsonl
+#DATASET=trl-lib/ultrafeedback_binarized
+DATASET=datasets/retriever_call_train_data.granite4_8b.jsonl
 
 # @@@ahoaho XXX
 #MODEL=Qwen/Qwen2-0.5B-Instruct
