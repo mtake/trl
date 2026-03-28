@@ -117,7 +117,9 @@ def main(script_args, training_args, model_args, dataset_args):
         # )
         if script_args.dataset_name.endswith((".json",".jsonl")):
             dataset = load_dataset(
-                "json", name=script_args.dataset_config, data_files={"train":script_args.dataset_name}, streaming=script_args.dataset_streaming
+                "json", name=script_args.dataset_config,
+                data_files={"train":script_args.dataset_name,"test":script_args.dataset_name},
+                streaming=script_args.dataset_streaming
             )
         else:
             dataset = load_dataset(
