@@ -106,23 +106,21 @@ cmd="${ENV}accelerate launch --config_file ${ACCELERATE_CONFIG}${ACCELERATE_OPT}
 cmd="$cmd --dataset_num_proc 8"
 cmd="$cmd --dtype bfloat16"
 cmd="$cmd --bf16 True"
-#cmd="$cmd --learning_rate 5.0e-7"
-#cmd="$cmd --num_train_epochs 1"  # default is 3
-####cmd="$cmd --per_device_train_batch_size 2"  # default is 8
-cmd="$cmd --per_device_train_batch_size 1"  # default is 8  # DPO OK for g4hs
-####cmd="$cmd --max_steps 10"  # default is -1 (len(train split) * num_train_epochs)
-####cmd="$cmd --gradient_accumulation_steps 8"
-cmd="$cmd --gradient_accumulation_steps 1"  # default is 1  # DPO OK for g4hs
+#cmd="$cmd --learning_rate 5.0e-7"  # default: 1e-06
+#cmd="$cmd --num_train_epochs 1"  # default: 3
+####cmd="$cmd --per_device_train_batch_size 2"  # default: 8
+cmd="$cmd --per_device_train_batch_size 1"  # default: 8  # DPO OK for g4hs
+####cmd="$cmd --max_steps 10"  # default: -1 (len(train split) * num_train_epochs)
+####cmd="$cmd --gradient_accumulation_steps 8"  # default: 1
+cmd="$cmd --gradient_accumulation_steps 1"  # default: 1  # DPO OK for g4hs
 # @@@ahoaho XXX
-#cmd="$cmd --eval_strategy no"
-cmd="$cmd --eval_strategy steps"
-cmd="$cmd --eval_steps 50"
+#cmd="$cmd --eval_strategy steps"  # default: no
+#cmd="$cmd --eval_steps 50"
 cmd="$cmd --output_dir ${OUTPUT_DIR}"
 # @@@ahoaho XXX
-#cmd="$cmd --no_remove_unused_columns"
+#cmd="$cmd --no_remove_unused_columns"  # default: False
 # @@@ahoaho XXX
-####cmd="$cmd --max_length 512"  # default is 1024
-####cmd="$cmd --max_length 256"  # default is 1024
+#cmd="$cmd --max_length 512"  # default: 1024
 echo "$cmd" | tee -a ${LOGFILE}
 eval "$cmd" 2>&1 | tee -a ${LOGFILE}
 
