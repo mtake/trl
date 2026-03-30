@@ -121,8 +121,8 @@ cmd="$cmd --output_dir ${OUTPUT_DIR}"
 # @@@ahoaho XXX
 #cmd="$cmd --no_remove_unused_columns"  # default: False
 # @@@ahoaho XXX
-#cmd="$cmd --max_length 512"  # default: 1024
-cmd="$cmd --max_length 4096"  # default: 1024  # WIP for retriever_call_train_data.granite4_8b.jsonl
+#cmd="$cmd --max_length 4096"  # default: 1024  # DPO OK for g48b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1 dataset_name=datasets/retriever_call_train_data.granite4_8b.jsonl
+cmd="$cmd --max_length 8192"  # default: 1024  # DPO WIP for g48b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1 dataset_name=datasets/retriever_call_train_data.granite4_8b.jsonl
 echo "$cmd" | tee -a ${LOGFILE}
 eval "$cmd" 2>&1 | tee -a ${LOGFILE}
 
