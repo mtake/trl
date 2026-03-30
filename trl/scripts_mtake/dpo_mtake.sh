@@ -57,8 +57,8 @@ DATASET=datasets/retriever_call_train_data.granite4_8b.jsonl
 #MODEL=ibm-granite/granite-4.0-micro
 #MODEL=ibm-granite/granite-4.0-h-micro
 #MODEL=ibm-granite/granite-4.0-h-tiny
-#MODEL=ibm-granite/granite-4.0-h-small
-MODEL=models/granite-4.0-8b-preview-r260310a
+MODEL=ibm-granite/granite-4.0-h-small
+####MODEL=models/granite-4.0-8b-preview-r260310a
 
 #ACCELERATE_CONFIG=accelerate_configs/multi_gpu_2proc.yaml  # SFT CUDA OOM for g338b, DPO OK for q205b, DPO CUDA OOM for g338b, g4m, DPO CUDA OOM for g338b dtype=bfloat16, DPO OK for g4m, g4hm dtype=bfloat16
 #ACCELERATE_CONFIG=accelerate_configs/multi_gpu_4proc.yaml  # SFT CUDA OOM for g338b, DPO CUDA OOM for g338b, g4m, DPO CUDA OOM for g338b, g4ht dtype=bfloat16, DPO OK for g4m, g4hm dtype=bfloat16
@@ -81,9 +81,9 @@ MODEL=models/granite-4.0-8b-preview-r260310a
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero2_1node_8proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_1proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_2proc.yaml  # SFT CUDA OOM for g338b, DPO OK for g4m, g4hm, g4ht dtype=bfloat16, DPO CUDA OOM for g48b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
-ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_4proc.yaml  # SFT OK for g338b, DPO OK for q205b, g338b, g4m, g4hm, g4ht dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16, DPO OK for g48b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
+####ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_4proc.yaml  # SFT OK for g338b, DPO OK for q205b, g338b, g4m, g4hm, g4ht dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16, DPO OK for g48b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_8proc.yaml  # DPO OK for g338b dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO OK for g4hs offload_optimizer_device=cpu offload_param_device=cpu dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
-#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_8proc_offload.yaml  # DPO OK for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
+ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_8proc_offload.yaml  # DPO OK for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
 
 ACCELERATE_OPT=""
 #ACCELERATE_OPT="${ACCELERATE_OPT} --num_processes 2"
@@ -114,7 +114,7 @@ cmd="$cmd --per_device_train_batch_size 1"  # default: 8  # DPO OK for g4hs
 ####cmd="$cmd --gradient_accumulation_steps 8"  # default: 1
 cmd="$cmd --gradient_accumulation_steps 1"  # default: 1  # DPO OK for g4hs
 # @@@ahoaho XXX
-#cmd="$cmd --eval_strategy steps"  # default: no
+#cmd="$cmd --eval_strategy steps"  # default: no  # requires test split
 #cmd="$cmd --eval_steps 50"
 #cmd="$cmd --per_device_eval_batch_size 1"  # default: 8
 cmd="$cmd --output_dir ${OUTPUT_DIR}"
@@ -122,7 +122,7 @@ cmd="$cmd --output_dir ${OUTPUT_DIR}"
 #cmd="$cmd --no_remove_unused_columns"  # default: False
 # @@@ahoaho XXX
 #cmd="$cmd --max_length 4096"  # default: 1024  # DPO OK for g48b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1 dataset_name=datasets/retriever_call_train_data.granite4_8b.jsonl
-cmd="$cmd --max_length 8192"  # default: 1024  # DPO WIP for g48b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1 dataset_name=datasets/retriever_call_train_data.granite4_8b.jsonl
+cmd="$cmd --max_length 8192"  # default: 1024  # DPO OK for g48b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1 dataset_name=datasets/retriever_call_train_data.granite4_8b.jsonl, DPO WIP for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1 dataset_name=datasets/retriever_call_train_data.granite4_8b.jsonl
 echo "$cmd" | tee -a ${LOGFILE}
 eval "$cmd" 2>&1 | tee -a ${LOGFILE}
 
