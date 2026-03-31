@@ -57,7 +57,8 @@ DATASET=datasets/retriever_call_train_data.granite4_8b.jsonl
 #MODEL=ibm-granite/granite-4.0-micro
 #MODEL=ibm-granite/granite-4.0-h-micro
 #MODEL=ibm-granite/granite-4.0-h-tiny
-MODEL=ibm-granite/granite-4.0-h-small
+####MODEL=ibm-granite/granite-4.0-h-small  # may cause OSError due to slow system system
+MODEL=models/granite-4.0-h-small
 ####MODEL=models/granite-4.0-8b-preview-r260310a
 
 #ACCELERATE_CONFIG=accelerate_configs/multi_gpu_2proc.yaml  # SFT CUDA OOM for g338b, DPO OK for q205b, DPO CUDA OOM for g338b, g4m, DPO CUDA OOM for g338b dtype=bfloat16, DPO OK for g4m, g4hm dtype=bfloat16
@@ -121,8 +122,7 @@ cmd="$cmd --output_dir ${OUTPUT_DIR}"
 # @@@ahoaho XXX
 #cmd="$cmd --no_remove_unused_columns"  # default: False
 # @@@ahoaho XXX
-#cmd="$cmd --max_length 4096"  # default: 1024  # DPO OK for g48b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1 dataset_name=datasets/retriever_call_train_data.granite4_8b.jsonl
-cmd="$cmd --max_length 8192"  # default: 1024  # DPO OK for g48b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1 dataset_name=datasets/retriever_call_train_data.granite4_8b.jsonl, DPO WIP for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1 dataset_name=datasets/retriever_call_train_data.granite4_8b.jsonl
+cmd="$cmd --max_length 8192"  # default: 1024  # DPO OK for g48b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1 dataset_name=datasets/retriever_call_train_data.granite4_8b.jsonl, DPO OK for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1 dataset_name=datasets/retriever_call_train_data.granite4_8b.jsonl
 echo "$cmd" | tee -a ${LOGFILE}
 eval "$cmd" 2>&1 | tee -a ${LOGFILE}
 
