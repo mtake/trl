@@ -51,7 +51,7 @@ fi
 #ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_4proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_8proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_1proc.yaml
-####ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_2proc.yaml  # OK for g338b, g4m, g4hm, g4ht, ERR for g48b
+####ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_2proc.yaml  # OK for g338b, g4m, g4hm, g4ht, ERR for g418b
 #ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_4proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_8proc.yaml  # OK for g4hs
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero1_1node_1proc.yaml
@@ -64,7 +64,7 @@ fi
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero2_1node_8proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_1proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_2proc.yaml  # CUDA OOM for g338b
-ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_4proc.yaml  # OK for g338b, g48b
+ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_4proc.yaml  # OK for g338b, g418b
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_8proc.yaml
 
 cmd="${ENV}accelerate launch --config_file ${ACCELERATE_CONFIG} ${BASENAME}.py"
