@@ -49,7 +49,8 @@ fi
 
 # @@@ahoaho XXX
 #DATASET=trl-lib/ultrafeedback_binarized
-DATASET=datasets/retriever_call_train_data.granite4_8b.jsonl
+#DATASET=datasets/retriever_call_train_data.granite4_8b.jsonl
+DATASET=datasets/retriever_call_train_data.granite4_8b.v2.0406.jsonl
 
 # @@@ahoaho XXX
 #MODEL=Qwen/Qwen2-0.5B-Instruct
