@@ -64,8 +64,9 @@ fi
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero2_1node_8proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_1proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_2proc.yaml  # CUDA OOM for g338b
-ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_4proc.yaml  # OK for g338b, g418b
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_4proc.yaml  # OK for g338b, g418b
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_8proc.yaml
+ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_8proc_offload.yaml  # OK g4130b
 
 cmd="${ENV}accelerate launch --config_file ${ACCELERATE_CONFIG} ${BASENAME}.py"
 echo "$cmd" | tee -a ${LOGFILE}
