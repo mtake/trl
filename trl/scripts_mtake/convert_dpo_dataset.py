@@ -29,11 +29,11 @@ def main():
     # 1. Load your DPO dataset
     if input_file.endswith((".json",".jsonl")):
         if output_file is None:
-            output_file = f"{input_file[:input_file.rfind(".")]}-sft.jsonl"
+            output_file = f"{input_file[:input_file.rfind(".")]}-SFT.jsonl"
         dpo_dataset = load_dataset("json", data_files=input_file, split="train")
     else:
         if output_file is None:
-            output_file = f"{input_file[input_file.rfind("/")+1:]}-sft.jsonl"
+            output_file = f"{input_file[input_file.rfind("/")+1:]}-SFT.jsonl"
         dpo_dataset = load_dataset(input_file, split="train")
 
     print(f"Input file: {input_file}")

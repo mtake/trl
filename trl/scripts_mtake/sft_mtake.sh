@@ -48,8 +48,8 @@ ENV="TORCH_NCCL_ASYNC_ERROR_HANDLING=1 ${ENV}"
 fi
 
 # @@@ahoaho XXX
-#DATASET=datasets/retriever_call_train_data.granite4_8b-sft.jsonl
-DATASET=datasets/retriever_call_train_data.granite4_8b.v2.0406-sft.jsonl
+#DATASET=datasets/messages_data__jfe-technical-report_r5.jsonl
+DATASET=datasets/retriever_call_train_data.granite4_8b.v2.0406-SFT.jsonl
 
 # @@@ahoaho XXX
 #MODEL=Qwen/Qwen2-0.5B-Instruct
@@ -61,37 +61,37 @@ DATASET=datasets/retriever_call_train_data.granite4_8b.v2.0406-sft.jsonl
 ####MODEL=models/granite-4.0-h-small
 MODEL=models/granite-4.1-8b
 
-#ACCELERATE_CONFIG=accelerate_configs/multi_gpu_2proc.yaml  # SFT CUDA OOM for g338b, DPO OK for q205b, DPO CUDA OOM for g338b, g4m, DPO CUDA OOM for g338b dtype=bfloat16, DPO OK for g4m, g4hm dtype=bfloat16
-#ACCELERATE_CONFIG=accelerate_configs/multi_gpu_4proc.yaml  # SFT CUDA OOM for g338b, DPO CUDA OOM for g338b, g4m, DPO CUDA OOM for g338b, g4ht dtype=bfloat16, DPO OK for g4m, g4hm dtype=bfloat16
-#ACCELERATE_CONFIG=accelerate_configs/multi_gpu_8proc.yaml  # DPO CUDA OOM for g338b, g4m, DPO CUDA OOM for g338b, g4ht dtype=bfloat16
+#ACCELERATE_CONFIG=accelerate_configs/multi_gpu_2proc.yaml  # SFT(jfe) CUDA OOM for g338b, DPO(rtrvr) OK for q205b, DPO(rtrvr) CUDA OOM for g338b, g4m, DPO(rtrvr) CUDA OOM for g338b dtype=bfloat16, DPO(rtrvr) OK for g4m, g4hm dtype=bfloat16
+#ACCELERATE_CONFIG=accelerate_configs/multi_gpu_4proc.yaml  # SFT(jfe) CUDA OOM for g338b, DPO(rtrvr) CUDA OOM for g338b, g4m, DPO(rtrvr) CUDA OOM for g338b, g4ht dtype=bfloat16, DPO(rtrvr) OK for g4m, g4hm dtype=bfloat16
+#ACCELERATE_CONFIG=accelerate_configs/multi_gpu_8proc.yaml  # DPO(rtrvr) CUDA OOM for g338b, g4m, DPO(rtrvr) CUDA OOM for g338b, g4ht dtype=bfloat16
 #ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_1proc.yaml
-#ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_2proc.yaml  # DPO CUDA BUSY for q205b
+#ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_2proc.yaml  # DPO(rtrvr) CUDA BUSY for q205b
 #ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_4proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp1_1node_8proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_1proc.yaml
-#ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_2proc.yaml  # SFT OK for g338b, g4m, g4hm, g4ht, DPO CUDA BUSY for q205b, DPO CUDA BUSY for q205b, g4m dtype=bfloat16
-#ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_4proc.yaml  # DPO CUDA BUSY for q205b dtype=bfloat16
-#ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_8proc.yaml  # SFT OK for g4hs
+#ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_2proc.yaml  # SFT(jfe) OK for g338b, g4m, g4hm, g4ht, DPO(rtrvr) CUDA BUSY for q205b, DPO(rtrvr) CUDA BUSY for q205b, g4m dtype=bfloat16
+#ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_4proc.yaml  # DPO(rtrvr) CUDA BUSY for q205b dtype=bfloat16
+#ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_8proc.yaml  # SFT(jfe) OK for g4hs
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero1_1node_1proc.yaml
-#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero1_1node_2proc.yaml  # SFT CUDA OOM
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero1_1node_2proc.yaml  # SFT(jfe) CUDA OOM
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero1_1node_4proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero1_1node_8proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero2_1node_1proc.yaml
-#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero2_1node_2proc.yaml  # SFT CUDA OOM
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero2_1node_2proc.yaml  # SFT(jfe) CUDA OOM
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero2_1node_4proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero2_1node_8proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_1proc.yaml
-#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_2proc.yaml  # SFT CUDA OOM for g338b, DPO OK for g4m, g4hm, g4ht dtype=bfloat16, DPO CUDA OOM for g418b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
-ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_4proc.yaml  # SFT OK for g338b, DPO OK for q205b, g338b, g4m, g4hm, g4ht dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16, DPO OK for g418b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
-#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_8proc.yaml  # DPO OK for g338b dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO OK for g4hs offload_optimizer_device=cpu offload_param_device=cpu dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
-####ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_8proc_offload.yaml  # DPO OK for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_2proc.yaml  # SFT(jfe) CUDA OOM for g338b, DPO(rtrvr) OK for g4m, g4hm, g4ht dtype=bfloat16, DPO(rtrvr) CUDA OOM for g418b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
+ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_4proc.yaml  # SFT(jfe) OK for g338b, DPO(rtrvr) OK for q205b, g338b, g4m, g4hm, g4ht dtype=bfloat16, DPO(rtrvr) CUDA OOM for g4hs dtype=bfloat16, DPO(rtrvr) OK for g418b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, SFT(rtrvr.v2) CUDA OOM for g418b dtype=bfloat16, per_device_train_batch_size=16, max_length=8192, SFT(rtrvr.v2) OK for g418b dtype=bfloat16, per_device_train_batch_size=8, max_length=8192
+#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_8proc.yaml  # DPO(rtrvr) OK for g338b dtype=bfloat16, DPO(rtrvr) CUDA OOM for g4hs dtype=bfloat16, DPO(rtrvr) CUDA OOM for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO(rtrvr) OK for g4hs offload_optimizer_device=cpu offload_param_device=cpu dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
+####ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_8proc_offload.yaml  # DPO(rtrvr) OK for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
 
 ACCELERATE_OPT=""
 #ACCELERATE_OPT="${ACCELERATE_OPT} --num_processes 2"
 #ACCELERATE_OPT="${ACCELERATE_OPT} --num_processes 4"
 #ACCELERATE_OPT="${ACCELERATE_OPT} --num_processes 8"
-#ACCELERATE_OPT="${ACCELERATE_OPT} --offload_optimizer_device cpu"  # for zero_stage>=2  # DPO OK for g4hs
-#ACCELERATE_OPT="${ACCELERATE_OPT} --offload_param_device cpu"  # for zero_stage>=3  # DPO OK for g4hs
+#ACCELERATE_OPT="${ACCELERATE_OPT} --offload_optimizer_device cpu"  # for zero_stage>=2  # DPO(rtrvr) OK for g4hs
+#ACCELERATE_OPT="${ACCELERATE_OPT} --offload_param_device cpu"  # for zero_stage>=3  # DPO(rtrvr) OK for g4hs
 
 #OUTPUT_DIR="trainer_output/${MODEL##*/}-${DATASET##*/}-sft-${START_TIME_STR}-${HOSTNAME_S}"  # NOTE neither timestamp nor hostname works with preemptable queue
 OUTPUT_DIR="trainer_output/${MODEL##*/}-${DATASET##*/}-sft"  # NOTE neither timestamp nor hostname works with preemptable queue
@@ -105,14 +105,17 @@ echo "============================================================" | tee -a ${L
 # See https://github.com/mtake/trl/blob/main/trl/scripts/sft.py
 cmd="${ENV}accelerate launch --config_file ${ACCELERATE_CONFIG}${ACCELERATE_OPT} ${BASENAME}.py --dataset_name ${DATASET} --model_name_or_path ${MODEL}"
 cmd="$cmd --output_dir ${OUTPUT_DIR}"  # default: trainer_output
-cmd="$cmd --per_device_train_batch_size 32"  # default: 8  # OK for g338b, g4m, g4hm, g4ht, g418b, g4130b
-#cmd="$cmd --per_device_train_batch_size 16"  # default: 8  # OK for g4hs
+####cmd="$cmd --per_device_train_batch_size 32"  # default: 8  # SFT(jfe) OK for g338b, g4m, g4hm, g4ht, g418b, g4130b
+#cmd="$cmd --per_device_train_batch_size 16"  # default: 8  # SFT(jfe) OK for g4hs, SFT(rtrve.v2) CUDA OOM for g418b per_device_train_batch_size=16, max_length=8192
+cmd="$cmd --per_device_train_batch_size 8"  # default: 8  # SFT(rtrve.v2) OK for g418b per_device_train_batch_size=8, max_length=8192
 #cmd="$cmd --num_train_epochs 1"  # default: 3
 #cmd="$cmd --gradient_accumulation_steps 8"  # default: 1
+cmd="$cmd --dtype bfloat16"
 cmd="$cmd --bf16 True"  # default: None
 #cmd="$cmd --use_liger_kernel True"  # default: False
 cmd="$cmd --dataset_num_proc 8"  # default: None
-cmd="$cmd --max_length 20000"  # default: 1024
+####cmd="$cmd --max_length 20000"  # default: 1024  # SFT(jfe) OK
+cmd="$cmd --max_length 8192"  # default: 1024  # SFT(rtrve.v2) OK for g418b per_device_train_batch_size=8, max_length=8192
 # @@@ahoaho XXX
 #cmd="$cmd --eval_strategy steps"  # default: no  # requires test split
 #cmd="$cmd --eval_steps 50"
