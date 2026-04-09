@@ -48,9 +48,8 @@ ENV="TORCH_NCCL_ASYNC_ERROR_HANDLING=1 ${ENV}"
 fi
 
 # @@@ahoaho XXX
-#DATASET=trl-lib/ultrafeedback_binarized
-#DATASET=datasets/retriever_call_train_data.granite4_8b.jsonl
-DATASET=datasets/retriever_call_train_data.granite4_8b.v2.0406.jsonl
+#DATASET=datasets/retriever_call_train_data.granite4_8b-sft.jsonl
+DATASET=datasets/retriever_call_train_data.granite4_8b.v2.0406-sft.jsonl
 
 # @@@ahoaho XXX
 #MODEL=Qwen/Qwen2-0.5B-Instruct
@@ -105,26 +104,18 @@ echo "============================================================" | tee -a ${L
 
 # See https://github.com/mtake/trl/blob/main/trl/scripts/sft.py
 cmd="${ENV}accelerate launch --config_file ${ACCELERATE_CONFIG}${ACCELERATE_OPT} ${BASENAME}.py --dataset_name ${DATASET} --model_name_or_path ${MODEL}"
-# @@@ahoaho XXX
-cmd="$cmd --dataset_num_proc 8"
-cmd="$cmd --dtype bfloat16"
-cmd="$cmd --bf16 True"
-#cmd="$cmd --learning_rate 5.0e-7"  # default: 1e-06
+cmd="$cmd --output_dir ${OUTPUT_DIR}"  # default: trainer_output
+cmd="$cmd --per_device_train_batch_size 32"  # default: 8  # OK for g338b, g4m, g4hm, g4ht, g418b, g4130b
+#cmd="$cmd --per_device_train_batch_size 16"  # default: 8  # OK for g4hs
 #cmd="$cmd --num_train_epochs 1"  # default: 3
-####cmd="$cmd --per_device_train_batch_size 2"  # default: 8
-cmd="$cmd --per_device_train_batch_size 1"  # default: 8  # DPO OK for g4hs
-####cmd="$cmd --max_steps 10"  # default: -1 (len(train split) * num_train_epochs)
-####cmd="$cmd --gradient_accumulation_steps 8"  # default: 1
-cmd="$cmd --gradient_accumulation_steps 1"  # default: 1  # DPO OK for g4hs
+#cmd="$cmd --gradient_accumulation_steps 8"  # default: 1
+cmd="$cmd --bf16 True"  # default: None
+#cmd="$cmd --use_liger_kernel True"  # default: False
+cmd="$cmd --dataset_num_proc 8"  # default: None
+cmd="$cmd --max_length 20000"  # default: 1024
 # @@@ahoaho XXX
 #cmd="$cmd --eval_strategy steps"  # default: no  # requires test split
 #cmd="$cmd --eval_steps 50"
-#cmd="$cmd --per_device_eval_batch_size 1"  # default: 8
-cmd="$cmd --output_dir ${OUTPUT_DIR}"
-# @@@ahoaho XXX
-#cmd="$cmd --no_remove_unused_columns"  # default: False
-# @@@ahoaho XXX
-cmd="$cmd --max_length 8192"  # default: 1024  # DPO OK for g418b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1 dataset_name=datasets/retriever_call_train_data.granite4_8b.jsonl, DPO OK for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1 dataset_name=datasets/retriever_call_train_data.granite4_8b.jsonl
 echo "$cmd" | tee -a ${LOGFILE}
 eval "$cmd" 2>&1 | tee -a ${LOGFILE}
 
