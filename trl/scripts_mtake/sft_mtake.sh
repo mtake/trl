@@ -51,6 +51,10 @@ fi
 #DATASET=datasets/messages_data__jfe-technical-report_r5.jsonl
 DATASET=datasets/retriever_call_train_data.granite4_8b.v2.0406-SFT.jsonl
 
+DATASET_S="${DATASET##*/}"
+DATASET_S="${DATASET_S%.jsonl}"
+DATASET_S="${DATASET_S%.json}"
+
 # @@@ahoaho XXX
 #MODEL=Qwen/Qwen2-0.5B-Instruct
 #MODEL=ibm-granite/granite-3.3-8b-instruct
@@ -93,10 +97,9 @@ ACCELERATE_OPT=""
 #ACCELERATE_OPT="${ACCELERATE_OPT} --offload_optimizer_device cpu"  # for zero_stage>=2  # DPO(rtrvr) OK for g4hs
 #ACCELERATE_OPT="${ACCELERATE_OPT} --offload_param_device cpu"  # for zero_stage>=3  # DPO(rtrvr) OK for g4hs
 
-#OUTPUT_DIR="trainer_output/${MODEL##*/}-${DATASET##*/}-sft-${START_TIME_STR}-${HOSTNAME_S}"  # NOTE neither timestamp nor hostname works with preemptable queue
-OUTPUT_DIR="trainer_output/${MODEL##*/}-${DATASET##*/}-sft"  # NOTE neither timestamp nor hostname works with preemptable queue
+#OUTPUT_DIR="trainer_output/${MODEL##*/}-${DATASET_S}-sft-${START_TIME_STR}-${HOSTNAME_S}"  # NOTE neither timestamp nor hostname works with preemptable queue
+OUTPUT_DIR="trainer_output/${MODEL##*/}-${DATASET_S}-sft"  # NOTE neither timestamp nor hostname works with preemptable queue
 
-# @@@ahoaho XXX
 echo "================== ENVIRONMENT VARIABLES ===================" | tee -a ${LOGFILE}
 env 2>&1 | tee -a ${LOGFILE}
 echo "============================================================" | tee -a ${LOGFILE}
