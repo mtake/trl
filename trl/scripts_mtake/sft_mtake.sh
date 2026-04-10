@@ -57,6 +57,7 @@ DATASET_S="${DATASET_S%.json}"
 
 # @@@ahoaho XXX
 #MODEL=Qwen/Qwen2-0.5B-Instruct
+#MODEL=Qwen/Qwen3-0.6B
 #MODEL=ibm-granite/granite-3.3-8b-instruct
 #MODEL=ibm-granite/granite-4.0-micro
 #MODEL=ibm-granite/granite-4.0-h-micro
@@ -112,16 +113,19 @@ cmd="$cmd --output_dir ${OUTPUT_DIR}"  # default: trainer_output
 #cmd="$cmd --per_device_train_batch_size 16"  # default: 8  # SFT(jfe) OK for g4hs, SFT(rtrve.v2) CUDA OOM for g418b per_device_train_batch_size=16, max_length=8192
 cmd="$cmd --per_device_train_batch_size 8"  # default: 8  # SFT(rtrve.v2) OK for g418b per_device_train_batch_size=8, max_length=8192
 #cmd="$cmd --num_train_epochs 1"  # default: 3
+####cmd="$cmd --max_steps 10"  # default: -1 (len(train split) * num_train_epochs)
 #cmd="$cmd --gradient_accumulation_steps 8"  # default: 1
+#cmd="$cmd --learning_rate 5.0e-7"  # default: 2e-05
+#cmd="$cmd --use_liger_kernel True"  # default: False
 cmd="$cmd --dtype bfloat16"
 cmd="$cmd --bf16 True"  # default: None
-#cmd="$cmd --use_liger_kernel True"  # default: False
 cmd="$cmd --dataset_num_proc 8"  # default: None
+#cmd="$cmd --no_remove_unused_columns"  # default: False
 ####cmd="$cmd --max_length 20000"  # default: 1024  # SFT(jfe) OK
 cmd="$cmd --max_length 8192"  # default: 1024  # SFT(rtrve.v2) OK for g418b per_device_train_batch_size=8, max_length=8192
-# @@@ahoaho XXX
 #cmd="$cmd --eval_strategy steps"  # default: no  # requires test split
 #cmd="$cmd --eval_steps 50"
+#cmd="$cmd --per_device_eval_batch_size 1"  # default: 8
 echo "$cmd" | tee -a ${LOGFILE}
 eval "$cmd" 2>&1 | tee -a ${LOGFILE}
 

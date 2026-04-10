@@ -58,6 +58,7 @@ DATASET_S="${DATASET_S%.json}"
 
 # @@@ahoaho XXX
 #MODEL=Qwen/Qwen2-0.5B-Instruct
+#MODEL=Qwen/Qwen3-0.6B
 #MODEL=ibm-granite/granite-3.3-8b-instruct
 #MODEL=ibm-granite/granite-4.0-micro
 #MODEL=ibm-granite/granite-4.0-h-micro
@@ -65,7 +66,7 @@ DATASET_S="${DATASET_S%.json}"
 ####MODEL=ibm-granite/granite-4.0-h-small  # may cause OSError due to slow system system
 ####MODEL=models/granite-4.0-h-small
 #MODEL=models/granite-4.1-8b
-MODEL=trainer_output/granite-4.1-8b-retriever_call_train_data.granite4_8b.v2.0406-SFT.jsonl-sft-20260409-150354-p4-r26-n3-g418b-3num_train_epochs-8192max_length-rtrvr.v2
+MODEL=trainer_output/granite-4.1-8b-retriever_call_train_data.granite4_8b.v2.0406-SFT-sft-20260409-150354-p4-r26-n3-g418b-3epochs-8192length-rtrvr.v2
 
 #ACCELERATE_CONFIG=accelerate_configs/multi_gpu_2proc.yaml  # SFT CUDA OOM for g338b, DPO OK for q205b, DPO CUDA OOM for g338b, g4m, DPO CUDA OOM for g338b dtype=bfloat16, DPO OK for g4m, g4hm dtype=bfloat16
 #ACCELERATE_CONFIG=accelerate_configs/multi_gpu_4proc.yaml  # SFT CUDA OOM for g338b, DPO CUDA OOM for g338b, g4m, DPO CUDA OOM for g338b, g4ht dtype=bfloat16, DPO OK for g4m, g4hm dtype=bfloat16
@@ -109,26 +110,21 @@ echo "============================================================" | tee -a ${L
 
 # See https://github.com/mtake/trl/blob/main/trl/scripts/dpo.py
 cmd="${ENV}accelerate launch --config_file ${ACCELERATE_CONFIG}${ACCELERATE_OPT} ${BASENAME}.py --dataset_name ${DATASET} --model_name_or_path ${MODEL}"
-# @@@ahoaho XXX
-cmd="$cmd --dataset_num_proc 8"
+cmd="$cmd --output_dir ${OUTPUT_DIR}"
+cmd="$cmd --per_device_train_batch_size 1"  # default: 8  # DPO OK for g4hs
+#cmd="$cmd --num_train_epochs 1"  # default: 3
+####cmd="$cmd --max_steps 10"  # default: -1 (len(train split) * num_train_epochs)
+#cmd="$cmd --gradient_accumulation_steps 8"  # default: 1  # DPO OK for g4hs
+#cmd="$cmd --learning_rate 5.0e-7"  # default: 1e-06
+#cmd="$cmd --use_liger_kernel True"  # default: False
 cmd="$cmd --dtype bfloat16"
 cmd="$cmd --bf16 True"
-#cmd="$cmd --learning_rate 5.0e-7"  # default: 1e-06
-#cmd="$cmd --num_train_epochs 1"  # default: 3
-####cmd="$cmd --per_device_train_batch_size 2"  # default: 8
-cmd="$cmd --per_device_train_batch_size 1"  # default: 8  # DPO OK for g4hs
-####cmd="$cmd --max_steps 10"  # default: -1 (len(train split) * num_train_epochs)
-####cmd="$cmd --gradient_accumulation_steps 8"  # default: 1
-cmd="$cmd --gradient_accumulation_steps 1"  # default: 1  # DPO OK for g4hs
-# @@@ahoaho XXX
+cmd="$cmd --dataset_num_proc 8"
+#cmd="$cmd --no_remove_unused_columns"  # default: False
+cmd="$cmd --max_length 8192"  # default: 1024  # DPO OK for g418b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1 dataset_name=datasets/retriever_call_train_data.granite4_8b.jsonl, DPO OK for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1 dataset_name=datasets/retriever_call_train_data.granite4_8b.jsonl
 #cmd="$cmd --eval_strategy steps"  # default: no  # requires test split
 #cmd="$cmd --eval_steps 50"
 #cmd="$cmd --per_device_eval_batch_size 1"  # default: 8
-cmd="$cmd --output_dir ${OUTPUT_DIR}"
-# @@@ahoaho XXX
-#cmd="$cmd --no_remove_unused_columns"  # default: False
-# @@@ahoaho XXX
-cmd="$cmd --max_length 8192"  # default: 1024  # DPO OK for g418b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1 dataset_name=datasets/retriever_call_train_data.granite4_8b.jsonl, DPO OK for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1 dataset_name=datasets/retriever_call_train_data.granite4_8b.jsonl
 echo "$cmd" | tee -a ${LOGFILE}
 eval "$cmd" 2>&1 | tee -a ${LOGFILE}
 
