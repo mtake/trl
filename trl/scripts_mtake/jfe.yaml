@@ -1,0 +1,4 @@
+datasets:
+  - path: json
+    data_files: datasets/messages_data__jfe-technical-report_r5.jsonl
+    split: train

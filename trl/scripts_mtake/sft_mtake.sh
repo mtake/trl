@@ -50,10 +50,18 @@ fi
 # @@@ahoaho XXX
 #DATASET=datasets/messages_data__jfe-technical-report_r5.jsonl
 DATASET=datasets/retriever_call_train_data.granite4_8b.v2.0406-SFT.jsonl
+#DATASET=jfe.yaml
+#DATASET=zragrtrvr.v2-SFT.yaml
 
 DATASET_S="${DATASET##*/}"
-DATASET_S="${DATASET_S%.jsonl}"
-DATASET_S="${DATASET_S%.json}"
+if [[ "${DATASET_S}" == *.yaml ]]; then
+    DATASET_S="${DATASET_S%.yaml}"
+    USE_CONFIG=1
+elif [[ "${DATASET_S}" == *.jsonl ]]; then
+    DATASET_S="${DATASET_S%.jsonl}"
+elif [[ "${DATASET_S}" == *.json ]]; then
+    DATASET_S="${DATASET_S%.json}"
+fi
 
 # @@@ahoaho XXX
 #MODEL=Qwen/Qwen2-0.5B-Instruct
@@ -107,7 +115,12 @@ echo "============================================================" | tee -a ${L
 
 
 # See https://github.com/mtake/trl/blob/main/trl/scripts/sft.py
-cmd="${ENV}accelerate launch --config_file ${ACCELERATE_CONFIG}${ACCELERATE_OPT} ${BASENAME}.py --dataset_name ${DATASET} --model_name_or_path ${MODEL}"
+cmd="${ENV}accelerate launch --config_file ${ACCELERATE_CONFIG}${ACCELERATE_OPT} ${BASENAME}.py --model_name_or_path ${MODEL}"
+if [[ -n "${USE_CONFIG}" ]]; then
+    cmd="$cmd --config ${DATASET}"
+else
+    cmd="$cmd --dataset_name ${DATASET}"
+fi
 cmd="$cmd --output_dir ${OUTPUT_DIR}"  # default: trainer_output
 ####cmd="$cmd --per_device_train_batch_size 32"  # default: 8  # SFT(jfe) OK for g338b, g4m, g4hm, g4ht, g418b, g4130b
 #cmd="$cmd --per_device_train_batch_size 16"  # default: 8  # SFT(jfe) OK for g4hs, SFT(rtrve.v2) CUDA OOM for g418b per_device_train_batch_size=16, max_length=8192
