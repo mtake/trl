@@ -49,9 +49,9 @@ fi
 
 # @@@ahoaho XXX
 #DATASET=datasets/messages_data__jfe-technical-report_r5.jsonl
-DATASET=datasets/retriever_call_train_data.granite4_8b.v2.0406-SFT.jsonl
+#DATASET=datasets/retriever_call_train_data.granite4_8b.v2.0406-SFT.jsonl
 #DATASET=jfe.yaml
-#DATASET=zragrtrvr.v2-SFT.yaml
+DATASET=zragrtrvr.v2-SFT.yaml
 
 DATASET_S="${DATASET##*/}"
 if [[ "${DATASET_S}" == *.yaml ]]; then
