@@ -73,9 +73,10 @@ fi
 #MODEL=ibm-granite/granite-4.0-h-tiny
 ####MODEL=ibm-granite/granite-4.0-h-small  # may cause OSError due to slow system system
 ####MODEL=models/granite-4.0-h-small
-MODEL=models/granite-4.1-8b
+#MODEL=models/granite-4.1-8b
 ####MODEL=trainer_output/granite-4.1-8b-retriever_call_train_data.granite4_8b.v2.0406-SFT-sft-20260409-150354-p4-r26-n3-g418b-3epochs-8192length-rtrvr.v2
 ####MODEL=trainer_output/granite-4.1-8b-retriever_call_train_data.granite4_8b.v2.0406-SFT-sft-20260416-100514-p1-r23-n3-g418b-3epochs-8192length-rtrvr.v2-transformers4576
+MODEL=models/granite-4.1-30b
 
 #ACCELERATE_CONFIG=accelerate_configs/multi_gpu_2proc.yaml  # SFT CUDA OOM for g338b, DPO OK for q205b, DPO CUDA OOM for g338b, g4m, DPO CUDA OOM for g338b dtype=bfloat16, DPO OK for g4m, g4hm dtype=bfloat16
 #ACCELERATE_CONFIG=accelerate_configs/multi_gpu_4proc.yaml  # SFT CUDA OOM for g338b, DPO CUDA OOM for g338b, g4m, DPO CUDA OOM for g338b, g4ht dtype=bfloat16, DPO OK for g4m, g4hm dtype=bfloat16
@@ -98,8 +99,8 @@ MODEL=models/granite-4.1-8b
 #ACCELERATE_CONFIG=accelerate_configs/zero2_1node_8proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/zero3_1node_1proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/zero3_1node_2proc.yaml  # SFT CUDA OOM for g338b, DPO OK for g4m, g4hm, g4ht dtype=bfloat16, DPO CUDA OOM for g418b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
-ACCELERATE_CONFIG=accelerate_configs/zero3_1node_4proc.yaml  # SFT OK for g338b, DPO OK for q205b, g338b, g4m, g4hm, g4ht dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16, DPO OK for g418b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
-#ACCELERATE_CONFIG=accelerate_configs/zero3_1node_8proc.yaml  # DPO OK for g338b dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO OK for g4hs offload_optimizer_device=cpu offload_param_device=cpu dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
+#ACCELERATE_CONFIG=accelerate_configs/zero3_1node_4proc.yaml  # SFT OK for g338b, DPO OK for q205b, g338b, g4m, g4hm, g4ht dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16, DPO OK for g418b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO CUDA OOM for g4130b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
+ACCELERATE_CONFIG=accelerate_configs/zero3_1node_8proc.yaml  # DPO OK for g338b dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO OK for g4hs offload_optimizer_device=cpu offload_param_device=cpu dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO OK for g4130b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
 ####ACCELERATE_CONFIG=accelerate_configs/zero3_1node_8proc_offload.yaml  # DPO OK for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
 
 ACCELERATE_OPT=""
@@ -137,7 +138,7 @@ cmd="$cmd --dtype bfloat16"
 cmd="$cmd --bf16 True"
 cmd="$cmd --dataset_num_proc 8"
 #cmd="$cmd --no_remove_unused_columns"  # default: False
-cmd="$cmd --max_length 8192"  # default: 1024  # DPO OK for g418b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1 dataset_name=datasets/retriever_call_train_data.granite4_8b.jsonl, DPO OK for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1 dataset_name=datasets/retriever_call_train_data.granite4_8b.jsonl
+cmd="$cmd --max_length 8192"  # default: 1024  # DPO OK for g418b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1 dataset_name=datasets/retriever_call_train_data.granite4_8b.jsonl, DPO OK for g4130b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1 config=zragrtrvr.v2.yaml, DPO OK for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1 dataset_name=datasets/retriever_call_train_data.granite4_8b.jsonl
 #cmd="$cmd --eval_strategy steps"  # default: no  # requires test split
 #cmd="$cmd --eval_steps 50"
 #cmd="$cmd --per_device_eval_batch_size 1"  # default: 8
