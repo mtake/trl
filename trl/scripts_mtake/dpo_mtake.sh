@@ -127,7 +127,9 @@ fi
 cmd="$cmd --output_dir ${OUTPUT_DIR}"
 cmd="$cmd --per_device_train_batch_size 1"  # default: 8  # DPO OK for g4hs
 #cmd="$cmd --num_train_epochs 1"  # default: 3
+cmd="$cmd --save_strategy epoch"  # default: steps
 ####cmd="$cmd --max_steps 10"  # default: -1 (len(train split) * num_train_epochs)
+#cmd="$cmd --save_steps 100"  # default: 500. an integer as steps or a float in range `[0,1)` as ratio of total training steps.
 #cmd="$cmd --gradient_accumulation_steps 8"  # default: 1  # DPO OK for g4hs
 #cmd="$cmd --learning_rate 5.0e-7"  # default: 1e-06
 #cmd="$cmd --use_liger_kernel True"  # default: False
