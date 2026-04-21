@@ -73,6 +73,7 @@ fi
 ####MODEL=ibm-granite/granite-4.0-h-small  # may cause OSError due to slow system system
 ####MODEL=models/granite-4.0-h-small
 MODEL=models/granite-4.1-8b
+#MODEL=models/granite-4.1-30b
 
 #ACCELERATE_CONFIG=accelerate_configs/multi_gpu_2proc.yaml  # SFT(jfe) CUDA OOM for g338b, DPO(rtrvr) OK for q205b, DPO(rtrvr) CUDA OOM for g338b, g4m, DPO(rtrvr) CUDA OOM for g338b dtype=bfloat16, DPO(rtrvr) OK for g4m, g4hm dtype=bfloat16
 #ACCELERATE_CONFIG=accelerate_configs/multi_gpu_4proc.yaml  # SFT(jfe) CUDA OOM for g338b, DPO(rtrvr) CUDA OOM for g338b, g4m, DPO(rtrvr) CUDA OOM for g338b, g4ht dtype=bfloat16, DPO(rtrvr) OK for g4m, g4hm dtype=bfloat16
@@ -96,7 +97,7 @@ MODEL=models/granite-4.1-8b
 #ACCELERATE_CONFIG=accelerate_configs/zero3_1node_1proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/zero3_1node_2proc.yaml  # SFT(jfe) CUDA OOM for g338b, DPO(rtrvr) OK for g4m, g4hm, g4ht dtype=bfloat16, DPO(rtrvr) CUDA OOM for g418b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
 ACCELERATE_CONFIG=accelerate_configs/zero3_1node_4proc.yaml  # SFT(jfe) OK for g338b, DPO(rtrvr) OK for q205b, g338b, g4m, g4hm, g4ht dtype=bfloat16, DPO(rtrvr) CUDA OOM for g4hs dtype=bfloat16, DPO(rtrvr) OK for g418b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, SFT(rtrvr.v2) CUDA OOM for g418b dtype=bfloat16, per_device_train_batch_size=16, max_length=8192, SFT(rtrvr.v2) OK for g418b dtype=bfloat16, per_device_train_batch_size=8, max_length=8192
-#ACCELERATE_CONFIG=accelerate_configs/zero3_1node_8proc.yaml  # DPO(rtrvr) OK for g338b dtype=bfloat16, DPO(rtrvr) CUDA OOM for g4hs dtype=bfloat16, DPO(rtrvr) CUDA OOM for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO(rtrvr) OK for g4hs offload_optimizer_device=cpu offload_param_device=cpu dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
+#ACCELERATE_CONFIG=accelerate_configs/zero3_1node_8proc.yaml  # DPO(rtrvr) OK for g338b dtype=bfloat16, DPO(rtrvr) CUDA OOM for g4hs dtype=bfloat16, DPO(rtrvr) CUDA OOM for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO(rtrvr) OK for g4hs offload_optimizer_device=cpu offload_param_device=cpu dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, SFT(rtrvr.v2) OK for g4130b dtype=bfloat16, per_device_train_batch_size=4, max_length=8192
 ####ACCELERATE_CONFIG=accelerate_configs/zero3_1node_8proc_offload.yaml  # DPO(rtrvr) OK for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
 
 ACCELERATE_OPT=""
@@ -124,7 +125,8 @@ fi
 cmd="$cmd --output_dir ${OUTPUT_DIR}"  # default: trainer_output
 ####cmd="$cmd --per_device_train_batch_size 32"  # default: 8  # SFT(jfe) OK for g338b, g4m, g4hm, g4ht, g418b, g4130b
 #cmd="$cmd --per_device_train_batch_size 16"  # default: 8  # SFT(jfe) OK for g4hs, SFT(rtrve.v2) CUDA OOM for g418b per_device_train_batch_size=16, max_length=8192
-cmd="$cmd --per_device_train_batch_size 8"  # default: 8  # SFT(rtrve.v2) OK for g418b per_device_train_batch_size=8, max_length=8192
+cmd="$cmd --per_device_train_batch_size 8"  # default: 8  # SFT(rtrve.v2) OK for g418b per_device_train_batch_size=8, max_length=8192, SFT(rtrve.v2) CUDA OOM for g4130b per_device_train_batch_size=8, max_length=8192
+#cmd="$cmd --per_device_train_batch_size 4"  # default: 8  # SFT(rtrve.v2) OK for g4130b per_device_train_batch_size=4, max_length=8192
 #cmd="$cmd --num_train_epochs 1"  # default: 3
 cmd="$cmd --save_strategy epoch"  # default: steps
 ####cmd="$cmd --max_steps 10"  # default: -1 (len(train split) * num_train_epochs)
@@ -137,7 +139,7 @@ cmd="$cmd --bf16 True"  # default: None
 cmd="$cmd --dataset_num_proc 8"  # default: None
 #cmd="$cmd --no_remove_unused_columns"  # default: False
 ####cmd="$cmd --max_length 20000"  # default: 1024  # SFT(jfe) OK
-cmd="$cmd --max_length 8192"  # default: 1024  # SFT(rtrve.v2) OK for g418b per_device_train_batch_size=8, max_length=8192
+cmd="$cmd --max_length 8192"  # default: 1024  # SFT(rtrve.v2) OK for g418b per_device_train_batch_size=8, max_length=8192, SFT(rtrve.v2) OK for g4130b per_device_train_batch_size=4, max_length=8192
 #cmd="$cmd --eval_strategy steps"  # default: no  # requires test split
 #cmd="$cmd --eval_steps 50"
 #cmd="$cmd --per_device_eval_batch_size 1"  # default: 8
