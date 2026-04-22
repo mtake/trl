@@ -72,7 +72,8 @@ fi
 #MODEL=ibm-granite/granite-4.0-h-tiny
 ####MODEL=ibm-granite/granite-4.0-h-small  # may cause OSError due to slow system system
 ####MODEL=models/granite-4.0-h-small
-MODEL=models/granite-4.1-8b
+MODEL=ibm-granite/granite-4.1-8b
+####MODEL=models/granite-4.1-8b
 #MODEL=models/granite-4.1-30b
 
 #ACCELERATE_CONFIG=accelerate_configs/multi_gpu_2proc.yaml  # SFT(jfe) CUDA OOM for g338b, DPO(rtrvr) OK for q205b, DPO(rtrvr) CUDA OOM for g338b, g4m, DPO(rtrvr) CUDA OOM for g338b dtype=bfloat16, DPO(rtrvr) OK for g4m, g4hm dtype=bfloat16
