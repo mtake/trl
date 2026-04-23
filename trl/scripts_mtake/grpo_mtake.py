@@ -85,6 +85,8 @@ def main(script_args, training_args, model_args, dataset_args):
         "reasoning_accuracy_reward": reasoning_accuracy_reward,
         "think_format_reward": think_format_reward,
         "get_soft_overlong_punishment": get_soft_overlong_punishment(max_completion_len=1280, soft_punish_cache=256),
+        # @@@ahoaho XXX
+        "get_soft_overlong_punishment_zragagent": get_soft_overlong_punishment(max_completion_len=400, soft_punish_cache=100),
     }
 
     # Get the reward models and functions
