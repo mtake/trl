@@ -98,7 +98,7 @@ MODEL=ibm-granite/granite-4.1-8b
 #ACCELERATE_CONFIG=accelerate_configs/zero3_1node_1proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/zero3_1node_2proc.yaml  # SFT(jfe) CUDA OOM for g338b, DPO(rtrvr) OK for g4m, g4hm, g4ht dtype=bfloat16, DPO(rtrvr) CUDA OOM for g418b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
 ACCELERATE_CONFIG=accelerate_configs/zero3_1node_4proc.yaml  # SFT(jfe) OK for g338b, DPO(rtrvr) OK for q205b, g338b, g4m, g4hm, g4ht dtype=bfloat16, DPO(rtrvr) CUDA OOM for g4hs dtype=bfloat16, DPO(rtrvr) OK for g418b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, SFT(rtrvr.v2) CUDA OOM for g418b dtype=bfloat16, per_device_train_batch_size=16, max_length=8192, SFT(rtrvr.v2) OK for g418b dtype=bfloat16, per_device_train_batch_size=8, max_length=8192
-#ACCELERATE_CONFIG=accelerate_configs/zero3_1node_8proc.yaml  # DPO(rtrvr) OK for g338b dtype=bfloat16, DPO(rtrvr) CUDA OOM for g4hs dtype=bfloat16, DPO(rtrvr) CUDA OOM for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO(rtrvr) OK for g4hs offload_optimizer_device=cpu offload_param_device=cpu dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, SFT(rtrvr.v2) OK for g4130b dtype=bfloat16, per_device_train_batch_size=4, max_length=8192
+#ACCELERATE_CONFIG=accelerate_configs/zero3_1node_8proc.yaml  # DPO(rtrvr) OK for g338b dtype=bfloat16, DPO(rtrvr) CUDA OOM for g4hs dtype=bfloat16, DPO(rtrvr) CUDA OOM for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO(rtrvr) OK for g4hs offload_optimizer_device=cpu offload_param_device=cpu dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, SFT(rtrvr.v2) OK for g4130b dtype=bfloat16, per_device_train_batch_size=4, max_length=8192, SFT(jfe) CUDA OOM for g4130b per_device_train_batch_size=32 max_length=20000, SFT(jfe) OK for g4130b per_device_train_batch_size=16 max_length=20000
 ####ACCELERATE_CONFIG=accelerate_configs/zero3_1node_8proc_offload.yaml  # DPO(rtrvr) OK for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
 
 ACCELERATE_OPT=""
@@ -124,8 +124,8 @@ else
     cmd="$cmd --dataset_name ${DATASET}"
 fi
 cmd="$cmd --output_dir ${OUTPUT_DIR}"  # default: trainer_output
-####cmd="$cmd --per_device_train_batch_size 32"  # default: 8  # SFT(jfe) OK for g338b, g4m, g4hm, g4ht, g418b, g4130b
-#cmd="$cmd --per_device_train_batch_size 16"  # default: 8  # SFT(jfe) OK for g4hs, SFT(rtrve.v2) CUDA OOM for g418b per_device_train_batch_size=16, max_length=8192
+####cmd="$cmd --per_device_train_batch_size 32"  # default: 8  # SFT(jfe) OK for g338b, g4m, g4hm, g4ht, g418b, g4130b(cpu_offload)
+#cmd="$cmd --per_device_train_batch_size 16"  # default: 8  # SFT(jfe) OK for g4hs, SFT(rtrve.v2) CUDA OOM for g418b per_device_train_batch_size=16, max_length=8192, SFT(jfe) OK for g4130b per_device_train_batch_size=16 max_length=20000
 cmd="$cmd --per_device_train_batch_size 8"  # default: 8  # SFT(rtrve.v2) OK for g418b per_device_train_batch_size=8, max_length=8192, SFT(rtrve.v2) CUDA OOM for g4130b per_device_train_batch_size=8, max_length=8192
 #cmd="$cmd --per_device_train_batch_size 4"  # default: 8  # SFT(rtrve.v2) OK for g4130b per_device_train_batch_size=4, max_length=8192
 #cmd="$cmd --num_train_epochs 1"  # default: 3
