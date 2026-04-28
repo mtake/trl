@@ -99,8 +99,8 @@ MODEL=ibm-granite/granite-4.1-8b
 #ACCELERATE_CONFIG=accelerate_configs/zero2_1node_2proc.yaml  # SFT CUDA OOM
 #ACCELERATE_CONFIG=accelerate_configs/zero2_1node_4proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/zero2_1node_8proc.yaml
-ACCELERATE_CONFIG=accelerate_configs/zero3_1node_1proc.yaml
-#ACCELERATE_CONFIG=accelerate_configs/zero3_1node_2proc.yaml  # SFT CUDA OOM for g338b, DPO OK for g4m, g4hm, g4ht dtype=bfloat16, DPO CUDA OOM for g418b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
+#ACCELERATE_CONFIG=accelerate_configs/zero3_1node_1proc.yaml
+ACCELERATE_CONFIG=accelerate_configs/zero3_1node_2proc.yaml  # SFT CUDA OOM for g338b, DPO OK for g4m, g4hm, g4ht dtype=bfloat16, DPO CUDA OOM for g418b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, ORPO WIP for g418b per_device_train_batch_size=8 max_length=8192
 ############ACCELERATE_CONFIG=accelerate_configs/zero3_1node_4proc.yaml  # SFT OK for g338b, DPO OK for q205b, g338b, g4m, g4hm, g4ht dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16, DPO OK for g418b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO CUDA OOM for g4130b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
 #ACCELERATE_CONFIG=accelerate_configs/zero3_1node_8proc.yaml  # DPO OK for g338b dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO OK for g4hs offload_optimizer_device=cpu offload_param_device=cpu dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO OK for g4130b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
 ####ACCELERATE_CONFIG=accelerate_configs/zero3_1node_8proc_offload.yaml  # DPO OK for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
@@ -128,8 +128,10 @@ else
     cmd="$cmd --dataset_name ${DATASET}"
 fi
 cmd="$cmd --output_dir ${OUTPUT_DIR}"
-cmd="$cmd --per_device_train_batch_size 1"  # default: 8  # DPO OK for g4hs
-#cmd="$cmd --num_train_epochs 1"  # default: 3
+# @@@ahoaho XXX
+####cmd="$cmd --per_device_train_batch_size 1"  # default: 8  # DPO OK for g4hs
+# @@@ahoaho XXX
+cmd="$cmd --num_train_epochs 1"  # default: 3
 cmd="$cmd --save_strategy epoch"  # default: steps
 ####cmd="$cmd --max_steps 10"  # default: -1 (len(train split) * num_train_epochs)
 #cmd="$cmd --save_steps 100"  # default: 500. an integer as steps or a float in range `[0,1)` as ratio of total training steps.
