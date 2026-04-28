@@ -120,7 +120,7 @@ def make_parser(subparsers: argparse._SubParsersAction | None = None, prog: str 
 
     dataclass_types = (ScriptArguments, ORPOConfig, ModelConfig, DatasetMixtureConfig)
     if subparsers is not None:
-        parser = subparsers.add_parser("dpo", help="Run the DPO training script", dataclass_types=dataclass_types)
+        parser = subparsers.add_parser("orpo", help="Run the ORPO training script", dataclass_types=dataclass_types)
     else:
         parser = TrlParser(dataclass_types, prog=prog)
     return parser
