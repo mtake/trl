@@ -144,6 +144,7 @@ cmd="$cmd --max_length 8192"  # default: 1024  # DPO OK for g418b dtype=bfloat16
 #cmd="$cmd --eval_strategy steps"  # default: no  # requires test split
 #cmd="$cmd --eval_steps 50"
 #cmd="$cmd --per_device_eval_batch_size 1"  # default: 8
+cmd="$cmd --logging_steps 1"  # default: 10
 echo "$cmd" | tee -a ${LOGFILE}
 eval "$cmd" 2>&1 | tee -a ${LOGFILE}
 
