@@ -76,7 +76,7 @@ def main(script_args, training_args, model_args, dataset_args):
 
     # @@@ahoaho XXX
     # from trl import DPOTrainer, get_dataset, get_kbit_device_map, get_peft_config, get_quantization_config
-    from trl.experimental.orpo import ORPOTrainer, ORPOConfig
+    from trl.experimental.orpo import ORPOTrainer
     from trl import get_dataset, get_kbit_device_map, get_peft_config, get_quantization_config
 
     logger = logging.get_logger(__name__)
@@ -164,9 +164,14 @@ def main(script_args, training_args, model_args, dataset_args):
 
 
 def make_parser(subparsers: argparse._SubParsersAction | None = None, prog: str | None = None):
-    from trl import DatasetMixtureConfig, DPOConfig, ModelConfig, ScriptArguments, TrlParser
+    # @@@ahoaho XXX
+    # from trl import DatasetMixtureConfig, DPOConfig, ModelConfig, ScriptArguments, TrlParser
+    from trl.experimental.orpo import ORPOConfig
+    from trl import DatasetMixtureConfig, ModelConfig, ScriptArguments, TrlParser
 
-    dataclass_types = (ScriptArguments, DPOConfig, ModelConfig, DatasetMixtureConfig)
+    # @@@ahoaho XXX
+    # dataclass_types = (ScriptArguments, DPOConfig, ModelConfig, DatasetMixtureConfig)
+    dataclass_types = (ScriptArguments, ORPOConfig, ModelConfig, DatasetMixtureConfig)
     if subparsers is not None:
         parser = subparsers.add_parser("dpo", help="Run the DPO training script", dataclass_types=dataclass_types)
     else:
