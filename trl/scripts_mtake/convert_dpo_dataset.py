@@ -8,7 +8,7 @@ def main():
     parser.add_argument("input_file", help="Path to the input file")
     parser.add_argument(
         "--output", "-o",
-        # default="output.jsonl",
+        default="output.jsonl",
         help="Path to the output file"
     )
     # parser.add_argument(
