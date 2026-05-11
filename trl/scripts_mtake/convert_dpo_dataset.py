@@ -56,7 +56,7 @@ def main():
 
     # 3. Apply the transformation
     sft_dataset = dpo_dataset.map(convert_to_sft, remove_columns=dpo_dataset.column_names)
-    sft_dataset.to_json(output_file)
+    sft_dataset.to_json(output_file, force_ascii=False)
 
     # sft_dataset is now ready for SFTTrainer
 
