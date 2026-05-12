@@ -1,0 +1,63 @@
+import argparse
+import json
+
+def convert_tool_calls(obj):
+    if isinstance(obj, dict):
+        new_obj = {}
+
+        for key, value in obj.items():
+            if key == "tool_calls" and isinstance(value, list):
+                new_obj["content"] = json.dumps(value, ensure_ascii=False)
+                continue
+
+            if key == "tool_calls" and isinstance(value, str):
+                new_obj["content"] = value
+                continue
+
+            if key == "tool_call_id" and isinstance(value, str):
+                continue
+
+            new_obj[key] = convert_tool_calls(value)
+
+        return new_obj
+
+    elif isinstance(obj, list):
+        return [convert_tool_calls(x) for x in obj]
+
+    else:
+        return obj
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Convert tool_calls to content")
+
+    parser.add_argument("input_file", help="Path to the input file")
+    parser.add_argument(
+        "--output", "-o",
+        default="output.jsonl",
+        help="Path to the output file"
+    )
+    # parser.add_argument(
+    #     "--verbose", "-v",
+    #     action="store_true",
+    #     help="Enable verbose output"
+    # )
+
+    args = parser.parse_args()
+
+    # if args.verbose:
+    #     print("Verbose mode enabled")
+
+    input_file = args.input_file
+    output_file = args.output
+
+    with open(input_file, "r", encoding="utf-8") as fin, open(output_file, "w", encoding="utf-8") as fout:
+
+        for line in fin:
+            data = json.loads(line)
+            converted = convert_tool_calls(data)
+            fout.write(json.dumps(converted, ensure_ascii=False) + "\n")
+
+
+if __name__ == "__main__":
+    main()
