@@ -53,7 +53,7 @@ fi
 #DATASET=jfe.yaml
 #DATASET=zragrtrvr.v2-SFT.yaml
 #DATASET=zragrtrvr.v3.0508-SFT.yaml
-DATASET=zragrtrvr.v3.0512-SFT.yaml
+DATASET=zragrtrvr.v3.0512b-SFT.yaml
 
 DATASET_S="${DATASET##*/}"
 if [[ "${DATASET_S}" == *.yaml ]]; then
