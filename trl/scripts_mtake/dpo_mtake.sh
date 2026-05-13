@@ -53,7 +53,8 @@ fi
 #DATASET=datasets/retriever_call_train_data.granite4_8b.v2.0406.jsonl
 #DATASET=zragrtrvr.yaml
 #DATASET=zragrtrvr.v2.yaml
-DATASET=zragrtrvr.v3.0512b.yaml
+#DATASET=zragrtrvr.v3.0512b.yaml
+DATASET=zragrtrvr.v3.0513.yaml
 
 DATASET_S="${DATASET##*/}"
 if [[ "${DATASET_S}" == *.yaml ]]; then
