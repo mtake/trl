@@ -131,10 +131,12 @@ cmd="$cmd --output_dir ${OUTPUT_DIR}"
 cmd="$cmd --reward_funcs ${REWARD_FUNCS}"
 # @@@ahoaho XXX
 #cmd="$cmd --num_generations 4"  # default: 8. The effective batch size (num_processes * per_device_batch_size * gradient_accumulation_steps) must be evenly divisible by this value.
-#cmd="$cmd --num_generations 8"  # default: 8. The effective batch size (num_processes * per_device_batch_size * gradient_accumulation_steps) must be evenly divisible by this value.  # GRPO OK? for g418b num_processes=4 per_device_train_batch_size=2 num_generations=8
+#cmd="$cmd --num_generations 8"  # default: 8. The effective batch size (num_processes * per_device_batch_size * gradient_accumulation_steps) must be evenly divisible by this value.  # GRPO OK? for g418b num_processes=4 per_device_train_batch_size=2 num_generations=8, GRPO OK? for q306b num_processes=4 per_device_train_batch_size=4 num_generations=8, GRPO OK? for q306b num_processes=4 per_device_train_batch_size=8 num_generations=8
 # @@@ahoaho XXX
 #cmd="$cmd --per_device_train_batch_size 1"  # default: 8  # DPO OK for g4hs
-cmd="$cmd --per_device_train_batch_size 2"  # default: 8  # GRPO OK? for g418b num_processes=4 per_device_train_batch_size=2 num_generations=8
+#cmd="$cmd --per_device_train_batch_size 2"  # default: 8  # GRPO OK? for g418b num_processes=4 per_device_train_batch_size=2 num_generations=8
+#cmd="$cmd --per_device_train_batch_size 4"  # default: 8  # GRPO OK? for q306b num_processes=4 per_device_train_batch_size=4 num_generations=8
+#cmd="$cmd --per_device_train_batch_size 8"  # default: 8  # GRPO OK? for q306b num_processes=4 per_device_train_batch_size=8 num_generations=8
 #cmd="$cmd --num_train_epochs 1"  # default: 3
 cmd="$cmd --save_strategy epoch"  # default: steps
 ####cmd="$cmd --max_steps 10"  # default: -1 (len(train split) * num_train_epochs)
