@@ -62,7 +62,7 @@ fi
 
 # @@@ahoaho XXX
 # REWARD_FUNCS=accuracy_reward
-REWARD_FUNCS=grpo_mtake_lib.accuracy_reward
+REWARD_FUNCS=grpo_mtake_lib.my_accuracy_reward
 
 # @@@ahoaho XXX
 #MODEL=Qwen/Qwen2-0.5B-Instruct
