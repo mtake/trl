@@ -61,7 +61,8 @@ elif [[ "${DATASET_S}" == *.json ]]; then
 fi
 
 # @@@ahoaho XXX
-REWARD_FUNCS=accuracy_reward
+# REWARD_FUNCS=accuracy_reward
+REWARD_FUNCS=grpo_mtake_lib.accuracy_reward
 # REWARD_FUNCS=get_soft_overlong_punishment_zragagent
 
 # @@@ahoaho XXX
