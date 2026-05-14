@@ -80,6 +80,7 @@ MODEL=ibm-granite/granite-4.1-8b
 ####MODEL=trainer_output/granite-4.1-8b-retriever_call_train_data.granite4_8b.v2.0406-SFT-sft-20260409-150354-p4-r26-n3-g418b-3epochs-8192length-rtrvr.v2
 ####MODEL=trainer_output/granite-4.1-8b-retriever_call_train_data.granite4_8b.v2.0406-SFT-sft-20260416-100514-p1-r23-n3-g418b-3epochs-8192length-rtrvr.v2-transformers4576
 ####MODEL=trainer_output/granite-4.1-8b-zragrtrvr.v3.0512b-SFT-sft-20260512-140204-p4-r17-n4-g418b-3epochs-8192length-rtrvr.v3-0512b
+####MODEL=trainer_output/granite-4.1-8b-zragrtrvr.v3.0513-SFT-sft-20260513-110924-p5-r16-n2-g418b-3epochs-8192length-rtrvr.v3-0513
 #MODEL=models/granite-4.1-30b
 #MODEL=trainer_output/granite-4.1-30b-zragrtrvr.v2-SFT-sft-20260421-134025-p6-r14-n1-g4130b-3epochs-8192length-rtrvr.v2
 
