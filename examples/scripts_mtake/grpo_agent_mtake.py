@@ -264,7 +264,13 @@ def format_example(example):
 # ------------------------
 if __name__ == "__main__":
     parser = TrlParser((ScriptArguments, GRPOConfig, ModelConfig))
-    script_args, training_args, model_args = parser.parse_args_and_config()
+    # @@@ahoaho XXX
+    # script_args, training_args, model_args = parser.parse_args_and_config()
+    script_args, training_args, model_args = parser.parse_args_and_config(fail_with_unknown_args=True)
+    # @@@ahoaho XXX
+    print(f"XXX script_args: {script_args} XXX")
+    print(f"XXX training_args: {training_args} XXX")
+    print(f"XXX model_args: {model_args} XXX")
 
     # @@@ahoaho XXX
     # # ------------------------
