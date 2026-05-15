@@ -268,9 +268,11 @@ if __name__ == "__main__":
     # script_args, training_args, model_args = parser.parse_args_and_config()
     script_args, training_args, model_args = parser.parse_args_and_config(fail_with_unknown_args=True)
     # @@@ahoaho XXX
-    print(f"XXX script_args: {script_args} XXX")
-    print(f"XXX training_args: {training_args} XXX")
-    print(f"XXX model_args: {model_args} XXX")
+    local_rank = int(os.environ.get("LOCAL_RANK", 0))
+    if local_rank == 0:
+        print(f"XXX script_args: {script_args} XXX")
+        print(f"XXX training_args: {training_args} XXX")
+        print(f"XXX model_args: {model_args} XXX")
 
     # @@@ahoaho XXX
     # # ------------------------
@@ -292,7 +294,7 @@ if __name__ == "__main__":
     # ------------------------
     # Create DB (rank 0 only to avoid concurrent write conflicts)
     # ------------------------
-    local_rank = int(os.environ.get("LOCAL_RANK", 0))
+    # local_rank = int(os.environ.get("LOCAL_RANK", 0))
     if local_rank == 0:
         print("Creating biogrid.db...")
         # Load dataset
