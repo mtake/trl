@@ -264,9 +264,7 @@ def format_example(example):
 # ------------------------
 if __name__ == "__main__":
     parser = TrlParser((ScriptArguments, GRPOConfig, ModelConfig))
-    # @@@ahoaho XXX
-    # script_args, training_args, model_args = parser.parse_args_and_config()
-    script_args, training_args, model_args = parser.parse_args_and_config(fail_with_unknown_args=True)
+    script_args, training_args, model_args = parser.parse_args_and_config()
     # @@@ahoaho XXX
     local_rank = int(os.environ.get("LOCAL_RANK", 0))
     if local_rank == 0:
