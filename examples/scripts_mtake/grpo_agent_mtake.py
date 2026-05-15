@@ -36,6 +36,8 @@ python examples/scripts/grpo_agent.py \
 ```
 """
 
+# @@@ahoaho XXX
+import os
 import re
 import signal
 import sqlite3
@@ -264,22 +266,41 @@ if __name__ == "__main__":
     parser = TrlParser((ScriptArguments, GRPOConfig, ModelConfig))
     script_args, training_args, model_args = parser.parse_args_and_config()
 
-    # ------------------------
-    # Create DB
-    # ------------------------
-    print("Creating biogrid.db...")
-    # Load dataset
-    biogrid_dataset = load_dataset("qgallouedec/biogrid", split="train")
-    df = biogrid_dataset.to_pandas()
+    # @@@ahoaho XXX
+    # # ------------------------
+    # # Create DB
+    # # ------------------------
+    # print("Creating biogrid.db...")
+    # # Load dataset
+    # biogrid_dataset = load_dataset("qgallouedec/biogrid", split="train")
+    # df = biogrid_dataset.to_pandas()
 
-    # Normalize column names: remove spaces, replace with underscores
-    df.columns = [c.replace(" ", "_") for c in df.columns]
-    conn = sqlite3.connect("biogrid.db")
-    try:
-        df.to_sql("interactions", conn, if_exists="replace", index=False)
-        print(f"biogrid.db created. Rows stored: {len(df)}")
-    finally:
-        conn.close()
+    # # Normalize column names: remove spaces, replace with underscores
+    # df.columns = [c.replace(" ", "_") for c in df.columns]
+    # conn = sqlite3.connect("biogrid.db")
+    # try:
+    #     df.to_sql("interactions", conn, if_exists="replace", index=False)
+    #     print(f"biogrid.db created. Rows stored: {len(df)}")
+    # finally:
+    #     conn.close()
+    # ------------------------
+    # Create DB (rank 0 only to avoid concurrent write conflicts)
+    # ------------------------
+    local_rank = int(os.environ.get("LOCAL_RANK", 0))
+    if local_rank == 0:
+        print("Creating biogrid.db...")
+        # Load dataset
+        biogrid_dataset = load_dataset("qgallouedec/biogrid", split="train")
+        df = biogrid_dataset.to_pandas()
+
+        # Normalize column names: remove spaces, replace with underscores
+        df.columns = [c.replace(" ", "_") for c in df.columns]
+        conn = sqlite3.connect("biogrid.db")
+        try:
+            df.to_sql("interactions", conn, if_exists="replace", index=False)
+            print(f"biogrid.db created. Rows stored: {len(df)}")
+        finally:
+            conn.close()
 
     # ------------------------
     # Load and format dataset
