@@ -66,14 +66,15 @@ REWARD_FUNCS=grpo_mtake_lib.my_accuracy_reward
 
 # @@@ahoaho XXX
 #MODEL=Qwen/Qwen2-0.5B-Instruct
-MODEL=Qwen/Qwen3-0.6B
+MODEL=Qwen/Qwen3-0.6B  # GRPO AGENT OK?
 #MODEL=ibm-granite/granite-3.3-8b-instruct
 #MODEL=ibm-granite/granite-4.0-micro
 #MODEL=ibm-granite/granite-4.0-h-micro
 #MODEL=ibm-granite/granite-4.0-h-tiny
 ####MODEL=ibm-granite/granite-4.0-h-small  # may cause OSError due to slow system system
 ####MODEL=models/granite-4.0-h-small
-# MODEL=ibm-granite/granite-4.1-8b
+#MODEL=ibm-granite/granite-4.1-3b  # GRPO AGENT ValueError: Unrecognized chat template, failed to add response schema. Please manually set the response schema on the tokenizer or processor. See the Transformers [docs](https://huggingface.co/docs/transformers/main/en/chat_response_parsing#response-parsing) for more details on response parsing.
+#MODEL=ibm-granite/granite-4.1-8b
 ####MODEL=models/granite-4.1-8b
 ####MODEL=trainer_output/granite-4.1-8b-retriever_call_train_data.granite4_8b.v2.0406-SFT-sft-20260409-150354-p4-r26-n3-g418b-3epochs-8192length-rtrvr.v2
 ####MODEL=trainer_output/granite-4.1-8b-retriever_call_train_data.granite4_8b.v2.0406-SFT-sft-20260416-100514-p1-r23-n3-g418b-3epochs-8192length-rtrvr.v2-transformers4576
@@ -152,6 +153,7 @@ cmd="$cmd --save_strategy epoch"  # default: steps
 #cmd="$cmd --logging_strategy epoch"  # default: steps, choices: [no, steps, epoch]
 #cmd="$cmd --logging_steps 10"  # default: 10. an integer as steps or a float in range `[0,1)` as ` as ratio of total training steps.
 cmd="$cmd --log_completions True"  # default: False
+cmd="$cmd --num_completions_to_print 10"  # default: None (means all)
 cmd="$cmd --report_to trackio"  # default: none, choices: [none, all, trackio, wandb]
 #cmd="$cmd --learning_rate 5.0e-7"  # default: 1e-06
 #cmd="$cmd --use_liger_kernel True"  # default: False
