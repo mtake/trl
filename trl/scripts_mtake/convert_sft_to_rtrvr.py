@@ -12,9 +12,9 @@ def main():
         help="Path to the output file"
     )
     parser.add_argument(
-        "--parse", "-p",
+        "--raw", "-r",
         action="store_true",
-        help="Parse raw documents to a list of documents. Otherwise, keep raw documents."
+        help="Keep raw documents. Otherwise, parse raw documents to a list of documents."
     )
     # parser.add_argument(
     #     "--verbose", "-v",
@@ -29,7 +29,7 @@ def main():
 
     input_file = args.input_file
     output_file = args.output
-    parse = args.parse
+    raw = args.raw
 
     # rtrvr = {}  # NOTE as single dictionary
 
@@ -53,7 +53,9 @@ def main():
             if query and raw_documents:
                 # print(f"XXX raw_documents = XXX {raw_documents} XXX")
 
-                if parse:
+                if raw:
+                    documents = raw_documents
+                else:
                     documents = []
                     # Parse raw documents to a list of documents
                     document_split = re.split(r'\[Rank \d+\] ', raw_documents)
@@ -82,13 +84,9 @@ def main():
                         }
                         # print(f"XXX document_dict = XXX {document_dict} XXX")
                         documents.append(document_dict)
-                else:
-                    documents = raw_documents
 
-                # rtrvr[query] = documents  # NOTE as single dictionary
-                fout.write(json.dumps({"query": query, "documents": documents}, ensure_ascii=False) + "\n")  # NOTE as multiple dictionaries
+                fout.write(json.dumps({"query": query, "documents": documents}, ensure_ascii=False) + "\n")
 
-        # json.dump(rtrvr, fout, ensure_ascii=False)  # NOTE as single dictionary
 
 if __name__ == "__main__":
     main()
