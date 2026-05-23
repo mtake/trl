@@ -8,13 +8,13 @@ def main():
     parser.add_argument("input_file", help="Path to the input file")
     parser.add_argument(
         "--output", "-o",
-        default="output.json",
+        default="output.jsonl",
         help="Path to the output file"
     )
     parser.add_argument(
-        "--raw", "-r",
+        "--parse", "-p",
         action="store_true",
-        help="Keep raw documents. Otherwise, convert raw documents to a list"
+        help="Parse raw documents to a list of documents. Otherwise, keep raw documents."
     )
     # parser.add_argument(
     #     "--verbose", "-v",
@@ -29,9 +29,9 @@ def main():
 
     input_file = args.input_file
     output_file = args.output
-    raw = args.raw
+    parse = args.parse
 
-    rtrvr = {}
+    # rtrvr = {}  # NOTE as single dictionary
 
     with open(input_file, "r", encoding="utf-8") as fin, open(output_file, "w", encoding="utf-8") as fout:
 
@@ -53,11 +53,9 @@ def main():
             if query and raw_documents:
                 # print(f"XXX raw_documents = XXX {raw_documents} XXX")
 
-                if raw:
-                    documents = raw_documents
-                else:
+                if parse:
                     documents = []
-                    # convert raw documents to a list of document
+                    # Parse raw documents to a list of documents
                     document_split = re.split(r'\[Rank \d+\] ', raw_documents)
                     if not document_split[0].strip():
                         document_split = document_split[1:]
@@ -84,10 +82,13 @@ def main():
                         }
                         # print(f"XXX document_dict = XXX {document_dict} XXX")
                         documents.append(document_dict)
+                else:
+                    documents = raw_documents
 
-                rtrvr[query] = documents
+                # rtrvr[query] = documents  # NOTE as single dictionary
+                fout.write(json.dumps({"query": query, "documents": documents}, ensure_ascii=False) + "\n")  # NOTE as multiple dictionaries
 
-        json.dump(rtrvr, fout, ensure_ascii=False)
+        # json.dump(rtrvr, fout, ensure_ascii=False)  # NOTE as single dictionary
 
 if __name__ == "__main__":
     main()
