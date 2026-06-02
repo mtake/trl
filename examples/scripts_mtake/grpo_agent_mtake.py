@@ -51,10 +51,11 @@ from trl import GRPOConfig, GRPOTrainer, ModelConfig, ScriptArguments, TrlParser
 
 # @@@ahoaho XXX
 # Enable logging in a Hugging Face Space
-# ~/.cache/huggingface/trackio/${TRACKIO_SPACE_ID}.db
+# ~/.cache/huggingface/trackio/${TRACKIO_PROJECT}.db
 # trackio list projects
-# trackio show --project ""
-os.environ.setdefault("TRACKIO_SPACE_ID", "grpo_agent_mtake")
+# trackio show --project ${TRACKIO_PROJECT}
+os.environ.setdefault("TRACKIO_PROJECT", "grpo_agent_mtake")
+# os.environ.setdefault("TRACKIO_SPACE_ID", "grpo_agent_mtake")  # if set, the log data will be stored in the HuggingFace space ${HF_USER}/${TRACKIO_SPACE_ID}
 
 
 def query_reward(completions, answer, **kwargs):

@@ -66,10 +66,11 @@ import os
 
 # @@@ahoaho XXX
 # Enable logging in a Hugging Face Space
-# ~/.cache/huggingface/trackio/${TRACKIO_SPACE_ID}.db
+# ~/.cache/huggingface/trackio/${TRACKIO_PROJECT}.db
 # trackio list projects
-# trackio show --project ${TRACKIO_SPACE_ID}
-os.environ.setdefault("TRACKIO_SPACE_ID", "sft_mtake")
+# trackio show --project ${TRACKIO_PROJECT}
+os.environ.setdefault("TRACKIO_PROJECT", "sft_mtake")
+# os.environ.setdefault("TRACKIO_SPACE_ID", "sft_mtake")  # if set, the log data will be stored in the HuggingFace space ${HF_USER}/${TRACKIO_SPACE_ID}
 
 
 def main(script_args, training_args, model_args, dataset_args):
