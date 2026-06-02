@@ -61,6 +61,15 @@ python trl/scripts/sft.py \
 """
 
 import argparse
+import os
+
+
+# @@@ahoaho XXX
+# Enable logging in a Hugging Face Space
+# ~/.cache/huggingface/trackio/${TRACKIO_SPACE_ID}.db
+# trackio list projects
+# trackio show --project ${TRACKIO_SPACE_ID}
+os.environ.setdefault("TRACKIO_SPACE_ID", "sft_mtake")
 
 
 def main(script_args, training_args, model_args, dataset_args):

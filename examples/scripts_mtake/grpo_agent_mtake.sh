@@ -145,9 +145,15 @@ cmd="$cmd --output_dir ${OUTPUT_DIR}"
 #cmd="$cmd --per_device_train_batch_size 4"  # default: 8  # GRPO OK? for q306b num_processes=4 per_device_train_batch_size=4 num_generations=8
 #cmd="$cmd --per_device_train_batch_size 8"  # default: 8  # GRPO OK? for q306b num_processes=4 per_device_train_batch_size=8 num_generations=8
 #cmd="$cmd --num_train_epochs 1"  # default: 3
-cmd="$cmd --save_strategy epoch"  # default: steps
-####cmd="$cmd --max_steps 32"  # default: -1 (len(train split) * num_train_epochs)
+# @@@ahoaho XXX WIP for functional test
+####cmd="$cmd --save_strategy epoch"  # default: steps
+cmd="$cmd --save_strategy steps"  # default: steps
+####cmd="$cmd --max_steps 30"  # default: -1 (len(train split) * num_train_epochs)
+# @@@ahoaho XXX WIP for functional test
+cmd="$cmd --max_steps 30"  # default: -1 (len(train split) * num_train_epochs)
 #cmd="$cmd --save_steps 100"  # default: 500. an integer as steps or a float in range `[0,1)` as ratio of total training steps.
+# @@@ahoaho XXX WIP for functional test
+cmd="$cmd --save_steps 10"  # default: 500. an integer as steps or a float in range `[0,1)` as ratio of total training steps.
 #cmd="$cmd --gradient_accumulation_steps 8"  # default: 1  # DPO OK for g4hs
 # @@@ahoaho XXX
 #cmd="$cmd --logging_strategy epoch"  # default: steps, choices: [no, steps, epoch]

@@ -49,6 +49,14 @@ from datasets import load_dataset
 from trl import GRPOConfig, GRPOTrainer, ModelConfig, ScriptArguments, TrlParser
 
 
+# @@@ahoaho XXX
+# Enable logging in a Hugging Face Space
+# ~/.cache/huggingface/trackio/${TRACKIO_SPACE_ID}.db
+# trackio list projects
+# trackio show --project ""
+os.environ.setdefault("TRACKIO_SPACE_ID", "grpo_agent_mtake")
+
+
 def query_reward(completions, answer, **kwargs):
     """
     Reward query strategy:
