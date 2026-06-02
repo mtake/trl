@@ -61,7 +61,8 @@ python trl/scripts/sft.py \
 """
 
 import argparse
-import os
+# @@@ahoaho XXX
+# import os
 
 
 # @@@ahoaho XXX
