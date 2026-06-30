@@ -59,29 +59,19 @@ python trl/scripts/dpo.py \
 """
 
 import argparse
-# @@@ahoaho XXX
-# import os
-
-
-# @@@ahoaho XXX
-# Enable logging in a Hugging Face Space
-# ~/.cache/huggingface/trackio/huggingface(or --project).db
-# trackio list projects
-# trackio show --project huggingface(or --project)
-# os.environ.setdefault("TRACKIO_SPACE_ID", "dpo_mtake")  # if set, the log data will be stored in the HuggingFace space ${HF_USER}/${TRACKIO_SPACE_ID}
 
 
 def main(script_args, training_args, model_args, dataset_args):
-    from accelerate import logging
+    from accelerate.logging import get_logger
     from datasets import load_dataset
 
     from trl import DPOTrainer, get_dataset, get_kbit_device_map, get_peft_config, get_quantization_config
 
-    logger = logging.get_logger(__name__)
+    logger = get_logger(__name__)
 
     training_args.model_init_kwargs = dict(
         revision=model_args.model_revision,
-        trust_remote_code=model_args.trust_remote_code,
+        trust_remote_code=training_args.trust_remote_code,
         attn_implementation=model_args.attn_implementation,
         dtype=model_args.dtype,
     )

@@ -30,6 +30,14 @@ from dataclasses import dataclass, field
 from trl import ScriptArguments
 
 
+# @@@ahoaho XXX
+# Enable logging in a Hugging Face Space
+# ~/.cache/huggingface/trackio/huggingface(or --project).db
+# trackio list projects
+# trackio show --project huggingface(or --project)
+# os.environ.setdefault("TRACKIO_SPACE_ID", "grpo_mtake")  # if set, the log data will be stored in the HuggingFace space ${HF_USER}/${TRACKIO_SPACE_ID}
+
+
 @dataclass
 class GRPOScriptArguments(ScriptArguments):
     """
@@ -66,7 +74,7 @@ class GRPOScriptArguments(ScriptArguments):
 
 
 def main(script_args, training_args, model_args, dataset_args):
-    from accelerate.logging import get_logger
+    from accelerate import logging
     from datasets import load_dataset
 
     from trl import GRPOTrainer, get_dataset, get_kbit_device_map, get_peft_config, get_quantization_config
@@ -77,7 +85,7 @@ def main(script_args, training_args, model_args, dataset_args):
         think_format_reward,
     )
 
-    logger = get_logger(__name__)
+    logger = logging.get_logger(__name__)
 
     reward_funcs_registry = {
         "accuracy_reward": accuracy_reward,
@@ -109,7 +117,7 @@ def main(script_args, training_args, model_args, dataset_args):
 
     training_args.model_init_kwargs = dict(
         revision=model_args.model_revision,
-        trust_remote_code=training_args.trust_remote_code,
+        trust_remote_code=model_args.trust_remote_code,
         attn_implementation=model_args.attn_implementation,
         dtype=model_args.dtype,
     )

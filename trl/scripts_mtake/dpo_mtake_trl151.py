@@ -23,57 +23,65 @@
 
 """
 # Full training
-```
-python trl/scripts/sft.py \
-    --model_name_or_path Qwen/Qwen2-0.5B \
-    --dataset_name trl-lib/Capybara \
-    --learning_rate 2.0e-5 \
+```bash
+python trl/scripts/dpo.py \
+    --dataset_name trl-lib/ultrafeedback_binarized \
+    --model_name_or_path Qwen/Qwen2-0.5B-Instruct \
+    --learning_rate 5.0e-7 \
     --num_train_epochs 1 \
-    --packing \
     --per_device_train_batch_size 2 \
+    --max_steps 1000 \
     --gradient_accumulation_steps 8 \
-    --eos_token '<|im_end|>' \
     --eval_strategy steps \
-    --eval_steps 100 \
-    --output_dir Qwen2-0.5B-SFT \
-    --push_to_hub
+    --eval_steps 50 \
+    --output_dir Qwen2-0.5B-DPO \
+    --no_remove_unused_columns
 ```
 
-# LoRA
-```
-python trl/scripts/sft.py \
-    --model_name_or_path Qwen/Qwen2-0.5B \
-    --dataset_name trl-lib/Capybara \
-    --learning_rate 2.0e-4 \
+# LoRA:
+```bash
+python trl/scripts/dpo.py \
+    --dataset_name trl-lib/ultrafeedback_binarized \
+    --model_name_or_path Qwen/Qwen2-0.5B-Instruct \
+    --learning_rate 5.0e-6 \
     --num_train_epochs 1 \
-    --packing \
     --per_device_train_batch_size 2 \
+    --max_steps 1000 \
     --gradient_accumulation_steps 8 \
-    --eos_token '<|im_end|>' \
     --eval_strategy steps \
-    --eval_steps 100 \
+    --eval_steps 50 \
+    --output_dir Qwen2-0.5B-DPO \
+    --no_remove_unused_columns \
     --use_peft \
     --lora_r 32 \
-    --lora_alpha 16 \
-    --output_dir Qwen2-0.5B-SFT \
-    --push_to_hub
+    --lora_alpha 16
 ```
 """
 
 import argparse
+# @@@ahoaho XXX
+# import os
+
+
+# @@@ahoaho XXX
+# Enable logging in a Hugging Face Space
+# ~/.cache/huggingface/trackio/huggingface(or --project).db
+# trackio list projects
+# trackio show --project huggingface(or --project)
+# os.environ.setdefault("TRACKIO_SPACE_ID", "dpo_mtake")  # if set, the log data will be stored in the HuggingFace space ${HF_USER}/${TRACKIO_SPACE_ID}
 
 
 def main(script_args, training_args, model_args, dataset_args):
-    from accelerate.logging import get_logger
+    from accelerate import logging
     from datasets import load_dataset
 
-    from trl import SFTTrainer, get_dataset, get_kbit_device_map, get_peft_config, get_quantization_config
+    from trl import DPOTrainer, get_dataset, get_kbit_device_map, get_peft_config, get_quantization_config
 
-    logger = get_logger(__name__)
+    logger = logging.get_logger(__name__)
 
     training_args.model_init_kwargs = dict(
         revision=model_args.model_revision,
-        trust_remote_code=training_args.trust_remote_code,
+        trust_remote_code=model_args.trust_remote_code,
         attn_implementation=model_args.attn_implementation,
         dtype=model_args.dtype,
     )
@@ -110,14 +118,22 @@ def main(script_args, training_args, model_args, dataset_args):
     else:
         raise ValueError("Either `datasets` or `dataset_name` must be provided.")
 
-    # Initialize the SFT trainer
-    trainer = SFTTrainer(
+    # Initialize the DPO trainer
+    trainer = DPOTrainer(
         model=model_args.model_name_or_path,
         args=training_args,
         train_dataset=dataset[script_args.dataset_train_split],
         eval_dataset=dataset[script_args.dataset_test_split] if training_args.eval_strategy != "no" else None,
         peft_config=get_peft_config(model_args),
     )
+
+    if script_args.ignore_bias_buffers:
+        import torch
+
+        # torch distributed hack
+        trainer.model._ddp_params_and_buffers_to_ignore = [
+            name for name, buffer in trainer.model.named_buffers() if buffer.dtype == torch.bool
+        ]
 
     # Train the model
     trainer.train()
@@ -135,11 +151,11 @@ def main(script_args, training_args, model_args, dataset_args):
 
 
 def make_parser(subparsers: argparse._SubParsersAction | None = None, prog: str | None = None):
-    from trl import DatasetMixtureConfig, ModelConfig, ScriptArguments, SFTConfig, TrlParser
+    from trl import DatasetMixtureConfig, DPOConfig, ModelConfig, ScriptArguments, TrlParser
 
-    dataclass_types = (ScriptArguments, SFTConfig, ModelConfig, DatasetMixtureConfig)
+    dataclass_types = (ScriptArguments, DPOConfig, ModelConfig, DatasetMixtureConfig)
     if subparsers is not None:
-        parser = subparsers.add_parser("sft", help="Run the SFT training script", dataclass_types=dataclass_types)
+        parser = subparsers.add_parser("dpo", help="Run the DPO training script", dataclass_types=dataclass_types)
     else:
         parser = TrlParser(dataclass_types, prog=prog)
     return parser
