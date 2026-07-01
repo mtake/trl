@@ -76,8 +76,9 @@ fi
 #MODEL=ibm-granite/granite-4.0-h-tiny
 ####MODEL=ibm-granite/granite-4.0-h-small  # may cause OSError due to slow system system
 ####MODEL=models/granite-4.0-h-small
-MODEL=ibm-granite/granite-4.1-8b
+####MODEL=ibm-granite/granite-4.1-8b
 ####MODEL=models/granite-4.1-8b
+MODEL=models/granite-4.2-8b-prerelease-r260622a
 ####MODEL=trainer_output/granite-4.1-8b-retriever_call_train_data.granite4_8b.v2.0406-SFT-sft-20260409-150354-p4-r26-n3-g418b-3epochs-8192length-rtrvr.v2
 ####MODEL=trainer_output/granite-4.1-8b-retriever_call_train_data.granite4_8b.v2.0406-SFT-sft-20260416-100514-p1-r23-n3-g418b-3epochs-8192length-rtrvr.v2-transformers4576
 ####MODEL=trainer_output/granite-4.1-8b-zragrtrvr.v3.0512b-SFT-sft-20260512-140204-p4-r17-n4-g418b-3epochs-8192length-rtrvr.v3-0512b
