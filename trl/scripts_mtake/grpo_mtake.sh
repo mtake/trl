@@ -75,6 +75,7 @@ MODEL=Qwen/Qwen3-0.6B
 ####MODEL=models/granite-4.0-h-small
 # MODEL=ibm-granite/granite-4.1-8b
 ####MODEL=models/granite-4.1-8b
+####MODEL=models/granite-4.2-8b-prerelease-r260622a  # XXX GRPO WIP epoch level checkpointing didn't work with preemptable queue. try step level checkpointing, e.g., --save_strategy steps --save_steps 50
 ####MODEL=trainer_output/granite-4.1-8b-retriever_call_train_data.granite4_8b.v2.0406-SFT-sft-20260409-150354-p4-r26-n3-g418b-3epochs-8192length-rtrvr.v2
 ####MODEL=trainer_output/granite-4.1-8b-retriever_call_train_data.granite4_8b.v2.0406-SFT-sft-20260416-100514-p1-r23-n3-g418b-3epochs-8192length-rtrvr.v2-transformers4576
 #MODEL=models/granite-4.1-30b
