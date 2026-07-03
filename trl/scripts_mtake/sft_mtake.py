@@ -120,7 +120,17 @@ def main(script_args, training_args, model_args, dataset_args):
     )
 
     # Train the model
-    trainer.train()
+    # @@@ahoaho XXX
+    # trainer.train()
+    resume_from_checkpoint = training_args.resume_from_checkpoint
+    if isinstance(resume_from_checkpoint, str) and resume_from_checkpoint.lower() in ["true", "yes", "1"]:
+        resume_from_checkpoint = True
+    if resume_from_checkpoint is True:
+        import sys, os
+        sys.path.insert(0, os.path.dirname(__file__))
+        from utils_mtake import get_last_checkpoint_safe
+        resume_from_checkpoint = get_last_checkpoint_safe(training_args.output_dir)
+    trainer.train(resume_from_checkpoint=resume_from_checkpoint)
 
     # Log training complete
     trainer.accelerator.print("✅ Training completed.")
