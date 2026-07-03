@@ -75,7 +75,7 @@ MODEL=Qwen/Qwen3-0.6B
 ####MODEL=models/granite-4.0-h-small
 # MODEL=ibm-granite/granite-4.1-8b
 ####MODEL=models/granite-4.1-8b
-####MODEL=models/granite-4.2-8b-prerelease-r260622a  # XXX GRPO WIP epoch level checkpointing didn't work with preemptable queue. try step level checkpointing, e.g., --save_strategy steps --save_steps 50
+#MODEL=models/granite-4.2-8b-prerelease-r260622a  # GRPO OK for g428bpre(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True
 ####MODEL=trainer_output/granite-4.1-8b-retriever_call_train_data.granite4_8b.v2.0406-SFT-sft-20260409-150354-p4-r26-n3-g418b-3epochs-8192length-rtrvr.v2
 ####MODEL=trainer_output/granite-4.1-8b-retriever_call_train_data.granite4_8b.v2.0406-SFT-sft-20260416-100514-p1-r23-n3-g418b-3epochs-8192length-rtrvr.v2-transformers4576
 #MODEL=models/granite-4.1-30b
@@ -132,16 +132,20 @@ cmd="$cmd --output_dir ${OUTPUT_DIR}"
 cmd="$cmd --reward_funcs ${REWARD_FUNCS}"
 # @@@ahoaho XXX
 #cmd="$cmd --num_generations 4"  # default: 8. The effective batch size (num_processes * per_device_batch_size * gradient_accumulation_steps) must be evenly divisible by this value.
-#cmd="$cmd --num_generations 8"  # default: 8. The effective batch size (num_processes * per_device_batch_size * gradient_accumulation_steps) must be evenly divisible by this value.  # GRPO OK? for g418b num_processes=4 per_device_train_batch_size=2 num_generations=8, GRPO OK? for q306b num_processes=4 per_device_train_batch_size=4 num_generations=8, GRPO OK? for q306b num_processes=4 per_device_train_batch_size=8 num_generations=8
+#cmd="$cmd --num_generations 8"  # default: 8. The effective batch size (num_processes * per_device_batch_size * gradient_accumulation_steps) must be evenly divisible by this value.  # GRPO OK? for g418b num_processes=4 per_device_train_batch_size=2 num_generations=8, GRPO OK? for q306b num_processes=4 per_device_train_batch_size=4 num_generations=8, GRPO OK? for q306b num_processes=4 per_device_train_batch_size=8 num_generations=8, GRPO OK for g428bpre(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True
 # @@@ahoaho XXX
 #cmd="$cmd --per_device_train_batch_size 1"  # default: 8  # DPO OK for g4hs
 #cmd="$cmd --per_device_train_batch_size 2"  # default: 8  # GRPO OK? for g418b num_processes=4 per_device_train_batch_size=2 num_generations=8
 #cmd="$cmd --per_device_train_batch_size 4"  # default: 8  # GRPO OK? for q306b num_processes=4 per_device_train_batch_size=4 num_generations=8
-#cmd="$cmd --per_device_train_batch_size 8"  # default: 8  # GRPO OK? for q306b num_processes=4 per_device_train_batch_size=8 num_generations=8
+#cmd="$cmd --per_device_train_batch_size 8"  # default: 8  # GRPO OK? for q306b num_processes=4 per_device_train_batch_size=8 num_generations=8, GRPO OK for g428bpre(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True
 #cmd="$cmd --num_train_epochs 1"  # default: 3
-cmd="$cmd --save_strategy epoch"  # default: steps
+####cmd="$cmd --save_strategy epoch"  # default: steps
+#cmd="$cmd --save_strategy steps"  # default: steps  # GRPO OK for g428bpre(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True
 ####cmd="$cmd --max_steps 10"  # default: -1 (len(train split) * num_train_epochs)
 #cmd="$cmd --save_steps 100"  # default: 500. an integer as steps or a float in range `[0,1)` as ratio of total training steps.
+cmd="$cmd --save_steps 50"  # default: 500. an integer as steps or a float in range `[0,1)` as ratio of total training steps.  # GRPO OK for g428bpre(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True
+# @@@ahoaho XXX
+cmd="$cmd --resume_from_checkpoint True"  # default: None  # GRPO OK for g428bpre(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True
 #cmd="$cmd --gradient_accumulation_steps 8"  # default: 1  # DPO OK for g4hs
 #cmd="$cmd --report_to trackio"  # default: none, choices: [none, all, trackio, wandb]
 #cmd="$cmd --project ${BASENAME}"  # default: huggingface. The name of the project to use for logging. Currently, only used by Trackio.
