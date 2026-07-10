@@ -7,6 +7,10 @@ def get_last_checkpoint_safe(output_dir):
     import re
 
     output_dir_ = Path(output_dir)
+
+    if not output_dir_.exists():
+        return None
+
     checkpoints = sorted(
         [
             p for p in output_dir_.iterdir()
