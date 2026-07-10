@@ -21,10 +21,14 @@
 # ]
 # ///
 
-"""
-Train Granite on a dataset.
+#
+# NOTE: this code is based on examples/scripts/sft_gemma3.py
+#
 
-accelerate launch --config_file examples/accelerate_configs/fsdp2.yaml examples/scripts_mtake/sft_granite.py
+"""
+Train Granite on the JFE Technical Report dataset.
+
+accelerate launch --config_file examples/accelerate_configs/deepspeed_zero3.yaml examples/scripts_mtake/sft_granite.py
 """
 
 from datasets import load_dataset
@@ -63,19 +67,19 @@ def main():
     # Train model
     training_args = SFTConfig(
         output_dir=output_dir,  # default: trainer_output
-        per_device_train_batch_size=32,  # default: 8  # OK for g338b, g4m, g4hm, g4ht, g418b, g4130b
-        # per_device_train_batch_size=16,  # default: 8  # OK for g4hs
-        # num_train_epochs=1,  # default: 3
-        # gradient_accumulation_steps=8,  # default: 1
         bf16=True,  # default: None
         # use_liger_kernel=True,
-        dataset_num_proc=8,  # default: None
         max_length=20000,  # default: 1024
+        per_device_train_batch_size=32,  # default: 8  # OK for g338b, g4m, g4hm, g4ht, g418b, g4130b
+        # per_device_train_batch_size=16,  # default: 8  # OK for g4hs
+        # gradient_accumulation_steps=8,  # default: 1
+        dataset_num_proc=8,  # default: None
+        # num_train_epochs=1,  # default: 3
     )
 
     trainer = SFTTrainer(
-        model=model_id,
         args=training_args,
+        model=model_id,
         train_dataset=train_dataset,
     )
     trainer.train()
