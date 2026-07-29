@@ -13,6 +13,17 @@ START_TIME_STR="$(${DATE_CMD} -d @${START_TIME} +%Y%m%d-%H%M%S)"
 BASENAME="$(basename "${BASH_SOURCE}" .sh)"
 HOSTNAME_S="$(hostname -s)"
 LOGFILE="${BASENAME}-${START_TIME_STR}-${HOSTNAME_S}.log"
+
+cleanup() {
+    echo "XXX SIGNAL_RECEIVED" | tee -a ${LOGFILE}
+    END_TIME="$(${DATE_CMD} +%s)"
+    END_TIME_STR="$(${DATE_CMD} -d @${END_TIME} +%Y%m%d-%H%M%S)"
+    echo "XXX DATETIME ${END_TIME_STR}" | tee -a ${LOGFILE}
+    echo "XXX ELAPSED_SECS $((END_TIME - START_TIME))" | tee -a ${LOGFILE}
+    exit 1
+}
+trap cleanup INT TERM HUP
+
 echo "XXX LOGFILE ${LOGFILE}" | tee -a ${LOGFILE}
 echo "XXX DATETIME ${START_TIME_STR}" | tee -a ${LOGFILE}
 
