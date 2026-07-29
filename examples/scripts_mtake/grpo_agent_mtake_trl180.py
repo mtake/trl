@@ -266,12 +266,6 @@ def format_example(example):
 if __name__ == "__main__":
     parser = TrlParser((ScriptArguments, GRPOConfig, ModelConfig))
     script_args, training_args, model_args = parser.parse_args_and_config()
-    # @@@ahoaho XXX
-    local_rank = int(os.environ.get("LOCAL_RANK", 0))
-    if local_rank == 0:
-        print(f"XXX script_args: {script_args} XXX")
-        print(f"XXX training_args: {training_args} XXX")
-        print(f"XXX model_args: {model_args} XXX")
 
     # @@@ahoaho XXX
     # # ------------------------
@@ -290,11 +284,15 @@ if __name__ == "__main__":
     #     print(f"biogrid.db created. Rows stored: {len(df)}")
     # finally:
     #     conn.close()
-    # ------------------------
-    # Create DB (rank 0 only to avoid concurrent write conflicts)
-    # ------------------------
-    # local_rank = int(os.environ.get("LOCAL_RANK", 0))
+    local_rank = int(os.environ.get("LOCAL_RANK", 0))
     if local_rank == 0:
+        print(f"XXX script_args: {script_args} XXX")
+        print(f"XXX training_args: {training_args} XXX")
+        print(f"XXX model_args: {model_args} XXX")
+
+        # ------------------------
+        # Create DB (rank 0 only to avoid concurrent write conflicts)
+        # ------------------------
         print("Creating biogrid.db...")
         # Load dataset
         biogrid_dataset = load_dataset("qgallouedec/biogrid", split="train")
