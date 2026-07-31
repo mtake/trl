@@ -58,22 +58,30 @@ ENV="TORCH_NCCL_ASYNC_ERROR_HANDLING=1 ${ENV}"
 #ENV="NCCL_IB_DISABLE=1 ${ENV}"
 fi
 
-# @@@ahoaho XXX
-DATASET=trl-lib/DeepMath-103K
+# @@@ahoaho XXX ???
+# # @@@ahoaho XXX
+# DATASET=trl-lib/DeepMath-103K
 
-DATASET_S="${DATASET##*/}"
-if [[ "${DATASET_S}" == *.yaml ]]; then
-    DATASET_S="${DATASET_S%.yaml}"
-    USE_CONFIG=1
-elif [[ "${DATASET_S}" == *.jsonl ]]; then
-    DATASET_S="${DATASET_S%.jsonl}"
-elif [[ "${DATASET_S}" == *.json ]]; then
-    DATASET_S="${DATASET_S%.json}"
+# DATASET_S="${DATASET##*/}"
+# if [[ "${DATASET_S}" == *.yaml ]]; then
+#     DATASET_S="${DATASET_S%.yaml}"
+#     USE_CONFIG=1
+# elif [[ "${DATASET_S}" == *.jsonl ]]; then
+#     DATASET_S="${DATASET_S%.jsonl}"
+# elif [[ "${DATASET_S}" == *.json ]]; then
+#     DATASET_S="${DATASET_S%.json}"
+# fi
+
+if [[ -n "${DATASET_S}" ]]; then
+    _DATASET_S="-${DATASET_S}"
+else
+    _DATASET_S=""
 fi
 
-# @@@ahoaho XXX
-# REWARD_FUNCS=accuracy_reward
-REWARD_FUNCS=grpo_mtake_lib.my_accuracy_reward
+# @@@ahoaho XXX ???
+# # @@@ahoaho XXX
+# # REWARD_FUNCS=accuracy_reward
+# REWARD_FUNCS=grpo_mtake_lib.my_accuracy_reward
 
 # @@@ahoaho XXX
 #MODEL=Qwen/Qwen2-0.5B-Instruct
@@ -123,8 +131,8 @@ ACCELERATE_OPT=""
 #ACCELERATE_OPT="${ACCELERATE_OPT} --offload_optimizer_device cpu"  # for zero_stage>=2  # DPO OK for g4hs
 #ACCELERATE_OPT="${ACCELERATE_OPT} --offload_param_device cpu"  # for zero_stage>=3  # DPO OK for g4hs
 
-#OUTPUT_DIR="trainer_output/${MODEL##*/}-${DATASET_S}-grpo_agent-${START_TIME_STR}-${HOSTNAME_S}"  # NOTE neither timestamp nor hostname works with preemptable queue
-OUTPUT_DIR="trainer_output/${MODEL##*/}-${DATASET_S}-grpo_agent"  # NOTE neither timestamp nor hostname works with preemptable queue
+#OUTPUT_DIR="trainer_output/${MODEL##*/}${_DATASET_S}-grpo_agent-${START_TIME_STR}-${HOSTNAME_S}"  # NOTE neither timestamp nor hostname works with preemptable queue
+OUTPUT_DIR="trainer_output/${MODEL##*/}${_DATASET_S}-grpo_agent"  # NOTE neither timestamp nor hostname works with preemptable queue
 
 echo "================== ENVIRONMENT VARIABLES ===================" | tee -a ${LOGFILE}
 env 2>&1 | tee -a ${LOGFILE}

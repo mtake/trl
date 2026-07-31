@@ -78,6 +78,12 @@ elif [[ "${DATASET_S}" == *.json ]]; then
     DATASET_S="${DATASET_S%.json}"
 fi
 
+if [[ -n "${DATASET_S}" ]]; then
+    _DATASET_S="-${DATASET_S}"
+else
+    _DATASET_S=""
+fi
+
 # @@@ahoaho XXX
 #MODEL=Qwen/Qwen2-0.5B-Instruct
 #MODEL=Qwen/Qwen3-0.6B
@@ -130,8 +136,8 @@ ACCELERATE_OPT=""
 #ACCELERATE_OPT="${ACCELERATE_OPT} --offload_optimizer_device cpu"  # for zero_stage>=2  # DPO OK for g4hs
 #ACCELERATE_OPT="${ACCELERATE_OPT} --offload_param_device cpu"  # for zero_stage>=3  # DPO OK for g4hs
 
-#OUTPUT_DIR="trainer_output/${MODEL##*/}-${DATASET_S}-dpo-${START_TIME_STR}-${HOSTNAME_S}"  # NOTE neither timestamp nor hostname works with preemptable queue
-OUTPUT_DIR="trainer_output/${MODEL##*/}-${DATASET_S}-dpo"  # NOTE neither timestamp nor hostname works with preemptable queue
+#OUTPUT_DIR="trainer_output/${MODEL##*/}${_DATASET_S}-dpo-${START_TIME_STR}-${HOSTNAME_S}"  # NOTE neither timestamp nor hostname works with preemptable queue
+OUTPUT_DIR="trainer_output/${MODEL##*/}${_DATASET_S}-dpo"  # NOTE neither timestamp nor hostname works with preemptable queue
 
 echo "================== ENVIRONMENT VARIABLES ===================" | tee -a ${LOGFILE}
 env 2>&1 | tee -a ${LOGFILE}
