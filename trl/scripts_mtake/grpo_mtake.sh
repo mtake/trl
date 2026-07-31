@@ -77,14 +77,14 @@ REWARD_FUNCS=grpo_mtake_lib.my_accuracy_reward
 
 # @@@ahoaho XXX
 #MODEL=Qwen/Qwen2-0.5B-Instruct
-MODEL=Qwen/Qwen3-0.6B  # GRPO OK? for q306b
+MODEL=Qwen/Qwen3-0.6B  # GRPO OK? for q306b(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True use_vllm=True
 #MODEL=ibm-granite/granite-3.3-8b-instruct
 #MODEL=ibm-granite/granite-4.0-micro
 #MODEL=ibm-granite/granite-4.0-h-micro
 #MODEL=ibm-granite/granite-4.0-h-tiny
 ####MODEL=ibm-granite/granite-4.0-h-small  # may cause OSError due to slow system system
 ####MODEL=models/granite-4.0-h-small
-#MODEL=ibm-granite/granite-4.1-3b  # GRPO OK? for g413b(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True
+#MODEL=ibm-granite/granite-4.1-3b  # GRPO OK? for g413b(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True use_vllm=True
 #MODEL=ibm-granite/granite-4.1-8b
 #MODEL=models/granite-4.2-8b-prerelease-r260622a  # GRPO OK for g428bpre(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True
 ####MODEL=trainer_output/granite-4.1-8b-retriever_call_train_data.granite4_8b.v2.0406-SFT-sft-20260409-150354-p4-r26-n3-g418b-3epochs-8192length-rtrvr.v2
@@ -113,7 +113,7 @@ MODEL=Qwen/Qwen3-0.6B  # GRPO OK? for q306b
 #ACCELERATE_CONFIG=accelerate_configs/zero2_1node_8proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/zero3_1node_1proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/zero3_1node_2proc.yaml  # SFT CUDA OOM for g338b, DPO OK for g4m, g4hm, g4ht dtype=bfloat16, DPO CUDA OOM for g418b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
-ACCELERATE_CONFIG=accelerate_configs/zero3_1node_4proc.yaml  # SFT OK for g338b, DPO OK for q205b, g338b, g4m, g4hm, g4ht dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16, DPO OK for g418b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO CUDA OOM for g4130b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, GRPO OK? for g413b(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True
+ACCELERATE_CONFIG=accelerate_configs/zero3_1node_4proc.yaml  # SFT OK for g338b, DPO OK for q205b, g338b, g4m, g4hm, g4ht dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16, DPO OK for g418b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO CUDA OOM for g4130b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, GRPO OK? for g413b(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True use_vllm=True
 #ACCELERATE_CONFIG=accelerate_configs/zero3_1node_8proc.yaml  # DPO OK for g338b dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO OK for g4hs offload_optimizer_device=cpu offload_param_device=cpu dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO OK for g4130b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
 ####ACCELERATE_CONFIG=accelerate_configs/zero3_1node_8proc_offload.yaml  # DPO OK for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
 
@@ -151,12 +151,12 @@ cmd="$cmd --reward_funcs ${REWARD_FUNCS}"
 #cmd="$cmd --per_device_train_batch_size 8"  # default: 8  # GRPO OK? for q306b num_processes=4 per_device_train_batch_size=8 num_generations=8, GRPO OK for g428bpre(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True
 #cmd="$cmd --num_train_epochs 1"  # default: 3
 ####cmd="$cmd --save_strategy epoch"  # default: steps
-#cmd="$cmd --save_strategy steps"  # default: steps  # GRPO OK for g428bpre(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True, GRPO OK? for g413b(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True
+#cmd="$cmd --save_strategy steps"  # default: steps  # GRPO OK for g428bpre(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True, GRPO OK? for g413b(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True use_vllm=True
 ####cmd="$cmd --max_steps 10"  # default: -1 (len(train split) * num_train_epochs)
 #cmd="$cmd --save_steps 100"  # default: 500. an integer as steps or a float in range `[0,1)` as ratio of total training steps.
-cmd="$cmd --save_steps 50"  # default: 500. an integer as steps or a float in range `[0,1)` as ratio of total training steps.  # GRPO OK for g428bpre(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True, GRPO OK? for g413b(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True
+cmd="$cmd --save_steps 50"  # default: 500. an integer as steps or a float in range `[0,1)` as ratio of total training steps.  # GRPO OK for g428bpre(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True, GRPO OK? for g413b(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True use_vllm=True
 # @@@ahoaho XXX
-cmd="$cmd --resume_from_checkpoint True"  # default: None  # GRPO OK for g428bpre(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True, GRPO OK? for g413b(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True
+cmd="$cmd --resume_from_checkpoint True"  # default: None  # GRPO OK for g428bpre(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True, GRPO OK? for g413b(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True use_vllm=True
 #cmd="$cmd --gradient_accumulation_steps 8"  # default: 1  # DPO OK for g4hs
 #cmd="$cmd --report_to trackio"  # default: none, choices: [none, all, trackio, wandb]
 #cmd="$cmd --project ${BASENAME}"  # default: huggingface. The name of the project to use for logging. Currently, only used by Trackio.
@@ -168,7 +168,7 @@ cmd="$cmd --bf16 True"
 #cmd="$cmd --eval_strategy steps"  # default: no  # requires test split
 #cmd="$cmd --eval_steps 50"
 #cmd="$cmd --per_device_eval_batch_size 1"  # default: 8
-cmd="$cmd --use_vllm True"  # default: False (see. trl/trainer/grpo_config.py)  # GRPO OK for q306b num_processes=4 per_device_train_batch_size=8 num_generations=8 `bsub -gpu num=4:mode=shared:j_exclusive=yes:gmodel=XXX ...` (NOTE: `bsub -gpu num=4:mode=exclusive_process:gmodel=XXX ...` causes CUDA warning: CUDA-capable device(s) is/are busy or unavailable (function destroyEvent))
+cmd="$cmd --use_vllm True"  # default: False (see. trl/trainer/grpo_config.py)  # GRPO OK for q306b num_processes=4 per_device_train_batch_size=8 num_generations=8 `bsub -gpu num=4:mode=shared:j_exclusive=yes:gmodel=XXX ...` (NOTE: `bsub -gpu num=4:mode=exclusive_process:gmodel=XXX ...` causes CUDA warning: CUDA-capable device(s) is/are busy or unavailable (function destroyEvent)), GRPO OK? for g413b(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True use_vllm=True
 echo "$cmd" | tee -a ${LOGFILE}
 eval "$cmd" 2>&1 | tee -a ${LOGFILE}
 
