@@ -168,7 +168,7 @@ cmd="$cmd --bf16 True"
 #cmd="$cmd --eval_strategy steps"  # default: no  # requires test split
 #cmd="$cmd --eval_steps 50"
 #cmd="$cmd --per_device_eval_batch_size 1"  # default: 8
-#cmd="$cmd --use_vllm True"  # default: False  # GRPO Warning: CUDA warning: CUDA-capable device(s) is/are busy or unavailable (function destroyEvent) for q306b num_processes=4 per_device_train_batch_size=8 num_generations=8
+cmd="$cmd --use_vllm True"  # default: False (see. trl/trainer/grpo_config.py)  # GRPO OK for q306b num_processes=4 per_device_train_batch_size=8 num_generations=8 `bsub -gpu num=4:mode=shared:j_exclusive=yes:gmodel=XXX ...` (NOTE: `bsub -gpu num=4:mode=exclusive_process:gmodel=XXX ...` causes CUDA warning: CUDA-capable device(s) is/are busy or unavailable (function destroyEvent))
 echo "$cmd" | tee -a ${LOGFILE}
 eval "$cmd" 2>&1 | tee -a ${LOGFILE}
 
