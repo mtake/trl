@@ -98,6 +98,43 @@ MODEL=Qwen/Qwen3-0.6B  # GRPO AGENT OK
 ####MODEL=trainer_output/granite-4.1-8b-retriever_call_train_data.granite4_8b.v2.0406-SFT-sft-20260416-100514-p1-r23-n3-g418b-3epochs-8192length-rtrvr.v2-transformers4576
 #MODEL=models/granite-4.1-30b
 #MODEL=trainer_output/granite-4.1-30b-zragrtrvr.v2-SFT-sft-20260421-134025-p6-r14-n1-g4130b-3epochs-8192length-rtrvr.v2
+#MODEL=ibm-research/granite-4.2-3b  # GRPO AGENT ERR for g423b use_vllm=True (see trl/chat_template_utils.py)
+
+# [rank2]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/examples/scripts_mtake/grpo_agent_mtake.py", line 340, in <module>
+# [rank2]:     trainer.train()
+# [rank2]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/.venv/lib/python3.12/site-packages/transformers/trainer.py", line 1437, in train
+# [rank2]:     return inner_training_loop(
+# [rank2]:            ^^^^^^^^^^^^^^^^^^^^
+# [rank2]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/.venv/lib/python3.12/site-packages/transformers/trainer.py", line 1519, in _inner_training_loop
+# [rank2]:     self._run_epoch(
+# [rank2]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/.venv/lib/python3.12/site-packages/transformers/trainer.py", line 1747, in _run_epoch
+# [rank2]:     tr_loss_step = self.training_step(model, inputs, num_items_in_batch)
+# [rank2]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# [rank2]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/trl/trainer/grpo_trainer.py", line 1549, in training_step
+# [rank2]:     output = super().training_step(model, inputs, num_items_in_batch)
+# [rank2]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# [rank2]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/.venv/lib/python3.12/site-packages/transformers/trainer.py", line 1913, in training_step
+# [rank2]:     inputs = self._prepare_inputs(inputs)
+# [rank2]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# [rank2]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/trl/extras/profiling.py", line 211, in wrapper
+# [rank2]:     return func(self, *args, **kwargs)
+# [rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# [rank2]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/trl/trainer/grpo_trainer.py", line 1578, in _prepare_inputs
+# [rank2]:     generation_batch = self._generate_and_score_completions(generation_batch)
+# [rank2]:                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# [rank2]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/trl/trainer/grpo_trainer.py", line 2689, in _generate_and_score_completions
+# [rank2]:     rewards_per_func = self._calculate_rewards(inputs, prompts, completions, completion_ids_list)
+# [rank2]:                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# [rank2]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/trl/extras/profiling.py", line 211, in wrapper
+# [rank2]:     return func(self, *args, **kwargs)
+# [rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# [rank2]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/trl/trainer/grpo_trainer.py", line 1663, in _calculate_rewards
+# [rank2]:     output_reward_func = reward_func(
+# [rank2]:                          ^^^^^^^^^^^^
+# [rank2]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/examples/scripts_mtake/grpo_agent_mtake.py", line 128, in correctness_reward
+# [rank2]:     raw = completion[-1]["content"].lower()
+# [rank2]:           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# [rank2]: AttributeError: 'list' object has no attribute 'lower'
 
 MODEL_S="${MODEL##*/}"
 MODEL_S="${MODEL_S//./_}"
