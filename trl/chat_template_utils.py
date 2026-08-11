@@ -600,6 +600,9 @@ gptoss_chat_template = (_CHAT_TEMPLATES_DIR / "gptoss.jinja").read_text(encoding
 # @@@ahoaho XXX
 granite4_1_chat_template = (_CHAT_TEMPLATES_DIR / "granite4_1.jinja").read_text(encoding="utf-8")
 
+# @@@ahoaho XXX
+granite4_2_chat_template = (_CHAT_TEMPLATES_DIR / "granite4_2.jinja").read_text(encoding="utf-8")
+
 idefics3_chat_template = (_CHAT_TEMPLATES_DIR / "idefics3.jinja").read_text(encoding="utf-8")
 
 lfm2_chat_template = (_CHAT_TEMPLATES_DIR / "lfm2.jinja").read_text(encoding="utf-8")
@@ -693,6 +696,9 @@ def add_response_schema(processing_class: ProcessingClassT) -> ProcessingClassT:
     # @@@ahoaho XXX
     elif chat_template == granite4_1_chat_template:
         schema, template = None, granite4_1_template
+    # @@@ahoaho XXX
+    elif chat_template == granite4_2_chat_template:
+        schema, template = None, nemotron_3_template
     elif chat_template in [llama3_1_chat_template, llama3_2_chat_template]:
         schema, template = llama3_schema, llama3_template
     elif chat_template in [
@@ -962,6 +968,9 @@ gptoss_training_chat_template = (_CHAT_TEMPLATES_DIR / "gptoss_training.jinja").
 # @@@ahoaho XXX
 granite4_1_training_chat_template = (_CHAT_TEMPLATES_DIR / "granite4_1_training.jinja").read_text(encoding="utf-8")
 
+# @@@ahoaho XXX
+granite4_2_training_chat_template = (_CHAT_TEMPLATES_DIR / "granite4_2_training.jinja").read_text(encoding="utf-8")
+
 idefics3_training_chat_template = (_CHAT_TEMPLATES_DIR / "idefics3_training.jinja").read_text(encoding="utf-8")
 
 lfm2_training_chat_template = (_CHAT_TEMPLATES_DIR / "lfm2_training.jinja").read_text(encoding="utf-8")
@@ -1113,6 +1122,10 @@ def get_training_chat_template(
     # @@@ahoaho XXX
     if processing_class.chat_template == granite4_1_chat_template:
         return granite4_1_training_chat_template
+
+    # @@@ahoaho XXX
+    if processing_class.chat_template == granite4_2_chat_template:
+        return granite4_2_training_chat_template
 
     if processing_class.chat_template == idefics3_chat_template:
         return idefics3_training_chat_template
