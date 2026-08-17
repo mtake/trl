@@ -79,12 +79,12 @@ else
 fi
 
 # @@@ahoaho XXX ???
-TOOLS="query_biogrid"
-# TOOLS="grpo_agent_separate_lib.query_biogrid"
+# TOOLS="query_biogrid"
+TOOLS="grpo_agent_separate_lib.query_biogrid"
 
 # @@@ahoaho XXX ???
-REWARD_FUNCS="correctness_reward structure_reward query_reward"
-# REWARD_FUNCS="grpo_agent_separate_lib.correctness_reward grpo_agent_separate_lib.structure_reward grpo_agent_separate_lib.query_reward"
+# REWARD_FUNCS="correctness_reward structure_reward query_reward"
+REWARD_FUNCS="grpo_agent_separate_lib.correctness_reward grpo_agent_separate_lib.structure_reward grpo_agent_separate_lib.query_reward"
 
 # @@@ahoaho XXX
 #MODEL=Qwen/Qwen2-0.5B-Instruct
