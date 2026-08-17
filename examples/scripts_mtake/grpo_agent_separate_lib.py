@@ -79,9 +79,11 @@ def correctness_reward(completions, answer, **kwargs):
     """
     rewards = []
     for completion, ans in zip(completions, answer, strict=False):
-        # @@@ahoaho XXX granite-4.2 could return completion[-1]["content"] as list, which will cause an error.
-        # print(f"XXX completion[-1] = XXX{completion[-1]}XXX")
-        raw = completion[-1]["content"].lower()
+        # @@@ahoaho XXX
+        # NOTE fail safe when completion[-1]["content"] is not a string
+        # raw = completion[-1]["content"].lower()
+        content = completion[-1]["content"]
+        raw = content.lower() if isinstance(content, str) else ""
 
         # detect form *yes* or *no*
         match = re.search(r"\*(yes|no)\*", raw)
