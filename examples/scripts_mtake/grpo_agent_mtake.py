@@ -41,6 +41,8 @@ import os
 import re
 import signal
 import sqlite3
+# @@@ahoaho XXX
+import sys
 import textwrap
 from contextlib import contextmanager
 
@@ -339,7 +341,16 @@ if __name__ == "__main__":
     # ------------------------
     # Train
     # ------------------------
-    trainer.train()
+    # @@@ahoaho XXX
+    # trainer.train()
+    resume_from_checkpoint = training_args.resume_from_checkpoint
+    if isinstance(resume_from_checkpoint, str) and resume_from_checkpoint.lower() in ["true", "yes", "1"]:
+        resume_from_checkpoint = True
+    if resume_from_checkpoint is True:
+        sys.path.insert(0, os.path.dirname(__file__))
+        from utils_mtake import get_last_checkpoint_safe
+        resume_from_checkpoint = get_last_checkpoint_safe(training_args.output_dir)
+    trainer.train(resume_from_checkpoint=resume_from_checkpoint)
 
     # ------------------------
     # Save and push

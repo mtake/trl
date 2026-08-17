@@ -223,6 +223,8 @@ cmd="$cmd --max_steps 30"  # default: -1 (len(train split) * num_train_epochs)
 #cmd="$cmd --save_steps 100"  # default: 500. an integer as steps or a float in range `[0,1)` as ratio of total training steps.
 # @@@ahoaho XXX WIP for functional test
 cmd="$cmd --save_steps 10"  # default: 500. an integer as steps or a float in range `[0,1)` as ratio of total training steps.
+# @@@ahoaho XXX NOT TESTED
+# cmd="$cmd --resume_from_checkpoint True"  # default: None  # GRPO OK for g428bpre(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True, GRPO OK? for g413b(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True use_vllm=True, GRPO OK? for g428b(preemptable) use_vllm=True num_processes=8 per_device_train_batch_size=8 num_generations=8 vllm_gpu_memory_utilization=0.5 save_strategy=steps save_steps=50 resume_from_checkpoint=True
 #cmd="$cmd --gradient_accumulation_steps 8"  # default: 1  # DPO OK for g4hs
 # @@@ahoaho XXX
 #cmd="$cmd --logging_strategy epoch"  # default: steps, choices: [no, steps, epoch]
