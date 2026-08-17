@@ -57,23 +57,34 @@ from trl import GRPOConfig, GRPOTrainer, ModelConfig, ScriptArguments, TrlParser
 
 # @@@ahoaho XXX
 @dataclass
-class GRPOScriptArguments(ScriptArguments):
+class GRPOAgentScriptArguments(ScriptArguments):
     """
     Script arguments for the GRPO training script.
 
     Args:
+        tools (`list[str]`, *optional*):
+            Available tools. Supported values are:
+                - `"query_biogrid"`
+                - any dotted import path " (e.g., `'my_lib.tools.custom_tool'`).
         reward_model_name_or_path (`str`, *optional*):
             Reward model id of a pretrained model hosted inside a model repo on huggingface.co or local path to a
             directory containing model weights saved using [`~transformers.PreTrainedModel.save_pretrained`].
         reward_funcs (`list[str]`, *optional*):
             Reward functions to use. Supported values are:
-                - `"accuracy_reward"`
-                - `"reasoning_accuracy_reward"`
-                - `"think_format_reward"`
-                - `"get_soft_overlong_punishment"` (used value are `max_completion_len=1280`, `soft_punish_cache=256`)
+                - `"correctness_reward"`
+                - `"structure_reward"`
+                - `"query_reward"`
                 - any dotted import path " (e.g., `'my_lib.rewards.custom_reward'`).
     """
 
+    # @@@ahoaho XXX
+    tools: list[str] | None = field(
+        default=None,
+        metadata={
+            "help": "Available tools. Supported values are: `query_biogrid`, or "
+            "any dotted import path (e.g., `'my_lib.tools.custom_tool'`)."
+        },
+    )
     reward_model_name_or_path: str | None = field(
         default=None,
         metadata={
@@ -84,8 +95,7 @@ class GRPOScriptArguments(ScriptArguments):
     reward_funcs: list[str] | None = field(
         default=None,
         metadata={
-            "help": "Reward functions to use. Supported values are: `accuracy_reward`,  `reasoning_accuracy_reward`, `think_format_reward`, "
-            "`get_soft_overlong_punishment` (used values are `max_completion_len=1280`, `soft_punish_cache=256`), or "
+            "help": "Reward functions to use. Supported values are: `correctness_reward`, `structure_reward`, `query_reward`, or "
             "any dotted import path (e.g., `'my_lib.rewards.custom_reward'`)."
         },
     )
@@ -309,8 +319,35 @@ def format_example(example):
 if __name__ == "__main__":
     # @@@ahoaho XXX
     # parser = TrlParser((ScriptArguments, GRPOConfig, ModelConfig))
-    parser = TrlParser((GRPOScriptArguments, GRPOConfig, ModelConfig))
+    parser = TrlParser((GRPOAgentScriptArguments, GRPOConfig, ModelConfig))
     script_args, training_args, model_args = parser.parse_args_and_config()
+
+    # @@@ahoaho XXX
+    tools_registry = {
+        "query_biogrid": query_biogrid,
+    }
+
+    # Get the tools
+    tools = []
+    if script_args.tools:
+        for func_name in script_args.tools:
+            if func_name in tools_registry:
+                tools.append(tools_registry[func_name])
+            elif "." in func_name:
+                module_path, func_name = func_name.rsplit(".", 1)
+                sys.path.insert(0, os.getcwd())
+                module = importlib.import_module(module_path)
+                tool = getattr(module, func_name)
+                tools.append(tool)
+            else:
+                raise ValueError(
+                    f"Could not load tool '{func_name}'. Expected one of "
+                    f"{list(tools_registry.keys())} or a valid import path."
+                )
+
+    # @@@ahoaho XXX
+    if not tools:
+        tools = [query_biogrid]
 
     # @@@ahoaho XXX
     reward_funcs_registry = {
@@ -407,9 +444,10 @@ if __name__ == "__main__":
         model=model_args.model_name_or_path,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
-        tools=[query_biogrid],
         # @@@ahoaho XXX
+        # tools=[query_biogrid],
         # reward_funcs=[correctness_reward, structure_reward, query_reward],
+        tools=tools,
         reward_funcs=reward_funcs,
         args=training_args,
     )

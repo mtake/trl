@@ -79,6 +79,10 @@ else
 fi
 
 # @@@ahoaho XXX ???
+TOOLS="query_biogrid"
+# TOOLS="grpo_agent_separate_lib.query_biogrid"
+
+# @@@ahoaho XXX ???
 REWARD_FUNCS="correctness_reward structure_reward query_reward"
 # REWARD_FUNCS="grpo_agent_separate_lib.correctness_reward grpo_agent_separate_lib.structure_reward grpo_agent_separate_lib.query_reward"
 
@@ -190,6 +194,11 @@ cmd="${ENV}accelerate launch --config_file ${ACCELERATE_CONFIG}${ACCELERATE_OPT}
 # fi
 
 cmd="$cmd --output_dir ${OUTPUT_DIR}"
+
+# @@@ahoaho XXX ???
+if [[ -n "${TOOLS}" ]]; then
+    cmd="$cmd --tools ${TOOLS}"
+fi
 
 # @@@ahoaho XXX ???
 if [[ -n "${REWARD_FUNCS}" ]]; then
