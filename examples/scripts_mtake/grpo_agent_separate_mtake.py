@@ -50,7 +50,9 @@ from contextlib import contextmanager
 # @@@ahoaho XXX
 from dataclasses import dataclass, field
 
-from datasets import load_dataset
+# @@@ahoaho XXX
+# from datasets import load_dataset
+from datasets import load_dataset, Dataset
 
 from trl import GRPOConfig, GRPOTrainer, ModelConfig, ScriptArguments, TrlParser
 
@@ -313,6 +315,41 @@ def format_example(example):
     return {"prompt": prompt}
 
 
+# @@@ahoaho XXX
+# ------------------------
+# Load and format dataset
+# ------------------------
+def load_qa() -> tuple[Dataset, Dataset]:
+    dataset = load_dataset("qgallouedec/biogrid_qa", split="train")
+    dataset = dataset.filter(
+        lambda example: example["question"].startswith("Does the gene ")
+    )  # keep only simple questions for example
+    dataset = dataset.map(format_example, remove_columns=["question"])
+
+    train_dataset = dataset
+    eval_dataset = None  # No eval by default, can be added if needed
+    return train_dataset, eval_dataset
+
+
+# ------------------------
+# Create DB (rank 0 only to avoid concurrent write conflicts)
+# ------------------------
+def create_db():
+    print("Creating biogrid.db...")
+    # Load dataset
+    biogrid_dataset = load_dataset("qgallouedec/biogrid", split="train")
+    df = biogrid_dataset.to_pandas()
+
+    # Normalize column names: remove spaces, replace with underscores
+    df.columns = [c.replace(" ", "_") for c in df.columns]
+    conn = sqlite3.connect("biogrid.db")
+    try:
+        df.to_sql("interactions", conn, if_exists="replace", index=False)
+        print(f"biogrid.db created. Rows stored: {len(df)}")
+    finally:
+        conn.close()
+
+
 # ------------------------
 # Main
 # ------------------------
@@ -405,35 +442,25 @@ if __name__ == "__main__":
     #     print(f"biogrid.db created. Rows stored: {len(df)}")
     # finally:
     #     conn.close()
+    # ------------------------
+    # Create DB (rank 0 only to avoid concurrent write conflicts)
+    # ------------------------
     if local_rank == 0:
-        # ------------------------
-        # Create DB (rank 0 only to avoid concurrent write conflicts)
-        # ------------------------
-        print("Creating biogrid.db...")
-        # Load dataset
-        biogrid_dataset = load_dataset("qgallouedec/biogrid", split="train")
-        df = biogrid_dataset.to_pandas()
-
-        # Normalize column names: remove spaces, replace with underscores
-        df.columns = [c.replace(" ", "_") for c in df.columns]
-        conn = sqlite3.connect("biogrid.db")
-        try:
-            df.to_sql("interactions", conn, if_exists="replace", index=False)
-            print(f"biogrid.db created. Rows stored: {len(df)}")
-        finally:
-            conn.close()
+        create_db()
 
     # ------------------------
     # Load and format dataset
     # ------------------------
-    dataset = load_dataset("qgallouedec/biogrid_qa", split="train")
-    dataset = dataset.filter(
-        lambda example: example["question"].startswith("Does the gene ")
-    )  # keep only simple questions for example
-    dataset = dataset.map(format_example, remove_columns=["question"])
+    # @@@ahoaho XXX
+    # dataset = load_dataset("qgallouedec/biogrid_qa", split="train")
+    # dataset = dataset.filter(
+    #     lambda example: example["question"].startswith("Does the gene ")
+    # )  # keep only simple questions for example
+    # dataset = dataset.map(format_example, remove_columns=["question"])
 
-    train_dataset = dataset
-    eval_dataset = None  # No eval by default, can be added if needed
+    # train_dataset = dataset
+    # eval_dataset = None  # No eval by default, can be added if needed
+    train_dataset, eval_dataset = load_qa()
 
     training_args.chat_template_kwargs = {"enable_thinking": False}
 
