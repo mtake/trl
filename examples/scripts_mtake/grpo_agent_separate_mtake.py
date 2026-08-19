@@ -36,28 +36,20 @@ python examples/scripts/grpo_agent.py \
 ```
 """
 
-# @@@ahoaho XXX
 import importlib
 import os
 import re
 import signal
 import sqlite3
-# @@@ahoaho XXX
 import sys
 import textwrap
 from contextlib import contextmanager
-
-# @@@ahoaho XXX
 from dataclasses import dataclass, field
-
-# @@@ahoaho XXX
-# from datasets import load_dataset
 from datasets import load_dataset, Dataset
 
 from trl import GRPOConfig, GRPOTrainer, ModelConfig, ScriptArguments, TrlParser
 
 
-# @@@ahoaho XXX
 @dataclass
 class GRPOAgentScriptArguments(ScriptArguments):
     """
@@ -79,7 +71,6 @@ class GRPOAgentScriptArguments(ScriptArguments):
                 - any dotted import path " (e.g., `'my_lib.rewards.custom_reward'`).
     """
 
-    # @@@ahoaho XXX
     tools: list[str] | None = field(
         default=None,
         metadata={
@@ -317,11 +308,10 @@ def format_example(example):
     return {"prompt": prompt}
 
 
-# @@@ahoaho XXX
 # ------------------------
-# Load and format dataset
+# Datasets
 # ------------------------
-def load_qa() -> tuple[Dataset, Dataset]:
+def load_datasets() -> tuple[Dataset, Dataset]:
     dataset = load_dataset("qgallouedec/biogrid_qa", split="train")
     dataset = dataset.filter(
         lambda example: example["question"].startswith("Does the gene ")
@@ -334,34 +324,48 @@ def load_qa() -> tuple[Dataset, Dataset]:
 
 
 # ------------------------
-# Create DB (rank 0 only to avoid concurrent write conflicts)
+# Environment
 # ------------------------
-def create_db():
-    print("Creating biogrid.db...")
-    # Load dataset
-    biogrid_dataset = load_dataset("qgallouedec/biogrid", split="train")
-    df = biogrid_dataset.to_pandas()
+def initialize_environment():
+    local_rank = int(os.environ.get("LOCAL_RANK", 0))
+    if local_rank == 0:
+        # ------------------------
+        # Create DB (rank 0 only to avoid concurrent write conflicts)
+        # ------------------------
+        print("Creating biogrid.db...")
+        # Load dataset
+        biogrid_dataset = load_dataset("qgallouedec/biogrid", split="train")
+        df = biogrid_dataset.to_pandas()
 
-    # Normalize column names: remove spaces, replace with underscores
-    df.columns = [c.replace(" ", "_") for c in df.columns]
-    conn = sqlite3.connect("biogrid.db")
-    try:
-        df.to_sql("interactions", conn, if_exists="replace", index=False)
-        print(f"biogrid.db created. Rows stored: {len(df)}")
-    finally:
-        conn.close()
+        # Normalize column names: remove spaces, replace with underscores
+        df.columns = [c.replace(" ", "_") for c in df.columns]
+        conn = sqlite3.connect("biogrid.db")
+        try:
+            df.to_sql("interactions", conn, if_exists="replace", index=False)
+            print(f"biogrid.db created. Rows stored: {len(df)}")
+        finally:
+            conn.close()
 
 
 # ------------------------
 # Main
 # ------------------------
 if __name__ == "__main__":
-    # @@@ahoaho XXX
-    # parser = TrlParser((ScriptArguments, GRPOConfig, ModelConfig))
     parser = TrlParser((GRPOAgentScriptArguments, GRPOConfig, ModelConfig))
     script_args, training_args, model_args = parser.parse_args_and_config()
 
+    training_args.chat_template_kwargs = {"enable_thinking": False}
+
     # @@@ahoaho XXX
+    local_rank = int(os.environ.get("LOCAL_RANK", 0))
+    if local_rank == 0:
+        print(f"XXX script_args: {script_args} XXX")
+        print(f"XXX training_args: {training_args} XXX")
+        print(f"XXX model_args: {model_args} XXX")
+
+    # ------------------------
+    # Tools and reward functions
+    # ------------------------
     tools_registry = {
         "query_biogrid": query_biogrid,
     }
@@ -384,11 +388,9 @@ if __name__ == "__main__":
                     f"{list(tools_registry.keys())} or a valid import path."
                 )
 
-    # @@@ahoaho XXX
     if not tools:
         tools = [query_biogrid]
 
-    # @@@ahoaho XXX
     reward_funcs_registry = {
         "correctness_reward": correctness_reward,
         "structure_reward": structure_reward,
@@ -416,55 +418,18 @@ if __name__ == "__main__":
                     f"{list(reward_funcs_registry.keys())} or a valid import path."
                 )
 
-    # @@@ahoaho XXX
     if not reward_funcs:
         reward_funcs = [correctness_reward, structure_reward, query_reward]
 
-    # @@@ahoaho XXX
-    local_rank = int(os.environ.get("LOCAL_RANK", 0))
-    if local_rank == 0:
-        print(f"XXX script_args: {script_args} XXX")
-        print(f"XXX training_args: {training_args} XXX")
-        print(f"XXX model_args: {model_args} XXX")
-
-    # @@@ahoaho XXX
-    # # ------------------------
-    # # Create DB
-    # # ------------------------
-    # print("Creating biogrid.db...")
-    # # Load dataset
-    # biogrid_dataset = load_dataset("qgallouedec/biogrid", split="train")
-    # df = biogrid_dataset.to_pandas()
-
-    # # Normalize column names: remove spaces, replace with underscores
-    # df.columns = [c.replace(" ", "_") for c in df.columns]
-    # conn = sqlite3.connect("biogrid.db")
-    # try:
-    #     df.to_sql("interactions", conn, if_exists="replace", index=False)
-    #     print(f"biogrid.db created. Rows stored: {len(df)}")
-    # finally:
-    #     conn.close()
     # ------------------------
-    # Create DB (rank 0 only to avoid concurrent write conflicts)
+    # Environment
     # ------------------------
-    if local_rank == 0:
-        create_db()
+    initialize_environment()
 
     # ------------------------
-    # Load and format dataset
+    # Datasets
     # ------------------------
-    # @@@ahoaho XXX
-    # dataset = load_dataset("qgallouedec/biogrid_qa", split="train")
-    # dataset = dataset.filter(
-    #     lambda example: example["question"].startswith("Does the gene ")
-    # )  # keep only simple questions for example
-    # dataset = dataset.map(format_example, remove_columns=["question"])
-
-    # train_dataset = dataset
-    # eval_dataset = None  # No eval by default, can be added if needed
-    train_dataset, eval_dataset = load_qa()
-
-    training_args.chat_template_kwargs = {"enable_thinking": False}
+    train_dataset, eval_dataset = load_datasets()
 
     # ------------------------
     # Initialize trainer
@@ -473,9 +438,6 @@ if __name__ == "__main__":
         model=model_args.model_name_or_path,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
-        # @@@ahoaho XXX
-        # tools=[query_biogrid],
-        # reward_funcs=[correctness_reward, structure_reward, query_reward],
         tools=tools,
         reward_funcs=reward_funcs,
         args=training_args,
