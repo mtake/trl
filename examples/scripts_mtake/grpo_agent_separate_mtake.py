@@ -232,6 +232,65 @@ def structure_reward(completions, **kwargs):
     return rewards
 
 
+def get_tools_and_reward_funcs(script_args) -> tuple[list, list]:
+    tools_registry = {
+        "query_biogrid": query_biogrid,
+    }
+
+    # Get the tools
+    tools = []
+    if script_args.tools:
+        for func_name in script_args.tools:
+            if func_name in tools_registry:
+                tools.append(tools_registry[func_name])
+            elif "." in func_name:
+                module_path, func_name = func_name.rsplit(".", 1)
+                sys.path.insert(0, os.getcwd())
+                module = importlib.import_module(module_path)
+                tool = getattr(module, func_name)
+                tools.append(tool)
+            else:
+                raise ValueError(
+                    f"Could not load tool '{func_name}'. Expected one of "
+                    f"{list(tools_registry.keys())} or a valid import path."
+                )
+
+    if not tools:
+        tools = [query_biogrid]
+
+    reward_funcs_registry = {
+        "correctness_reward": correctness_reward,
+        "structure_reward": structure_reward,
+        "query_reward": query_reward,
+    }
+
+    # Get the reward models and functions
+    reward_funcs = []
+    if script_args.reward_model_name_or_path:
+        reward_funcs.append(script_args.reward_model_name_or_path)
+
+    if script_args.reward_funcs:
+        for func_name in script_args.reward_funcs:
+            if func_name in reward_funcs_registry:
+                reward_funcs.append(reward_funcs_registry[func_name])
+            elif "." in func_name:
+                module_path, func_name = func_name.rsplit(".", 1)
+                sys.path.insert(0, os.getcwd())
+                module = importlib.import_module(module_path)
+                reward_func = getattr(module, func_name)
+                reward_funcs.append(reward_func)
+            else:
+                raise ValueError(
+                    f"Could not load reward function '{func_name}'. Expected one of "
+                    f"{list(reward_funcs_registry.keys())} or a valid import path."
+                )
+
+    if not reward_funcs:
+        reward_funcs = [correctness_reward, structure_reward, query_reward]
+
+    return tools, reward_funcs
+
+
 # ------------------------
 # Database tool function
 # ------------------------
@@ -366,60 +425,7 @@ if __name__ == "__main__":
     # ------------------------
     # Tools and reward functions
     # ------------------------
-    tools_registry = {
-        "query_biogrid": query_biogrid,
-    }
-
-    # Get the tools
-    tools = []
-    if script_args.tools:
-        for func_name in script_args.tools:
-            if func_name in tools_registry:
-                tools.append(tools_registry[func_name])
-            elif "." in func_name:
-                module_path, func_name = func_name.rsplit(".", 1)
-                sys.path.insert(0, os.getcwd())
-                module = importlib.import_module(module_path)
-                tool = getattr(module, func_name)
-                tools.append(tool)
-            else:
-                raise ValueError(
-                    f"Could not load tool '{func_name}'. Expected one of "
-                    f"{list(tools_registry.keys())} or a valid import path."
-                )
-
-    if not tools:
-        tools = [query_biogrid]
-
-    reward_funcs_registry = {
-        "correctness_reward": correctness_reward,
-        "structure_reward": structure_reward,
-        "query_reward": query_reward,
-    }
-
-    # Get the reward models and functions
-    reward_funcs = []
-    if script_args.reward_model_name_or_path:
-        reward_funcs.append(script_args.reward_model_name_or_path)
-
-    if script_args.reward_funcs:
-        for func_name in script_args.reward_funcs:
-            if func_name in reward_funcs_registry:
-                reward_funcs.append(reward_funcs_registry[func_name])
-            elif "." in func_name:
-                module_path, func_name = func_name.rsplit(".", 1)
-                sys.path.insert(0, os.getcwd())
-                module = importlib.import_module(module_path)
-                reward_func = getattr(module, func_name)
-                reward_funcs.append(reward_func)
-            else:
-                raise ValueError(
-                    f"Could not load reward function '{func_name}'. Expected one of "
-                    f"{list(reward_funcs_registry.keys())} or a valid import path."
-                )
-
-    if not reward_funcs:
-        reward_funcs = [correctness_reward, structure_reward, query_reward]
+    tools, reward_funcs = get_tools_and_reward_funcs(script_args)
 
     # ------------------------
     # Environment
