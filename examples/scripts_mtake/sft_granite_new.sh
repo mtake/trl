@@ -80,7 +80,7 @@ fi
 #MODEL=ibm-granite/granite-4.0-h-tiny  # OK with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_2proc.yaml
 #MODEL=ibm-granite/granite-4.0-h-small  # OK with per_device_train_batch_size=16, max_length=20000, fsdp2_1node_8proc.yaml  # CUDA OOM with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_8proc.yaml
 #MODEL=ibm-granite/granite-4.1-8b  # OK with per_device_train_batch_size=32, max_length=20000, deepspeed_zero3_1node_4proc.yaml
-MODEL=ibm-research/granite-4.2-8b  # OK with per_device_train_batch_size=32, max_length=20000, deepspeed_zero3_1node_4proc.yaml
+MODEL=ibm-granite/granite-4.2-8b  # OK with per_device_train_batch_size=32, max_length=20000, deepspeed_zero3_1node_4proc.yaml
 #MODEL=models/granite-4.1-30b  # OK with per_device_train_batch_size=32, max_length=20000, deepspeed_zero3_1node_8proc_offload.yaml
 
 MODEL_S="${MODEL##*/}"
