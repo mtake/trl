@@ -23,7 +23,7 @@
 """
 # Full training
 ```
-python examples/scripts/grpo_agent.py \
+python examples/scripts/grpo_sql_agent.py \
     --model_name_or_path Qwen/Qwen3-1.7B \
     --output_dir grpo_biogrid_qwen_3g-1.7b \
     --push_to_hub True \
@@ -125,8 +125,6 @@ def correctness_reward(completions, answer, **kwargs):
     """
     rewards = []
     for completion, ans in zip(completions, answer, strict=False):
-        # @@@ahoaho XXX granite-4.2 could return completion[-1]["content"] as list, which will cause an error.
-        # print(f"XXX completion[-1] = XXX{completion[-1]}XXX")
         raw = completion[-1]["content"].lower()
 
         # detect form *yes* or *no*

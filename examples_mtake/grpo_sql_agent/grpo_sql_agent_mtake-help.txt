@@ -1,5 +1,5 @@
-$ python grpo_agent_mtake.py --help
-usage: grpo_agent_mtake.py [-h] [--dataset_name DATASET_NAME]
+$ python grpo_sql_agent_mtake.py --help
+usage: grpo_sql_agent_mtake.py [-h] [--dataset_name DATASET_NAME]
                            [--dataset_config DATASET_CONFIG]
                            [--dataset_train_split DATASET_TRAIN_SPLIT]
                            [--dataset_test_split DATASET_TEST_SPLIT]

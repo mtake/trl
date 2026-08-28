@@ -79,12 +79,9 @@ else
 fi
 
 # @@@ahoaho XXX ???
-# TOOLS="query_biogrid"
-TOOLS="grpo_agent_separate_lib.query_biogrid"
-
-# @@@ahoaho XXX ???
-# REWARD_FUNCS="correctness_reward structure_reward query_reward"
-REWARD_FUNCS="grpo_agent_separate_lib.correctness_reward grpo_agent_separate_lib.structure_reward grpo_agent_separate_lib.query_reward"
+# # @@@ahoaho XXX
+# # REWARD_FUNCS=accuracy_reward
+# REWARD_FUNCS=grpo_mtake_lib.my_accuracy_reward
 
 # @@@ahoaho XXX
 #MODEL=Qwen/Qwen2-0.5B-Instruct
@@ -104,7 +101,7 @@ REWARD_FUNCS="grpo_agent_separate_lib.correctness_reward grpo_agent_separate_lib
 MODEL=ibm-granite/granite-4.2-3b  # GRPO AGENT OK for g423b use_vllm=True num_processes=4 per_device_train_batch_size=8 num_generations=8 vllm_gpu_memory_utilization=0.5
 #MODEL=ibm-granite/granite-4.2-8b  # GRPO OK? for g428b(preemptable) use_vllm=True num_processes=8 per_device_train_batch_size=8 num_generations=8 vllm_gpu_memory_utilization=0.5 save_strategy=steps save_steps=50 resume_from_checkpoint=True, GRPO AGENT OK for g428b use_vllm=True num_processes=8 per_device_train_batch_size=8 num_generations=8 vllm_gpu_memory_utilization=0.5
 
-# [rank2]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/examples/scripts_mtake/grpo_agent_mtake.py", line 340, in <module>
+# [rank2]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/examples/scripts_mtake/grpo_sql_agent_mtake.py", line 340, in <module>
 # [rank2]:     trainer.train()
 # [rank2]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/.venv/lib/python3.12/site-packages/transformers/trainer.py", line 1437, in train
 # [rank2]:     return inner_training_loop(
@@ -135,7 +132,7 @@ MODEL=ibm-granite/granite-4.2-3b  # GRPO AGENT OK for g423b use_vllm=True num_pr
 # [rank2]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/trl/trainer/grpo_trainer.py", line 1663, in _calculate_rewards
 # [rank2]:     output_reward_func = reward_func(
 # [rank2]:                          ^^^^^^^^^^^^
-# [rank2]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/examples/scripts_mtake/grpo_agent_mtake.py", line 128, in correctness_reward
+# [rank2]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/examples/scripts_mtake/grpo_sql_agent_mtake.py", line 128, in correctness_reward
 # [rank2]:     raw = completion[-1]["content"].lower()
 # [rank2]:           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 # [rank2]: AttributeError: 'list' object has no attribute 'lower'
@@ -175,15 +172,15 @@ ACCELERATE_OPT=""
 #ACCELERATE_OPT="${ACCELERATE_OPT} --offload_optimizer_device cpu"  # for zero_stage>=2  # DPO OK for g4hs
 #ACCELERATE_OPT="${ACCELERATE_OPT} --offload_param_device cpu"  # for zero_stage>=3  # DPO OK for g4hs
 
-#OUTPUT_DIR="trainer_output/${MODEL##*/}${_DATASET_S}-grpo_agent_separate-${START_TIME_STR}-${HOSTNAME_S}"  # NOTE neither timestamp nor hostname works with preemptable queue
-OUTPUT_DIR="trainer_output/${MODEL##*/}${_DATASET_S}-grpo_agent_separate"  # NOTE neither timestamp nor hostname works with preemptable queue
+#OUTPUT_DIR="trainer_output/${MODEL##*/}${_DATASET_S}-grpo_sql_agent-${START_TIME_STR}-${HOSTNAME_S}"  # NOTE neither timestamp nor hostname works with preemptable queue
+OUTPUT_DIR="trainer_output/${MODEL##*/}${_DATASET_S}-grpo_sql_agent"  # NOTE neither timestamp nor hostname works with preemptable queue
 
 echo "================== ENVIRONMENT VARIABLES ===================" | tee -a ${LOGFILE}
 env 2>&1 | tee -a ${LOGFILE}
 echo "============================================================" | tee -a ${LOGFILE}
 
 
-# See https://github.com/mtake/trl/blob/main/examples/scripts/grpo_agent.py
+# See https://github.com/mtake/trl/blob/main/examples/scripts/grpo_sql_agent.py
 cmd="${ENV}accelerate launch --config_file ${ACCELERATE_CONFIG}${ACCELERATE_OPT} ${BASENAME}.py --model_name_or_path ${MODEL}"
 
 # @@@ahoaho XXX ???
@@ -196,14 +193,7 @@ cmd="${ENV}accelerate launch --config_file ${ACCELERATE_CONFIG}${ACCELERATE_OPT}
 cmd="$cmd --output_dir ${OUTPUT_DIR}"
 
 # @@@ahoaho XXX ???
-if [[ -n "${TOOLS}" ]]; then
-    cmd="$cmd --tools ${TOOLS}"
-fi
-
-# @@@ahoaho XXX ???
-if [[ -n "${REWARD_FUNCS}" ]]; then
-    cmd="$cmd --reward_funcs ${REWARD_FUNCS}"
-fi
+# cmd="$cmd --reward_funcs ${REWARD_FUNCS}"
 
 # @@@ahoaho XXX
 #cmd="$cmd --num_generations 4"  # default: 8. The effective batch size (num_processes * per_device_batch_size * gradient_accumulation_steps) must be evenly divisible by this value.
@@ -223,8 +213,8 @@ cmd="$cmd --max_steps 30"  # default: -1 (len(train split) * num_train_epochs)
 #cmd="$cmd --save_steps 100"  # default: 500. an integer as steps or a float in range `[0,1)` as ratio of total training steps.
 # @@@ahoaho XXX WIP for functional test
 cmd="$cmd --save_steps 10"  # default: 500. an integer as steps or a float in range `[0,1)` as ratio of total training steps.
-# @@@ahoaho XXX WIP preemptable queue requires this
-cmd="$cmd --resume_from_checkpoint True"  # default: None  # GRPO OK for g428bpre(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True, GRPO OK? for g413b(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True use_vllm=True, GRPO OK? for g428b(preemptable) use_vllm=True num_processes=8 per_device_train_batch_size=8 num_generations=8 vllm_gpu_memory_utilization=0.5 save_strategy=steps save_steps=50 resume_from_checkpoint=True
+# @@@ahoaho XXX NOT TESTED
+# cmd="$cmd --resume_from_checkpoint True"  # default: None  # GRPO OK for g428bpre(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True, GRPO OK? for g413b(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True use_vllm=True, GRPO OK? for g428b(preemptable) use_vllm=True num_processes=8 per_device_train_batch_size=8 num_generations=8 vllm_gpu_memory_utilization=0.5 save_strategy=steps save_steps=50 resume_from_checkpoint=True
 #cmd="$cmd --gradient_accumulation_steps 8"  # default: 1  # DPO OK for g4hs
 # @@@ahoaho XXX
 #cmd="$cmd --logging_strategy epoch"  # default: steps, choices: [no, steps, epoch]
@@ -232,10 +222,10 @@ cmd="$cmd --resume_from_checkpoint True"  # default: None  # GRPO OK for g428bpr
 cmd="$cmd --log_completions True"  # default: False
 cmd="$cmd --num_completions_to_print 10"  # default: None (means all)
 cmd="$cmd --report_to trackio"  # default: none, choices: [none, all, trackio, wandb]
-# * Trackio project initialized: grpo_agent_mtake
+# * Trackio project initialized: grpo_sql_agent_mtake
 # * Trackio metrics logged to: /u/mtake/.cache/huggingface/trackio
-# * View dashboard by running in your terminal: trackio show --project "grpo_agent_mtake"
-# * or by running in Python: trackio.show(project="grpo_agent_mtake")
+# * View dashboard by running in your terminal: trackio show --project "grpo_sql_agent_mtake"
+# * or by running in Python: trackio.show(project="grpo_sql_agent_mtake")
 # * NVIDIA GPU detected, enabling automatic GPU metrics logging
 # * psutil detected, enabling automatic CPU/system metrics logging
 # * Trackio directory /u/mtake/.cache/huggingface/trackio appears to be on a network filesystem: logging via append-only JSONL fragments instead of direct SQLite writes. Set TRACKIO_STORAGE_MODE=sqlite to override.

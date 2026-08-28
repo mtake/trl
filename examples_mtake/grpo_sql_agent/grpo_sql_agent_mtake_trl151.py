@@ -23,7 +23,7 @@
 """
 # Full training
 ```
-python examples/scripts/grpo_agent.py \
+python examples/scripts/grpo_sql_agent.py \
     --model_name_or_path Qwen/Qwen3-1.7B \
     --output_dir grpo_biogrid_qwen_3g-1.7b \
     --push_to_hub True \
@@ -54,7 +54,7 @@ from trl import GRPOConfig, GRPOTrainer, ModelConfig, ScriptArguments, TrlParser
 # ~/.cache/huggingface/trackio/huggingface(or --project).db
 # trackio list projects
 # trackio show --project huggingface(or --project)
-# os.environ.setdefault("TRACKIO_SPACE_ID", "grpo_agent_mtake")  # if set, the log data will be stored in the HuggingFace space ${HF_USER}/${TRACKIO_SPACE_ID}
+# os.environ.setdefault("TRACKIO_SPACE_ID", "grpo_sql_agent_mtake")  # if set, the log data will be stored in the HuggingFace space ${HF_USER}/${TRACKIO_SPACE_ID}
 
 
 def query_reward(completions, answer, **kwargs):

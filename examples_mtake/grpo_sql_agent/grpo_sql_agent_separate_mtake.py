@@ -23,7 +23,7 @@
 """
 # Full training
 ```
-python examples/scripts/grpo_agent.py \
+python examples/scripts/grpo_sql_agent.py \
     --model_name_or_path Qwen/Qwen3-1.7B \
     --output_dir grpo_biogrid_qwen_3g-1.7b \
     --push_to_hub True \

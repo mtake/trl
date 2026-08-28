@@ -23,7 +23,7 @@
 """
 # Full training
 ```
-python examples/scripts/grpo_agent.py \
+python examples/scripts/grpo_sql_agent.py \
     --model_name_or_path Qwen/Qwen3-1.7B \
     --output_dir grpo_biogrid_qwen_3g-1.7b \
     --push_to_hub True \
@@ -41,6 +41,8 @@ import os
 import re
 import signal
 import sqlite3
+# @@@ahoaho XXX
+import sys
 import textwrap
 from contextlib import contextmanager
 
@@ -125,6 +127,8 @@ def correctness_reward(completions, answer, **kwargs):
     """
     rewards = []
     for completion, ans in zip(completions, answer, strict=False):
+        # @@@ahoaho XXX granite-4.2 could return completion[-1]["content"] as list, which will cause an error.
+        # print(f"XXX completion[-1] = XXX{completion[-1]}XXX")
         raw = completion[-1]["content"].lower()
 
         # detect form *yes* or *no*
@@ -337,7 +341,16 @@ if __name__ == "__main__":
     # ------------------------
     # Train
     # ------------------------
-    trainer.train()
+    # @@@ahoaho XXX
+    # trainer.train()
+    resume_from_checkpoint = training_args.resume_from_checkpoint
+    if isinstance(resume_from_checkpoint, str) and resume_from_checkpoint.lower() in ["true", "yes", "1"]:
+        resume_from_checkpoint = True
+    if resume_from_checkpoint is True:
+        sys.path.insert(0, os.path.dirname(__file__))
+        from utils_mtake import get_last_checkpoint_safe
+        resume_from_checkpoint = get_last_checkpoint_safe(training_args.output_dir)
+    trainer.train(resume_from_checkpoint=resume_from_checkpoint)
 
     # ------------------------
     # Save and push
