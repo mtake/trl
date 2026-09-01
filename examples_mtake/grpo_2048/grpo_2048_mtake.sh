@@ -86,7 +86,7 @@ fi
 # @@@ahoaho XXX
 #MODEL=Qwen/Qwen2-0.5B-Instruct
 ####MODEL=Qwen/Qwen3-0.6B  # GRPO AGENT OK
-MODEL=Qwen/Qwen3-4B  # GRPO 2048 default
+MODEL=Qwen/Qwen3-4B  # GRPO 2048 default for q34b
 #MODEL=ibm-granite/granite-3.3-8b-instruct
 #MODEL=ibm-granite/granite-4.0-micro
 #MODEL=ibm-granite/granite-4.0-h-micro
@@ -99,7 +99,7 @@ MODEL=Qwen/Qwen3-4B  # GRPO 2048 default
 ####MODEL=trainer_output/granite-4.1-8b-retriever_call_train_data.granite4_8b.v2.0406-SFT-sft-20260416-100514-p1-r23-n3-g418b-3epochs-8192length-rtrvr.v2-transformers4576
 #MODEL=models/granite-4.1-30b
 #MODEL=trainer_output/granite-4.1-30b-zragrtrvr.v2-SFT-sft-20260421-134025-p6-r14-n1-g4130b-3epochs-8192length-rtrvr.v2
-# MODEL=ibm-granite/granite-4.2-3b  # GRPO AGENT OK for g423b use_vllm=True num_processes=4 per_device_train_batch_size=8 num_generations=8 vllm_gpu_memory_utilization=0.5
+#MODEL=ibm-granite/granite-4.2-3b  # GRPO AGENT OK for g423b use_vllm=True num_processes=4 per_device_train_batch_size=8 num_generations=8 vllm_gpu_memory_utilization=0.5
 #MODEL=ibm-granite/granite-4.2-8b  # GRPO OK? for g428b(preemptable) use_vllm=True num_processes=8 per_device_train_batch_size=8 num_generations=8 vllm_gpu_memory_utilization=0.5 save_strategy=steps save_steps=50 resume_from_checkpoint=True, GRPO AGENT OK for g428b use_vllm=True num_processes=8 per_device_train_batch_size=8 num_generations=8 vllm_gpu_memory_utilization=0.5
 
 # [rank2]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/examples/scripts_mtake/grpo_sql_agent_mtake.py", line 340, in <module>
@@ -162,7 +162,7 @@ MODEL_S="${MODEL_S//./_}"
 #ACCELERATE_CONFIG=accelerate_configs/zero2_1node_8proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/zero3_1node_1proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/zero3_1node_2proc.yaml  # SFT CUDA OOM for g338b, DPO OK for g4m, g4hm, g4ht dtype=bfloat16, DPO CUDA OOM for g418b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
-ACCELERATE_CONFIG=accelerate_configs/zero3_1node_4proc.yaml  # SFT OK for g338b, DPO OK for q205b, g338b, g4m, g4hm, g4ht dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16, DPO OK for g418b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO CUDA OOM for g4130b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, GRPO AGENT OK for q306b, GRPO AGENT OK for g413b use_vllm=True, GRPO AGENT OK for g423b use_vllm=True num_processes=4 per_device_train_batch_size=8 num_generations=8 vllm_gpu_memory_utilization=0.5, GRPO AGENT OK for g423b use_vllm=True num_processes=4 per_device_train_batch_size=8 num_generations=8 vllm_gpu_memory_utilization=0.5
+ACCELERATE_CONFIG=accelerate_configs/zero3_1node_4proc.yaml  # SFT OK for g338b, DPO OK for q205b, g338b, g4m, g4hm, g4ht dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16, DPO OK for g418b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO CUDA OOM for g4130b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, GRPO AGENT OK for q306b, GRPO AGENT OK for g413b use_vllm=True, GRPO AGENT OK for g423b use_vllm=True num_processes=4 per_device_train_batch_size=8 num_generations=8 vllm_gpu_memory_utilization=0.5, GRPO AGENT OK for g423b use_vllm=True num_processes=4 per_device_train_batch_size=8 num_generations=8 vllm_gpu_memory_utilization=0.5, GRPO 2048 OK for q34b
 ####ACCELERATE_CONFIG=accelerate_configs/zero3_1node_8proc.yaml  # DPO OK for g338b dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO OK for g4hs offload_optimizer_device=cpu offload_param_device=cpu dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO OK for g4130b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, GRPO AGENT OK for g418b use_vllm=True num_processes=8 per_device_train_batch_size=8 num_generations=8 vllm_gpu_memory_utilization=0.5, GRPO AGENT OK for g428b use_vllm=True num_processes=8 per_device_train_batch_size=8 num_generations=8 vllm_gpu_memory_utilization=0.5
 ####ACCELERATE_CONFIG=accelerate_configs/zero3_1node_8proc_offload.yaml  # DPO OK for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
 
@@ -207,18 +207,17 @@ cmd="$cmd --per_device_train_batch_size 4"  # default: 8  # GRPO OK? for q306b n
 #cmd="$cmd --num_train_epochs 1"  # default: 3
 # @@@ahoaho XXX WIP for functional test
 ####cmd="$cmd --save_strategy epoch"  # default: steps
-# cmd="$cmd --save_strategy steps"  # default: steps
+cmd="$cmd --save_strategy steps"  # default: steps
 ####cmd="$cmd --max_steps 30"  # default: -1 (len(train split) * num_train_epochs)
 # @@@ahoaho XXX WIP for functional test
-# cmd="$cmd --max_steps 30"  # default: -1 (len(train split) * num_train_epochs)
+cmd="$cmd --max_steps 30"  # default: -1 (len(train split) * num_train_epochs)
 #cmd="$cmd --save_steps 100"  # default: 500. an integer as steps or a float in range `[0,1)` as ratio of total training steps.
 # @@@ahoaho XXX WIP for functional test
-# cmd="$cmd --save_steps 10"  # default: 500. an integer as steps or a float in range `[0,1)` as ratio of total training steps.
+cmd="$cmd --save_steps 10"  # default: 500. an integer as steps or a float in range `[0,1)` as ratio of total training steps.
 # @@@ahoaho XXX NOT TESTED
-# cmd="$cmd --resume_from_checkpoint True"  # default: None  # GRPO OK for g428bpre(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True, GRPO OK? for g413b(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True use_vllm=True, GRPO OK? for g428b(preemptable) use_vllm=True num_processes=8 per_device_train_batch_size=8 num_generations=8 vllm_gpu_memory_utilization=0.5 save_strategy=steps save_steps=50 resume_from_checkpoint=True
+#cmd="$cmd --resume_from_checkpoint True"  # default: None  # GRPO OK for g428bpre(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True, GRPO OK? for g413b(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True use_vllm=True, GRPO OK? for g428b(preemptable) use_vllm=True num_processes=8 per_device_train_batch_size=8 num_generations=8 vllm_gpu_memory_utilization=0.5 save_strategy=steps save_steps=50 resume_from_checkpoint=True
 cmd="$cmd --gradient_accumulation_steps 2"  # default: 1  # GRPO 2048 default for q43b
 #cmd="$cmd --gradient_accumulation_steps 8"  # default: 1  # DPO OK for g4hs
-# @@@ahoaho XXX
 cmd="$cmd --max_completion_length 2048"  # default: 512. GRPO 2048 default for q34b
 # @@@ahoaho XXX
 #cmd="$cmd --logging_strategy epoch"  # default: steps, choices: [no, steps, epoch]
@@ -226,7 +225,7 @@ cmd="$cmd --logging_steps 1"  # default: 10. an integer as steps or a float in r
 #cmd="$cmd --logging_steps 10"  # default: 10. an integer as steps or a float in range `[0,1)` as ` as ratio of total training steps.
 cmd="$cmd --log_completions True"  # default: False
 cmd="$cmd --num_completions_to_print 2"  # default: None (means all). GRPO 2048 default for q34b
-# cmd="$cmd --num_completions_to_print 10"  # default: None (means all)
+#cmd="$cmd --num_completions_to_print 10"  # default: None (means all)
 cmd="$cmd --report_to trackio"  # default: none, choices: [none, all, trackio, wandb]
 # * Trackio project initialized: grpo_2048_mtake
 # * Trackio metrics logged to: /u/mtake/.cache/huggingface/trackio
@@ -236,7 +235,7 @@ cmd="$cmd --report_to trackio"  # default: none, choices: [none, all, trackio, w
 # * psutil detected, enabling automatic CPU/system metrics logging
 # * Trackio directory /u/mtake/.cache/huggingface/trackio appears to be on a network filesystem: logging via append-only JSONL fragments instead of direct SQLite writes. Set TRACKIO_STORAGE_MODE=sqlite to override.
 # * Created new run: brave-forest-1
-# cmd="$cmd --trackio_space_id trl-2048"  # default: None (means local logging). The Hugging Face Space ID to use for live Trackio logging. GRPO 2048 default for q34b
+#cmd="$cmd --trackio_space_id trl-2048"  # default: None (means local logging). The Hugging Face Space ID to use for live Trackio logging. GRPO 2048 default for q34b
 cmd="$cmd --project ${BASENAME}"  # default: huggingface. The name of the project to use for logging. Currently, only used by Trackio.
 cmd="$cmd --run_name ${MODEL_S}"  # default: None. A descriptor for the run. Typically used for trackio, wandb, etc.
 #cmd="$cmd --learning_rate 5.0e-7"  # default: 1e-06
