@@ -159,6 +159,7 @@ def main() -> None:
         model=model_args.model_name_or_path,
         train_dataset=dataset,
         reward_funcs=reward_score,
+        # @@@ahoaho XXX
         # args=GRPOConfig(
         #     chat_template_kwargs={"enable_thinking": False},
         #     logging_steps=1,
