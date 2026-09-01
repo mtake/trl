@@ -151,6 +151,12 @@ def main() -> None:
 
     training_args.chat_template_kwargs = {"enable_thinking": False}
 
+    # @@@ahoaho XXX
+    local_rank = int(os.environ.get("LOCAL_RANK", 0))
+    if local_rank == 0:
+        print(f"XXX training_args: {training_args} XXX")
+        print(f"XXX model_args: {model_args} XXX")
+
     dataset = Dataset.from_dict({"prompt": [[{"role": "user", "content": PROMPT}] for _ in range(1000)]})
 
     trainer = GRPOTrainer(
