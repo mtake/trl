@@ -40,14 +40,19 @@ uv pip install -e .
 
 Usage:
 
+# @@@ahoaho XXX
+# ```sh
+# python examples/grpo_echo/grpo_echo.py
+# python examples/grpo_echo/grpo_echo.py --model Qwen/Qwen2.5-0.5B-Instruct --env-host https://qgallouedec-echo-env.hf.space
+# ```
 ```sh
-python examples/grpo_echo/grpo_echo.py
-python examples/grpo_echo/grpo_echo.py --model Qwen/Qwen2.5-0.5B-Instruct --env-host https://qgallouedec-echo-env.hf.space
+python examples_mtake/grpo_echo/grpo_echo_mtake.py
+python examples_mtake/grpo_echo/grpo_echo_mtake.py --model_name_or_path Qwen/Qwen2.5-0.5B-Instruct --env_host https://qgallouedec-echo-env.hf.space
 ```
 """
 
-import argparse
 # @@@ahoaho XXX
+# import argparse
 import os
 import sys
 
@@ -88,6 +93,7 @@ class GRPOEchoScriptArguments(ScriptArguments):
     Args:
         env_host (`str`, *optional*):
             URL for the Echo environment HF Space. Default is "https://qgallouedec-echo-env.hf.space".
+        # @@@ahoaho XXX
         # tools (`list[str]`, *optional*):
         #     Available tools. Supported values are:
         #         - `"query_biogrid"`
@@ -109,6 +115,7 @@ class GRPOEchoScriptArguments(ScriptArguments):
             "help": "URL for the Echo environment HF Space."
         },
     )
+    # @@@ahoaho XXX
     # tools: list[str] | None = field(
     #     default=None,
     #     metadata={
@@ -165,7 +172,9 @@ def main():
 
     class EchoToolEnv:
         def __init__(self):
-            self.env = EchoEnv(base_url=args.env_host)
+            # @@@ahoaho XXX
+            # self.env = EchoEnv(base_url=args.env_host)
+            self.env = EchoEnv(base_url=script_args.env_host)
             self.reward = 0.0
 
         def reset(self, **kwargs) -> None | str:
@@ -186,32 +195,23 @@ def main():
             self.reward = observation.observation.reward
             return observation.observation.echoed_message
 
-    # @@@ahoaho XXX
-    # trainer = GRPOTrainer(
-    #     model=args.model,
-    #     train_dataset=dataset,
-    #     reward_funcs=reward_func,
-    #     args=GRPOConfig(
-    #         chat_template_kwargs={"enable_thinking": False},
-    #         log_completions=True,
-    #         logging_steps=2,
-    #         num_completions_to_print=1,
-    #     ),
-    #     environment_factory=EchoToolEnv,
-    # )
     trainer = GRPOTrainer(
+        # @@@ahoaho XXX
+        # model=args.model,
         model=model_args.model_name_or_path,
         train_dataset=dataset,
         reward_funcs=reward_func,
-        args=training_args,
+        # @@@ahoaho XXX
         # args=GRPOConfig(
         #     chat_template_kwargs={"enable_thinking": False},
         #     log_completions=True,
         #     logging_steps=2,
         #     num_completions_to_print=1,
         # ),
+        args=training_args,
         environment_factory=EchoToolEnv,
     )
+    # @@@ahoaho XXX
     # trainer.train()
     resume_from_checkpoint = training_args.resume_from_checkpoint
     if isinstance(resume_from_checkpoint, str) and resume_from_checkpoint.lower() in ["true", "yes", "1"]:
