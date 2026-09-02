@@ -92,7 +92,7 @@ class GRPOEchoScriptArguments(ScriptArguments):
 
     Args:
         env_host (`str`, *optional*):
-            URL for the Echo environment HF Space. Default is "https://qgallouedec-echo-env.hf.space".
+            URL for the Echo environment HF Space. Default is "http://localhost:8000".
         # @@@ahoaho XXX
         # tools (`list[str]`, *optional*):
         #     Available tools. Supported values are:
@@ -110,7 +110,7 @@ class GRPOEchoScriptArguments(ScriptArguments):
     """
 
     env_host: str | None = field(
-        default="https://qgallouedec-echo-env.hf.space",
+        default="http://localhost:8000",
         metadata={
             "help": "URL for the Echo environment HF Space."
         },
