@@ -12,10 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# @@@ahoaho XXX
+#     "openenv-echo-env @ git+https://huggingface.co/spaces/qgallouedec/echo_env",
+
 # /// script
 # dependencies = [
 #     "trl",
-#     "openenv-echo-env @ git+https://huggingface.co/spaces/qgallouedec/echo_env",
+#     "openenv-echo-env @ git+https://huggingface.co/spaces/openenv/echo_env",
 # ]
 # ///
 
@@ -26,8 +29,12 @@ sent to it and rewards longer completions.
 
 Setup (Option A - Install from HF Space, recommended):
 
+# @@@ahoaho XXX
+# ```sh
+# uv pip install git+https://huggingface.co/spaces/qgallouedec/echo_env
+# ```
 ```sh
-uv pip install git+https://huggingface.co/spaces/qgallouedec/echo_env
+uv pip install git+https://huggingface.co/spaces/openenv/echo_env
 ```
 
 Setup (Option B - Clone OpenEnv repo, for development):
@@ -47,7 +54,8 @@ Usage:
 # ```
 ```sh
 python examples_mtake/grpo_echo/grpo_echo_mtake.py
-python examples_mtake/grpo_echo/grpo_echo_mtake.py --model_name_or_path Qwen/Qwen3-0.6B --env_host http://localhost:8000
+python examples_mtake/grpo_echo/grpo_echo_mtake.py --model_name_or_path Qwen/Qwen3-0.6B --env_host https://openenv-echo-env.hf.space
+# python examples_mtake/grpo_echo/grpo_echo_mtake.py --model_name_or_path Qwen/Qwen3-0.6B --env_host http://localhost:8000
 ```
 """
 
