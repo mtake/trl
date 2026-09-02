@@ -185,10 +185,10 @@ env 2>&1 | tee -a ${LOGFILE}
 echo "============================================================" | tee -a ${LOGFILE}
 
 
-# See https://github.com/mtake/trl/blob/main/examples/grpo_2048/grpo_2048.py
+# See https://github.com/mtake/trl/blob/main/examples/grpo_echo/grpo_echo.py
 # @@@ahoaho XXX
-# cmd="${ENV}accelerate launch --config_file ${ACCELERATE_CONFIG}${ACCELERATE_OPT} ${BASENAME}.py --model_name_or_path ${MODEL}"
-cmd="${ENV}accelerate launch --config_file ${ACCELERATE_CONFIG}${ACCELERATE_OPT} ${BASENAME}.py --model ${MODEL}"
+cmd="${ENV}accelerate launch --config_file ${ACCELERATE_CONFIG}${ACCELERATE_OPT} ${BASENAME}.py --model_name_or_path ${MODEL}"
+# cmd="${ENV}accelerate launch --config_file ${ACCELERATE_CONFIG}${ACCELERATE_OPT} ${BASENAME}.py --model ${MODEL}"
 
 # @@@ahoaho XXX ???
 # if [[ -n "${USE_CONFIG}" ]]; then
@@ -203,7 +203,7 @@ cmd="$cmd --output_dir ${OUTPUT_DIR}"
 # cmd="$cmd --reward_funcs ${REWARD_FUNCS}"
 
 # @@@ahoaho XXX ???
-cmd="$cmd --env-host ${ENV_HOST}"
+cmd="$cmd --env_host ${ENV_HOST}"
 
 # @@@ahoaho XXX
 #cmd="$cmd --num_generations 4"  # default: 8. The effective batch size (num_processes * per_device_batch_size * gradient_accumulation_steps) must be evenly divisible by this value.
@@ -211,7 +211,7 @@ cmd="$cmd --env-host ${ENV_HOST}"
 # @@@ahoaho XXX
 #cmd="$cmd --per_device_train_batch_size 1"  # default: 8  # DPO OK for g4hs
 #cmd="$cmd --per_device_train_batch_size 2"  # default: 8  # GRPO OK? for g418b num_processes=4 per_device_train_batch_size=2 num_generations=8
-cmd="$cmd --per_device_train_batch_size 4"  # default: 8  # GRPO OK? for q306b num_processes=4 per_device_train_batch_size=4 num_generations=8, GRPO 2048 default for q34b
+#cmd="$cmd --per_device_train_batch_size 4"  # default: 8  # GRPO OK? for q306b num_processes=4 per_device_train_batch_size=4 num_generations=8, GRPO 2048 default for q34b
 #cmd="$cmd --per_device_train_batch_size 8"  # default: 8  # GRPO OK? for q306b num_processes=4 per_device_train_batch_size=8 num_generations=8, GRPO AGENT OK for g413b use_vllm=True, GRPO AGENT OK for g418b use_vllm=True num_processes=8 per_device_train_batch_size=8 num_generations=8 vllm_gpu_memory_utilization=0.5, GRPO AGENT OK for g428b use_vllm=True num_processes=8 per_device_train_batch_size=8 num_generations=8 vllm_gpu_memory_utilization=0.5, GRPO AGENT OK for g423b use_vllm=True num_processes=4 per_device_train_batch_size=8 num_generations=8 vllm_gpu_memory_utilization=0.5
 #cmd="$cmd --num_train_epochs 1"  # default: 3
 # @@@ahoaho XXX WIP for functional test
@@ -224,15 +224,17 @@ cmd="$cmd --max_steps 30"  # default: -1 (len(train split) * num_train_epochs)
 # @@@ahoaho XXX WIP for functional test
 cmd="$cmd --save_steps 10"  # default: 500. an integer as steps or a float in range `[0,1)` as ratio of total training steps.
 cmd="$cmd --resume_from_checkpoint True"  # default: None  # GRPO OK for g428bpre(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True, GRPO OK? for g413b(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True use_vllm=True, GRPO OK? for g428b(preemptable) use_vllm=True num_processes=8 per_device_train_batch_size=8 num_generations=8 vllm_gpu_memory_utilization=0.5 save_strategy=steps save_steps=50 resume_from_checkpoint=True, GRPO 2048 OK for q34b
-cmd="$cmd --gradient_accumulation_steps 2"  # default: 1  # GRPO 2048 default for q34b
+#cmd="$cmd --gradient_accumulation_steps 2"  # default: 1  # GRPO 2048 default for q34b
 #cmd="$cmd --gradient_accumulation_steps 8"  # default: 1  # DPO OK for g4hs
-cmd="$cmd --max_completion_length 2048"  # default: 512. GRPO 2048 default for q34b
+#cmd="$cmd --max_completion_length 2048"  # default: 512. GRPO 2048 default for q34b
 # @@@ahoaho XXX
 #cmd="$cmd --logging_strategy epoch"  # default: steps, choices: [no, steps, epoch]
-cmd="$cmd --logging_steps 1"  # default: 10. an integer as steps or a float in range `[0,1)` as ` as ratio of total training steps. GRPO 2048 default for q34b
+#cmd="$cmd --logging_steps 1"  # default: 10. an integer as steps or a float in range `[0,1)` as ` as ratio of total training steps. GRPO 2048 default for q34b
+cmd="$cmd --logging_steps 2"  # default: 10. an integer as steps or a float in range `[0,1)` as ` as ratio of total training steps. GRPO 2048 default for q34b, GRPO ECHO default.
 #cmd="$cmd --logging_steps 10"  # default: 10. an integer as steps or a float in range `[0,1)` as ` as ratio of total training steps.
 cmd="$cmd --log_completions True"  # default: False
-cmd="$cmd --num_completions_to_print 2"  # default: None (means all). GRPO 2048 default for q34b
+cmd="$cmd --num_completions_to_print 1"  # default: None (means all). GRPO 2048 default for q34b, GRPO ECHO default.
+#cmd="$cmd --num_completions_to_print 2"  # default: None (means all). GRPO 2048 default for q34b
 #cmd="$cmd --num_completions_to_print 10"  # default: None (means all)
 cmd="$cmd --report_to trackio"  # default: none, choices: [none, all, trackio, wandb]
 # * Trackio project initialized: grpo_2048_mtake

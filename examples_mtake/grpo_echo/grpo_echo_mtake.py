@@ -47,29 +47,89 @@ python examples/grpo_echo/grpo_echo.py --model Qwen/Qwen2.5-0.5B-Instruct --env-
 """
 
 import argparse
+# @@@ahoaho XXX
+import os
+import sys
 
+# @@@ahoaho XXX
+from dataclasses import dataclass, field
 from datasets import Dataset
 from echo_env import EchoEnv
 from echo_env.models import EchoAction
 
-from trl import GRPOConfig, GRPOTrainer
+# @@@ahoaho XXX
+# from trl import GRPOConfig, GRPOTrainer
+from trl import GRPOConfig, GRPOTrainer, ModelConfig, ScriptArguments, TrlParser
 
 
-def parse_args():
-    parser = argparse.ArgumentParser(description="Run GRPO training with Echo environment.")
-    parser.add_argument(
-        "--model",
-        type=str,
-        default="Qwen/Qwen3-0.6B",
-        help="Model to use for training.",
-    )
-    parser.add_argument(
-        "--env-host",
-        type=str,
+# @@@ahoaho XXX
+# def parse_args():
+#     parser = argparse.ArgumentParser(description="Run GRPO training with Echo environment.")
+#     parser.add_argument(
+#         "--model",
+#         type=str,
+#         default="Qwen/Qwen3-0.6B",
+#         help="Model to use for training.",
+#     )
+#     parser.add_argument(
+#         "--env-host",
+#         type=str,
+#         default="https://qgallouedec-echo-env.hf.space",
+#         help="URL for the Echo environment HF Space.",
+#     )
+#     return parser.parse_args()
+
+
+@dataclass
+class GRPOEchoScriptArguments(ScriptArguments):
+    """
+    Script arguments for the GRPO training script.
+
+    Args:
+        env_host (`str`, *optional*):
+            URL for the Echo environment HF Space. Default is "https://qgallouedec-echo-env.hf.space".
+        # tools (`list[str]`, *optional*):
+        #     Available tools. Supported values are:
+        #         - `"query_biogrid"`
+        #         - any dotted import path " (e.g., `'my_lib.tools.custom_tool'`).
+        # reward_model_name_or_path (`str`, *optional*):
+        #     Reward model id of a pretrained model hosted inside a model repo on huggingface.co or local path to a
+        #     directory containing model weights saved using [`~transformers.PreTrainedModel.save_pretrained`].
+        # reward_funcs (`list[str]`, *optional*):
+        #     Reward functions to use. Supported values are:
+        #         - `"correctness_reward"`
+        #         - `"structure_reward"`
+        #         - `"query_reward"`
+        #         - any dotted import path " (e.g., `'my_lib.rewards.custom_reward'`).
+    """
+
+    env_host: str | None = field(
         default="https://qgallouedec-echo-env.hf.space",
-        help="URL for the Echo environment HF Space.",
+        metadata={
+            "help": "URL for the Echo environment HF Space."
+        },
     )
-    return parser.parse_args()
+    # tools: list[str] | None = field(
+    #     default=None,
+    #     metadata={
+    #         "help": "Available tools. Supported values are: `query_biogrid`, or "
+    #         "any dotted import path (e.g., `'my_lib.tools.custom_tool'`)."
+    #     },
+    # )
+    # reward_model_name_or_path: str | None = field(
+    #     default=None,
+    #     metadata={
+    #         "help": "Reward model id of a pretrained model hosted inside a model repo on huggingface.co or "
+    #         "local path to a directory containing model weights saved using `PreTrainedModel.save_pretrained`."
+    #     },
+    # )
+    # reward_funcs: list[str] | None = field(
+    #     default=None,
+    #     metadata={
+    #         "help": "Reward functions to use. Supported values are: `correctness_reward`, `structure_reward`, `query_reward`, or "
+    #         "any dotted import path (e.g., `'my_lib.rewards.custom_reward'`)."
+    #     },
+    # )
 
 
 def reward_func(environments, **kwargs):
@@ -77,7 +137,19 @@ def reward_func(environments, **kwargs):
 
 
 def main():
-    args = parse_args()
+    # @@@ahoaho XXX
+    # args = parse_args()
+    parser = TrlParser((GRPOEchoScriptArguments, GRPOConfig, ModelConfig))
+    script_args, training_args, model_args = parser.parse_args_and_config()
+
+    training_args.chat_template_kwargs = {"enable_thinking": False}
+
+    # @@@ahoaho XXX
+    local_rank = int(os.environ.get("LOCAL_RANK", 0))
+    if local_rank == 0:
+        print(f"XXX script_args: {script_args} XXX")
+        print(f"XXX training_args: {training_args} XXX")
+        print(f"XXX model_args: {model_args} XXX")
 
     dataset = Dataset.from_dict(
         {
@@ -114,19 +186,41 @@ def main():
             self.reward = observation.observation.reward
             return observation.observation.echoed_message
 
+    # @@@ahoaho XXX
+    # trainer = GRPOTrainer(
+    #     model=args.model,
+    #     train_dataset=dataset,
+    #     reward_funcs=reward_func,
+    #     args=GRPOConfig(
+    #         chat_template_kwargs={"enable_thinking": False},
+    #         log_completions=True,
+    #         logging_steps=2,
+    #         num_completions_to_print=1,
+    #     ),
+    #     environment_factory=EchoToolEnv,
+    # )
     trainer = GRPOTrainer(
-        model=args.model,
+        model=model_args.model_name_or_path,
         train_dataset=dataset,
         reward_funcs=reward_func,
-        args=GRPOConfig(
-            chat_template_kwargs={"enable_thinking": False},
-            log_completions=True,
-            logging_steps=2,
-            num_completions_to_print=1,
-        ),
+        args=training_args,
+        # args=GRPOConfig(
+        #     chat_template_kwargs={"enable_thinking": False},
+        #     log_completions=True,
+        #     logging_steps=2,
+        #     num_completions_to_print=1,
+        # ),
         environment_factory=EchoToolEnv,
     )
-    trainer.train()
+    # trainer.train()
+    resume_from_checkpoint = training_args.resume_from_checkpoint
+    if isinstance(resume_from_checkpoint, str) and resume_from_checkpoint.lower() in ["true", "yes", "1"]:
+        resume_from_checkpoint = True
+    if resume_from_checkpoint is True:
+        sys.path.insert(0, os.path.dirname(__file__))
+        from utils_mtake import get_last_checkpoint_safe
+        resume_from_checkpoint = get_last_checkpoint_safe(training_args.output_dir)
+    trainer.train(resume_from_checkpoint=resume_from_checkpoint)
 
 
 if __name__ == "__main__":
