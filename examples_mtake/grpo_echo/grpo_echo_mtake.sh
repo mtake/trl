@@ -86,8 +86,8 @@ fi
 
 # @@@ahoaho XXX
 #MODEL=Qwen/Qwen2-0.5B-Instruct
-####MODEL=Qwen/Qwen3-0.6B  # GRPO AGENT OK
-MODEL=Qwen/Qwen3-4B  # GRPO 2048 default for q34b, GRPO ECHO WIP
+MODEL=Qwen/Qwen3-0.6B  # GRPO AGENT OK, GRPO ECHO WIP
+#MODEL=Qwen/Qwen3-4B  # GRPO 2048 default for q34b
 #MODEL=ibm-granite/granite-3.3-8b-instruct
 #MODEL=ibm-granite/granite-4.0-micro
 #MODEL=ibm-granite/granite-4.0-h-micro

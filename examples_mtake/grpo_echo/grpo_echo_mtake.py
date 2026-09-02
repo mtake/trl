@@ -47,7 +47,7 @@ Usage:
 # ```
 ```sh
 python examples_mtake/grpo_echo/grpo_echo_mtake.py
-python examples_mtake/grpo_echo/grpo_echo_mtake.py --model_name_or_path Qwen/Qwen2.5-0.5B-Instruct --env_host https://qgallouedec-echo-env.hf.space
+python examples_mtake/grpo_echo/grpo_echo_mtake.py --model_name_or_path Qwen/Qwen3-0.6B --env_host http://localhost:8000
 ```
 """
 
@@ -92,7 +92,7 @@ class GRPOEchoScriptArguments(ScriptArguments):
 
     Args:
         env_host (`str`, *optional*):
-            URL for the Echo environment HF Space. Default is "http://localhost:8000".
+            URL for the Echo environment HF Space. Default is "https://qgallouedec-echo-env.hf.space".
         # @@@ahoaho XXX
         # tools (`list[str]`, *optional*):
         #     Available tools. Supported values are:
@@ -110,7 +110,7 @@ class GRPOEchoScriptArguments(ScriptArguments):
     """
 
     env_host: str | None = field(
-        default="http://localhost:8000",
+        default="https://qgallouedec-echo-env.hf.space",
         metadata={
             "help": "URL for the Echo environment HF Space."
         },
