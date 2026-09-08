@@ -203,9 +203,13 @@ def main():
             Returns:
                 The echoed message.
             """
-            observation = self.env.step(EchoAction(message=message))
-            self.reward = observation.observation.reward
-            return observation.observation.echoed_message
+            # @@@ahoaho XXX
+            # observation = self.env.step(EchoAction(message=message))
+            # self.reward = observation.observation.reward
+            # return observation.observation.echoed_message
+            step_result = self.env.step(EchoAction(message=message))
+            self.reward = step_result.observation.reward
+            return step_result.observation.echoed_message
 
     trainer = GRPOTrainer(
         # @@@ahoaho XXX
