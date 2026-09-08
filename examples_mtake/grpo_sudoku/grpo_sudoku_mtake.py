@@ -87,17 +87,26 @@ python examples/grpo_sudoku/grpo_sudoku.py \
 from __future__ import annotations
 
 # ruff: noqa: T201
-import argparse
+# @@@ahoaho XXX
+# import argparse
+# @@@ahoaho XXX
+import os
 import sys
 import time
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
+# @@@ahoaho XXX
+from typing import Literal
 
+# @@@ahoaho XXX
+from dataclasses import dataclass, field
 from datasets import Dataset
 from openenv.core.containers.runtime import LocalDockerProvider
 
-from trl import GRPOConfig, GRPOTrainer, RichProgressCallback
+# @@@ahoaho XXX
+# from trl import GRPOConfig, GRPOTrainer, RichProgressCallback
+from trl import GRPOConfig, GRPOTrainer, ModelConfig, ScriptArguments, TrlParser, RichProgressCallback
 
 
 # Ensure src/ is on the path
@@ -111,81 +120,218 @@ from textarena_env import TextArenaAction, TextArenaEnv
 # ---------------------------------------------------------------------------
 
 
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="GRPO training for Sudoku")
+# @@@ahoaho XXX
+# def parse_args() -> argparse.Namespace:
+#     parser = argparse.ArgumentParser(description="GRPO training for Sudoku")
 
-    # Model
-    parser.add_argument("--model-id", default="Qwen/Qwen3-1.7B")
+#     # Model
+#     parser.add_argument("--model-id", default="Qwen/Qwen3-1.7B")  # @@@ahoaho XXX model_args.model_name_or_path TODO
+
+#     # @@@ahoaho XXX sudoku specific
+#     # Environment
+#     parser.add_argument("--env-host", type=str, default="https://openenv-sudoku.hf.space")
+#     parser.add_argument("--env-port", type=int, default=8001)
+#     parser.add_argument("--env-mode", choices=["docker-local", "docker-image", "space"], default="space")
+#     parser.add_argument("--env-image", type=str, default="textarena-env:latest")
+
+#     # @@@ahoaho XXX sudoku specific
+#     # Prompts
+#     parser.add_argument("--system-prompt-path", default="sudoku_prompt.txt")
+#     parser.add_argument("--dataset-prompt", default="Play Sudoku like an expert.")
+#     parser.add_argument("--dataset-size", type=int, default=1000)
+
+#     # @@@ahoaho XXX sudoku specific
+#     # Game settings
+#     parser.add_argument("--max-turns", type=int, default=100)
+#     parser.add_argument(
+#         "--difficulty",
+#         type=str,
+#         choices=["easy", "medium", "hard"],
+#         default="easy",
+#         help="Training difficulty: easy=guaranteed+options, medium=only options, hard=no hints",
+#     )
+#     parser.add_argument(
+#         "--api-delay", type=float, default=0.0, help="Delay in seconds between API calls to avoid rate limiting"
+#     )
+
+#     # Sampling
+#     parser.add_argument("--temperature", type=float, default=0.8)  # @@@ahoaho XXX training_args.temperature
+#     parser.add_argument("--top-k", type=int, default=10)  # @@@ahoaho XXX training_args.top_k
+#     parser.add_argument("--top-p", type=float, default=None, help="Top-p sampling parameter")  # @@@ahoaho XXX training_args.top_p
+
+#     # Training
+#     parser.add_argument("--learning-rate", type=float, default=5e-6)  # @@@ahoaho XXX training_args.learning_rate
+#     parser.add_argument("--weight-decay", type=float, default=0.0)  # @@@ahoaho XXX training_args.weight_decay
+#     parser.add_argument("--gradient-accumulation-steps", type=int, default=64)  # @@@ahoaho XXX training_args.gradient_accumulation_steps
+#     parser.add_argument("--warmup-steps", type=int, default=20)  # @@@ahoaho XXX training_args.warmup_steps
+#     parser.add_argument("--per-device-batch-size", type=int, default=1)  # @@@ahoaho XXX training_args.per_device_train_batch_size TODO
+#     parser.add_argument("--num-generations", type=int, default=8)  # @@@ahoaho XXX training_args.num_generations
+#     parser.add_argument("--num-epochs", type=int, default=1)  # @@@ahoaho XXX training_args.num_train_epochs TODO
+#     parser.add_argument("--max-completion-length", type=int, default=16384)  # @@@ahoaho XXX training_args.max_completion_length
+#     parser.add_argument("--resume-from-checkpoint", type=bool, default=False)  # @@@ahoaho XXX training_args.resume_from_checkpoint
+
+#     # Checkpoints
+#     parser.add_argument("--save-interval", type=int, default=10)  # @@@ahoaho XXX training_args.save_steps TODO
+#     parser.add_argument("--save-total-limit", type=int, default=None)  # @@@ahoaho XXX training_args.save_total_limit
+#     parser.add_argument("--output-dir", default=None)  # @@@ahoaho XXX training_args.output_dir
+
+#     # Logging
+#     parser.add_argument("--run-name", default=None)  # @@@ahoaho XXX training_args.run_name
+#     parser.add_argument("--project", default=None)  # @@@ahoaho XXX training_args.project
+#     parser.add_argument("--trackio-space-id", default="Sudoku-GRPO")  # @@@ahoaho XXX training_args.trackio_space_id
+#     parser.add_argument("--logging-steps", type=int, default=1)  # @@@ahoaho XXX training_args.logging_steps
+#     parser.add_argument(
+#         "--gradient-checkpointing",
+#         action=argparse.BooleanOptionalAction,
+#         default=True,
+#         help="Enable gradient checkpointing to save memory",
+#     )  # @@@ahoaho XXX training_args.gradient_checkpointing
+
+#     # LoRA / PEFT
+#     parser.add_argument(
+#         "--use-lora", action="store_true", default=False, help="Use LoRA for memory-efficient training"
+#     )  # @@@ XXX model_args.use_peft TODO
+#     parser.add_argument("--lora-r", type=int, default=16, help="LoRA rank")  # @@@ XXX model_args.lora_r
+#     parser.add_argument("--lora-alpha", type=int, default=32, help="LoRA alpha")  # @@@ XXX model_args.lora_alpha
+
+#     # vLLM
+#     # @@@ahoaho XXX TODO training_args.use_vllm = True
+#     parser.add_argument("--vllm-mode", choices=("colocate", "server"), default="colocate")  # @@@ahoaho XXX training_args.vllm_mode
+#     parser.add_argument("--vllm-server-url", type=str, default="http://localhost:8000")  # @@@ahoaho XXX training_args.vllm_server_base_url TODO
+#     parser.add_argument("--vllm-gpu-memory-utilization", type=float, default=0.15)  # @@@ahoaho XXX training_args.vllm_gpu_memory_utilization
+
+#     return parser.parse_args()
+
+
+# @@@ahoaho XXX
+@dataclass
+class GRPOSudokuScriptArguments(ScriptArguments):
+    """
+    Script arguments for the GRPO training script.
+
+    Args:
+        env_host (`str`, *optional*):
+            URL for the Sudoku environment HF Space. Default is "https://openenv-sudoku.hf.space".
+        env_port (`int`, *optional*):
+            Port for the Sudoku environment. Default is 8001.
+        env_mode (`str`, *optional*):
+            Mode for the Sudoku environment. Default is "space".
+        env_image (`str`, *optional*):
+            Image for the Sudoku environment. Default is "textarena-env:latest".
+        system_prompt_path (`str`, *optional*):
+            Path to the system prompt file. Default is "sudoku_prompt.txt".
+        dataset_prompt (`str`, *optional*):
+            User prompt. Default is "Play Sudoku like an expert.".
+        dataset_size (`int`, *optional*):
+            Dataset size. Default is 1000.
+        max_turns (`int`, *optional*):
+            Max turns to play game. Default is 100.
+        difficulty (`str`, *optional*):
+            Training difficulty: easy=guaranteed+options, medium=only options, hard=no hints. Default is "easy".
+        api_delay (`float`, *optional*):
+            Delay in seconds between API calls to avoid rate limiting. Default is 0.0.
+        # @@@ahoaho XXX
+        # tools (`list[str]`, *optional*):
+        #     Available tools. Supported values are:
+        #         - `"query_biogrid"`
+        #         - any dotted import path " (e.g., `'my_lib.tools.custom_tool'`).
+        # reward_model_name_or_path (`str`, *optional*):
+        #     Reward model id of a pretrained model hosted inside a model repo on huggingface.co or local path to a
+        #     directory containing model weights saved using [`~transformers.PreTrainedModel.save_pretrained`].
+        # reward_funcs (`list[str]`, *optional*):
+        #     Reward functions to use. Supported values are:
+        #         - `"correctness_reward"`
+        #         - `"structure_reward"`
+        #         - `"query_reward"`
+        #         - any dotted import path " (e.g., `'my_lib.rewards.custom_reward'`).
+    """
 
     # Environment
-    parser.add_argument("--env-host", type=str, default="https://openenv-sudoku.hf.space")
-    parser.add_argument("--env-port", type=int, default=8001)
-    parser.add_argument("--env-mode", choices=["docker-local", "docker-image", "space"], default="space")
-    parser.add_argument("--env-image", type=str, default="textarena-env:latest")
-
+    env_host: str | None = field(
+        default="https://openenv-sudoku.hf.space",
+        metadata={
+            "help": "URL for the Sudoku environment HF Space."
+        },
+    )
+    env_port: int | None = field(
+        default=8001,
+        metadata={
+            "help": "Port for the Sudoku environment."
+        },
+    )
+    env_mode: Literal["docker-local", "docker-image", "space"] | None = field(
+        default="space",
+        metadata={
+            "help": "Mode for the Sudoku environment."
+        },
+    )
+    env_image: str | None = field(
+        default="textarena-env:latest",
+        metadata={
+            "help": "Image for the Sudoku environment."
+        },
+    )
     # Prompts
-    parser.add_argument("--system-prompt-path", default="sudoku_prompt.txt")
-    parser.add_argument("--dataset-prompt", default="Play Sudoku like an expert.")
-    parser.add_argument("--dataset-size", type=int, default=1000)
-
+    system_prompt_path: str | None = field(
+        default="sudoku_prompt.txt",
+        metadata={
+            "help": "Path to the system prompt file."
+        },
+    )
+    dataset_prompt: str | None = field(
+        default="Play Sudoku like an expert.",
+        metadata={
+            "help": "User prompt."
+        },
+    )
+    dataset_size: int | None = field(
+        default=1000,
+        metadata={
+            "help": "Dataset size."
+        },
+    )
     # Game settings
-    parser.add_argument("--max-turns", type=int, default=100)
-    parser.add_argument(
-        "--difficulty",
-        type=str,
-        choices=["easy", "medium", "hard"],
+    max_turns: int | None = field(
+        default=100,
+        metadata={
+            "help": "Max turns to play game."
+        },
+    )
+    difficulty: Literal["easy", "medium", "hard"] | None = field(
         default="easy",
-        help="Training difficulty: easy=guaranteed+options, medium=only options, hard=no hints",
+        metadata={
+            "help": "Training difficulty: easy=guaranteed+options, medium=only options, hard=no hints."
+        },
     )
-    parser.add_argument(
-        "--api-delay", type=float, default=0.0, help="Delay in seconds between API calls to avoid rate limiting"
+    api_delay: float | None = field(
+        default=0.0,
+        metadata={
+            "help": "Delay in seconds between API calls to avoid rate limiting."
+        },
     )
+    # @@@ahoaho XXX
+    # tools: list[str] | None = field(
+    #     default=None,
+    #     metadata={
+    #         "help": "Available tools. Supported values are: `query_biogrid`, or "
+    #         "any dotted import path (e.g., `'my_lib.tools.custom_tool'`)."
+    #     },
+    # )
+    # reward_model_name_or_path: str | None = field(
+    #     default=None,
+    #     metadata={
+    #         "help": "Reward model id of a pretrained model hosted inside a model repo on huggingface.co or "
+    #         "local path to a directory containing model weights saved using `PreTrainedModel.save_pretrained`."
+    #     },
+    # )
+    # reward_funcs: list[str] | None = field(
+    #     default=None,
+    #     metadata={
+    #         "help": "Reward functions to use. Supported values are: `correctness_reward`, `structure_reward`, `query_reward`, or "
+    #         "any dotted import path (e.g., `'my_lib.rewards.custom_reward'`)."
+    #     },
+    # )
 
-    # Sampling
-    parser.add_argument("--temperature", type=float, default=0.8)
-    parser.add_argument("--top-k", type=int, default=10)
-    parser.add_argument("--top-p", type=float, default=None, help="Top-p sampling parameter")
-
-    # Training
-    parser.add_argument("--learning-rate", type=float, default=5e-6)
-    parser.add_argument("--weight-decay", type=float, default=0.0)
-    parser.add_argument("--gradient-accumulation-steps", type=int, default=64)
-    parser.add_argument("--warmup-steps", type=int, default=20)
-    parser.add_argument("--per-device-batch-size", type=int, default=1)
-    parser.add_argument("--num-generations", type=int, default=8)
-    parser.add_argument("--num-epochs", type=int, default=1)
-    parser.add_argument("--max-completion-length", type=int, default=16384)
-
-    # Checkpoints
-    parser.add_argument("--save-interval", type=int, default=10)
-    parser.add_argument("--save-total-limit", type=int, default=None)
-    parser.add_argument("--output-dir", default=None)
-
-    # Logging
-    parser.add_argument("--run-name", default=None)
-    parser.add_argument("--project", default=None)
-    parser.add_argument("--trackio-space-id", default="Sudoku-GRPO")
-    parser.add_argument("--logging-steps", type=int, default=1)
-    parser.add_argument(
-        "--gradient-checkpointing",
-        action=argparse.BooleanOptionalAction,
-        default=True,
-        help="Enable gradient checkpointing to save memory",
-    )
-
-    # LoRA / PEFT
-    parser.add_argument(
-        "--use-lora", action="store_true", default=False, help="Use LoRA for memory-efficient training"
-    )
-    parser.add_argument("--lora-r", type=int, default=16, help="LoRA rank")
-    parser.add_argument("--lora-alpha", type=int, default=32, help="LoRA alpha")
-
-    # vLLM
-    parser.add_argument("--vllm-mode", choices=("colocate", "server"), default="colocate")
-    parser.add_argument("--vllm-server-url", type=str, default="http://localhost:8000")
-    parser.add_argument("--vllm-gpu-memory-utilization", type=float, default=0.15)
-
-    return parser.parse_args()
 
 
 # ---------------------------------------------------------------------------
@@ -376,39 +522,81 @@ def reward_progress(environments, **kwargs) -> list[float]:
 
 
 def main() -> None:
-    args = parse_args()
+    # @@@ahoaho XXX
+    # args = parse_args()
+    parser = TrlParser((GRPOSudokuScriptArguments, GRPOConfig, ModelConfig))
+    script_args, training_args, model_args = parser.parse_args_and_config()
+
+    training_args.chat_template_kwargs = {"enable_thinking": False}
+
+    # @@@ahoaho XXX
+    local_rank = int(os.environ.get("LOCAL_RANK", 0))
+    if local_rank == 0:
+        print(f"XXX script_args: {script_args} XXX")
+        print(f"XXX training_args: {training_args} XXX")
+        print(f"XXX model_args: {model_args} XXX")
 
     # Setup environment — all modes resolve to env_url
-    if args.env_mode == "docker-local":
-        env_url = f"http://{args.env_host}:{args.env_port}"
-    elif args.env_mode == "docker-image":
+    # @@@ahoaho XXX
+    # if args.env_mode == "docker-local":
+    #     env_url = f"http://{args.env_host}:{args.env_port}"
+    # elif args.env_mode == "docker-image":
+    #     provider = LocalDockerProvider()
+    #     env_url = provider.start_container(args.env_image)
+    #     provider.wait_for_ready(env_url)
+    # elif args.env_mode == "space":
+    #     env_url = args.env_host
+    # else:
+    #     raise ValueError(f"Unknown environment mode: {args.env_mode}")
+
+    # print(f"Environment: {args.env_mode} ({env_url})")
+    if script_args.env_mode == "docker-local":
+        env_url = f"http://{script_args.env_host}:{script_args.env_port}"
+    elif script_args.env_mode == "docker-image":
         provider = LocalDockerProvider()
-        env_url = provider.start_container(args.env_image)
+        env_url = provider.start_container(script_args.env_image)
         provider.wait_for_ready(env_url)
-    elif args.env_mode == "space":
-        env_url = args.env_host
+    elif script_args.env_mode == "space":
+        env_url = script_args.env_host
     else:
-        raise ValueError(f"Unknown environment mode: {args.env_mode}")
+        raise ValueError(f"Unknown environment mode: {script_args.env_mode}")
 
-    print(f"Environment: {args.env_mode} ({env_url})")
+    print(f"Environment: {script_args.env_mode} ({env_url})")
 
-    system_prompt = resolve_system_prompt(args.system_prompt_path)
+    # @@@ahoaho XXX
+    # system_prompt = resolve_system_prompt(args.system_prompt_path)
+    # dataset = Dataset.from_dict(
+    #     {
+    #         "prompt": [
+    #             [
+    #                 {"role": "system", "content": system_prompt},
+    #                 {"role": "user", "content": args.dataset_prompt},
+    #             ]
+    #         ]
+    #         * args.dataset_size
+    #     }
+    # )
+    system_prompt = resolve_system_prompt(script_args.system_prompt_path)
     dataset = Dataset.from_dict(
         {
             "prompt": [
                 [
                     {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": args.dataset_prompt},
+                    {"role": "user", "content": script_args.dataset_prompt},
                 ]
             ]
-            * args.dataset_size
+            * script_args.dataset_size
         }
     )
 
     # Capture args for use in the environment class closure
-    difficulty = args.difficulty
-    max_turns = args.max_turns
-    api_delay = args.api_delay
+    # @@@ahoaho XXX
+    # difficulty = args.difficulty
+    # max_turns = args.max_turns
+    # api_delay = args.api_delay
+    difficulty = script_args.difficulty
+    max_turns = script_args.max_turns
+    api_delay = script_args.api_delay
 
     class SudokuEnv:
         def __init__(self):
@@ -607,48 +795,59 @@ def main() -> None:
             return 1.0
 
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    output_dir = Path(args.output_dir or f"outputs/sudoku-grpo-{sanitize_name(args.model_id)}-{timestamp}")
+    # @@@ahoaho XXX
+    # output_dir = Path(args.output_dir or f"outputs/sudoku-grpo-{sanitize_name(args.model_id)}-{timestamp}")
+    # output_dir = Path(training_args.output_dir or f"outputs/sudoku-grpo-{sanitize_name(model_args.model_name_or_path)}-{timestamp}")
 
-    grpo_config = GRPOConfig(
-        use_vllm=True,
-        vllm_mode=args.vllm_mode,
-        vllm_server_base_url=args.vllm_server_url if args.vllm_mode == "server" else None,
-        vllm_gpu_memory_utilization=args.vllm_gpu_memory_utilization or 0.2,
-        output_dir=str(output_dir),
-        num_train_epochs=args.num_epochs,
-        learning_rate=args.learning_rate,
-        weight_decay=args.weight_decay,
-        gradient_accumulation_steps=args.gradient_accumulation_steps,
-        per_device_train_batch_size=args.per_device_batch_size,
-        warmup_steps=args.warmup_steps,
-        num_generations=args.num_generations,
-        max_completion_length=args.max_completion_length,
-        logging_steps=args.logging_steps,
-        save_strategy="steps",
-        save_steps=args.save_interval,
-        save_total_limit=args.save_total_limit,
-        temperature=args.temperature,
-        top_k=args.top_k,
-        top_p=args.top_p,
-        report_to="trackio",
-        log_completions=True,
-        num_completions_to_print=1,
-        chat_template_kwargs={"enable_thinking": False},
-    )
+    # @@@ahoaho XXX
+    # grpo_config = GRPOConfig(
+    #     use_vllm=True,
+    #     vllm_mode=args.vllm_mode,
+    #     vllm_server_base_url=args.vllm_server_url if args.vllm_mode == "server" else None,
+    #     vllm_gpu_memory_utilization=args.vllm_gpu_memory_utilization or 0.2,
+    #     output_dir=str(output_dir),
+    #     num_train_epochs=args.num_epochs,
+    #     learning_rate=args.learning_rate,
+    #     weight_decay=args.weight_decay,
+    #     gradient_accumulation_steps=args.gradient_accumulation_steps,
+    #     per_device_train_batch_size=args.per_device_batch_size,
+    #     warmup_steps=args.warmup_steps,
+    #     num_generations=args.num_generations,
+    #     max_completion_length=args.max_completion_length,
+    #     logging_steps=args.logging_steps,
+    #     save_strategy="steps",
+    #     save_steps=args.save_interval,
+    #     save_total_limit=args.save_total_limit,
+    #     temperature=args.temperature,
+    #     top_k=args.top_k,
+    #     top_p=args.top_p,
+    #     report_to="trackio",
+    #     log_completions=True,
+    #     num_completions_to_print=1,
+    #     chat_template_kwargs={"enable_thinking": False},
+    # )
 
-    grpo_config.run_name = args.run_name or f"run-{timestamp}"
-    grpo_config.project = args.project or f"group-{sanitize_name(args.model_id)}"
-    grpo_config.trackio_space_id = args.trackio_space_id
-    grpo_config.gradient_checkpointing = args.gradient_checkpointing
+    # @@@ahoaho XXX
+    # grpo_config.run_name = args.run_name or f"run-{timestamp}"
+    # grpo_config.project = args.project or f"group-{sanitize_name(args.model_id)}"
+    # grpo_config.trackio_space_id = args.trackio_space_id
+    # grpo_config.gradient_checkpointing = args.gradient_checkpointing
 
     peft_config = None
-    if args.use_lora:
+    # @@@ahoaho XXX
+    # if args.use_lora:
+    #     from peft import LoraConfig
+
+    #     peft_config = LoraConfig(r=args.lora_r, lora_alpha=args.lora_alpha, task_type="CAUSAL_LM")
+    if model_args.use_peft:
         from peft import LoraConfig
 
-        peft_config = LoraConfig(r=args.lora_r, lora_alpha=args.lora_alpha, task_type="CAUSAL_LM")
+        peft_config = LoraConfig(r=model_args.lora_r, lora_alpha=model_args.lora_alpha, task_type="CAUSAL_LM")
 
     trainer = GRPOTrainer(
-        model=args.model_id,
+        # @@@ahoaho XXX
+        # model=args.model_id,
+        model=model_args.model_name_or_path,
         reward_funcs=[
             reward_empty_cell,  # Learn to pick empty cells
             reward_valid_moves,  # Learn valid numbers
@@ -658,13 +857,26 @@ def main() -> None:
         ],
         peft_config=peft_config,
         train_dataset=dataset,
-        args=grpo_config,
+        # @@@ahoaho XXX
+        # args=grpo_config,
+        args=training_args,
         environment_factory=SudokuEnv,
         callbacks=[RichProgressCallback()],
     )
 
-    print(f"Starting GRPO training: {args.num_generations} generations, {args.max_turns} max turns")
-    trainer.train()
+    # @@@ahoaho XXX
+    # print(f"Starting GRPO training: {args.num_generations} generations, {args.max_turns} max turns")
+    print(f"Starting GRPO training: {training_args.num_generations} generations, {script_args.max_turns} max turns")
+    # @@@ahoaho XXX
+    # trainer.train()
+    resume_from_checkpoint = training_args.resume_from_checkpoint
+    if isinstance(resume_from_checkpoint, str) and resume_from_checkpoint.lower() in ["true", "yes", "1"]:
+        resume_from_checkpoint = True
+    if resume_from_checkpoint is True:
+        sys.path.insert(0, os.path.dirname(__file__))
+        from utils_mtake import get_last_checkpoint_safe
+        resume_from_checkpoint = get_last_checkpoint_safe(training_args.output_dir)
+    trainer.train(resume_from_checkpoint=resume_from_checkpoint)
 
 
 if __name__ == "__main__":
