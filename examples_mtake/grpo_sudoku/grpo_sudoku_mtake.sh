@@ -248,14 +248,14 @@ cmd="$cmd --num_completions_to_print 1"  # default: None (means all). GRPO 2048 
 #cmd="$cmd --num_completions_to_print 2"  # default: None (means all). GRPO 2048 default for q34b
 #cmd="$cmd --num_completions_to_print 10"  # default: None (means all)
 cmd="$cmd --report_to trackio"  # default: none, choices: [none, all, trackio, wandb]
-# * Trackio project initialized: grpo_2048_mtake
+# * Trackio project initialized: grpo_sudoku_mtake
 # * Trackio metrics logged to: /u/mtake/.cache/huggingface/trackio
-# * View dashboard by running in your terminal: trackio show --project "grpo_2048_mtake"
-# * or by running in Python: trackio.show(project="grpo_2048_mtake")
+# * View dashboard by running in your terminal: trackio show --project "grpo_sudoku_mtake"
+# * or by running in Python: trackio.show(project="grpo_sudoku_mtake")
 # * NVIDIA GPU detected, enabling automatic GPU metrics logging
 # * psutil detected, enabling automatic CPU/system metrics logging
 # * Trackio directory /u/mtake/.cache/huggingface/trackio appears to be on a network filesystem: logging via append-only JSONL fragments instead of direct SQLite writes. Set TRACKIO_STORAGE_MODE=sqlite to override.
-# * Created new run: brave-forest-1
+# * Created new run: Qwen3-1_7B
 #cmd="$cmd --trackio_space_id trl-2048"  # default: None (means local logging). The Hugging Face Space ID to use for live Trackio logging. GRPO 2048 default for q34b
 cmd="$cmd --project ${BASENAME}"  # default: huggingface. The name of the project to use for logging. Currently, only used by Trackio.
 cmd="$cmd --run_name ${MODEL_S}"  # default: None. A descriptor for the run. Typically used for trackio, wandb, etc.
