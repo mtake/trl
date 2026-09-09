@@ -143,9 +143,9 @@ MODEL_S="${MODEL##*/}"
 MODEL_S="${MODEL_S//./_}"
 
 # @@@ahoaho XXX
-#ENV_HOST=https://qgallouedec-echo-env.hf.space
 #ENV_HOST=https://openenv-echo-env.hf.space  # this is default. unreachable from bv
-ENV_HOST=http://localhost:8000  # run the server as `uv run --project . server &`
+#ENV_HOST=http://localhost:8000  # run the server as `uvicorn echo_env.server.app:app --host 0.0.0.0 --port 8000 --reload &` or `uv run --project . server &`
+ENV_HOST=http://localhost:8001  # run the server as `uvicorn echo_env.server.app:app --host 0.0.0.0 --port 8001 --reload &`
 
 #ACCELERATE_CONFIG=accelerate_configs/multi_gpu_2proc.yaml  # SFT CUDA OOM for g338b, DPO OK for q205b, DPO CUDA OOM for g338b, g4m, DPO CUDA OOM for g338b dtype=bfloat16, DPO OK for g4m, g4hm dtype=bfloat16
 #ACCELERATE_CONFIG=accelerate_configs/multi_gpu_4proc.yaml  # SFT CUDA OOM for g338b, DPO CUDA OOM for g338b, g4m, DPO CUDA OOM for g338b, g4ht dtype=bfloat16, DPO OK for g4m, g4hm dtype=bfloat16
