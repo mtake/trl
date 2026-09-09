@@ -210,6 +210,40 @@ def main() -> None:
     class WordleEnv:
         def __init__(self):
             self.client = TextArenaEnv(base_url=env_url)
+            # self.client = TextArenaEnv(base_url=env_url).sync()
+
+            # @@@ahoaho XXX `.sync()` will make self.client.reset() return StepResult rather than coroutine. This is probably a right fix, but it triggers an another error.
+
+            # [rank0]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/examples_mtake/grpo_sudoku/grpo_sudoku_mtake.py", line 627, in reset
+            # [rank0]:     result = self.client.reset()
+            # [rank0]:              ^^^^^^^^^^^^^^^^^^^
+            # [rank0]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/.venv/lib/python3.12/site-packages/openenv/core/sync_client.py", line 178, in reset
+            # [rank0]:     return self._run(self._async.reset(**kwargs))
+            # [rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            # [rank0]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/.venv/lib/python3.12/site-packages/openenv/core/sync_client.py", line 132, in _run
+            # [rank0]:     return future.result()
+            # [rank0]:            ^^^^^^^^^^^^^^^
+            # [rank0]:   File "/u/mtake/.local/share/uv/python/cpython-3.12-linux-x86_64-gnu/lib/python3.12/concurrent/futures/_base.py", line 456, in result
+            # [rank0]:     return self.__get_result()
+            # [rank0]:            ^^^^^^^^^^^^^^^^^^^
+            # [rank0]:   File "/u/mtake/.local/share/uv/python/cpython-3.12-linux-x86_64-gnu/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+            # [rank0]:     raise self._exception
+            # [rank0]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/.venv/lib/python3.12/site-packages/openenv/core/env_client.py", line 389, in reset
+            # [rank0]:     response = await self._send_and_receive(message)
+            # [rank0]:                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            # [rank0]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/.venv/lib/python3.12/site-packages/openenv/core/env_client.py", line 226, in _send_and_receive
+            # [rank0]:     await self._send(message)
+            # [rank0]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/.venv/lib/python3.12/site-packages/openenv/core/env_client.py", line 216, in _send
+            # [rank0]:     await self._ws.send(json.dumps(message))
+            # [rank0]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/.venv/lib/python3.12/site-packages/websockets/asyncio/connection.py", line 473, in send
+            # [rank0]:     async with self.send_context():
+            # [rank0]:                ^^^^^^^^^^^^^^^^^^^
+            # [rank0]:   File "/u/mtake/.local/share/uv/python/cpython-3.12-linux-x86_64-gnu/lib/python3.12/contextlib.py", line 210, in __aenter__
+            # [rank0]:     return await anext(self.gen)
+            # [rank0]:            ^^^^^^^^^^^^^^^^^^^^^
+            # [rank0]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/.venv/lib/python3.12/site-packages/websockets/asyncio/connection.py", line 960, in send_context
+            # [rank0]:     raise self.protocol.close_exc from original_exc
+            # [rank0]: websockets.exceptions.ConnectionClosedOK: received 1000 (OK); then sent 1000 (OK)
 
         def reset(self, **kwargs) -> str | None:
             result = self.client.reset()
