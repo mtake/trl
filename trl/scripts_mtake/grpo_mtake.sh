@@ -83,7 +83,7 @@ REWARD_FUNCS=grpo_mtake_lib.my_accuracy_reward
 
 # @@@ahoaho XXX
 #MODEL=Qwen/Qwen2-0.5B-Instruct
-MODEL=Qwen/Qwen3-0.6B  # GRPO OK? for q306b(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True use_vllm=True
+MODEL=Qwen/Qwen3-0.6B  # GRPO OK? for q306b(preemptable) save_strategy=steps save_steps=50 resume_from_checkpoint=True use_vllm=True num_processes=4
 #MODEL=ibm-granite/granite-3.3-8b-instruct
 #MODEL=ibm-granite/granite-4.0-micro
 #MODEL=ibm-granite/granite-4.0-h-micro
