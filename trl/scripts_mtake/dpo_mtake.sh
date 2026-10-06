@@ -95,7 +95,8 @@ fi
 ####MODEL=models/granite-4.0-h-small
 ####MODEL=ibm-granite/granite-4.1-8b
 ####MODEL=models/granite-4.1-8b
-MODEL=models/granite-4.2-8b-prerelease-r260622a
+####MODEL=models/granite-4.2-8b-prerelease-r260622a
+MODEL=ibm-research/granite-5.0-20b-rl-preview
 ####MODEL=trainer_output/granite-4.1-8b-retriever_call_train_data.granite4_8b.v2.0406-SFT-sft-20260409-150354-p4-r26-n3-g418b-3epochs-8192length-rtrvr.v2
 ####MODEL=trainer_output/granite-4.1-8b-retriever_call_train_data.granite4_8b.v2.0406-SFT-sft-20260416-100514-p1-r23-n3-g418b-3epochs-8192length-rtrvr.v2-transformers4576
 ####MODEL=trainer_output/granite-4.1-8b-zragrtrvr.v3.0512b-SFT-sft-20260512-140204-p4-r17-n4-g418b-3epochs-8192length-rtrvr.v3-0512b
@@ -125,8 +126,8 @@ MODEL=models/granite-4.2-8b-prerelease-r260622a
 #ACCELERATE_CONFIG=accelerate_configs/zero2_1node_8proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/zero3_1node_1proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/zero3_1node_2proc.yaml  # SFT CUDA OOM for g338b, DPO OK for g4m, g4hm, g4ht dtype=bfloat16, DPO CUDA OOM for g418b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
-ACCELERATE_CONFIG=accelerate_configs/zero3_1node_4proc.yaml  # SFT OK for g338b, DPO OK for q205b, g338b, g4m, g4hm, g4ht dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16, DPO OK for g418b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO CUDA OOM for g4130b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
-#ACCELERATE_CONFIG=accelerate_configs/zero3_1node_8proc.yaml  # DPO OK for g338b dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO OK for g4hs offload_optimizer_device=cpu offload_param_device=cpu dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO OK for g4130b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
+#ACCELERATE_CONFIG=accelerate_configs/zero3_1node_4proc.yaml  # SFT OK for g338b, DPO OK for q205b, g338b, g4m, g4hm, g4ht dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16, DPO OK for g418b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO CUDA OOM for g4130b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO CUDA OOM for g5020brlpre
+ACCELERATE_CONFIG=accelerate_configs/zero3_1node_8proc.yaml  # DPO OK for g338b dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16, DPO CUDA OOM for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO OK for g4hs offload_optimizer_device=cpu offload_param_device=cpu dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO OK for g4130b dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1, DPO OK for g5020brlpre dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
 ####ACCELERATE_CONFIG=accelerate_configs/zero3_1node_8proc_offload.yaml  # DPO OK for g4hs dtype=bfloat16 per_device_train_batch_size=1 gradient_accumulation_steps=1
 
 ACCELERATE_OPT=""
