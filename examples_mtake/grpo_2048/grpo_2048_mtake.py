@@ -192,6 +192,8 @@ def main() -> None:
         resume_from_checkpoint = get_last_checkpoint_safe(training_args.output_dir)
     trainer.train(resume_from_checkpoint=resume_from_checkpoint)
 
+    trainer.end()
+
 
 if __name__ == "__main__":
     main()

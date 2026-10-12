@@ -23,7 +23,7 @@
 """
 # Full training
 ```
-python examples/scripts/grpo_sql_agent.py \
+python examples/grpo_sql_agent/grpo_sql_agent.py \
     --model_name_or_path Qwen/Qwen3-1.7B \
     --output_dir grpo_biogrid_qwen_3g-1.7b \
     --push_to_hub True \
@@ -469,3 +469,5 @@ if __name__ == "__main__":
     trainer.save_model(training_args.output_dir)
     if training_args.push_to_hub:
         trainer.push_to_hub(dataset_name=script_args.dataset_name)
+
+    trainer.end()

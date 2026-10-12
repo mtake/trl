@@ -309,6 +309,8 @@ def main() -> None:
     )
     trainer.train()
 
+    trainer.end()
+
 
 if __name__ == "__main__":
     main()
