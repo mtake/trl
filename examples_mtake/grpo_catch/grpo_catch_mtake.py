@@ -342,7 +342,11 @@ def main():
             server_process.terminate()
             server_process.wait()
 
-    trainer.end()
+    # @@@ahoaho XXX
+    # trainer.end()
+    # # Finish the trackers and destroy the process group
+    # if Version(transformers.__version__) >= Version("5.18.0"):
+    #     trainer.end()
 
 
 if __name__ == "__main__":

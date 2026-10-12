@@ -470,4 +470,8 @@ if __name__ == "__main__":
     if training_args.push_to_hub:
         trainer.push_to_hub(dataset_name=script_args.dataset_name)
 
-    trainer.end()
+    # @@@ahoaho XXX
+    # trainer.end()
+    # # Finish the trackers and destroy the process group
+    # if Version(transformers.__version__) >= Version("5.18.0"):
+    #     trainer.end()

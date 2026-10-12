@@ -273,7 +273,11 @@ def main():
         resume_from_checkpoint = get_last_checkpoint_safe(training_args.output_dir)
     trainer.train(resume_from_checkpoint=resume_from_checkpoint)
 
-    trainer.end()
+    # @@@ahoaho XXX
+    # trainer.end()
+    # # Finish the trackers and destroy the process group
+    # if Version(transformers.__version__) >= Version("5.18.0"):
+    #     trainer.end()
 
 
 if __name__ == "__main__":
