@@ -88,7 +88,7 @@ REWARD_FUNCS="grpo_sql_agent_separate_lib.correctness_reward grpo_sql_agent_sepa
 
 # @@@ahoaho XXX
 #MODEL=Qwen/Qwen2-0.5B-Instruct
-####MODEL=Qwen/Qwen3-0.6B  # GRPO AGENT OK
+MODEL=Qwen/Qwen3-0.6B  # GRPO AGENT OK
 #MODEL=ibm-granite/granite-3.3-8b-instruct
 #MODEL=ibm-granite/granite-4.0-micro
 #MODEL=ibm-granite/granite-4.0-h-micro
@@ -101,7 +101,33 @@ REWARD_FUNCS="grpo_sql_agent_separate_lib.correctness_reward grpo_sql_agent_sepa
 ####MODEL=trainer_output/granite-4.1-8b-retriever_call_train_data.granite4_8b.v2.0406-SFT-sft-20260416-100514-p1-r23-n3-g418b-3epochs-8192length-rtrvr.v2-transformers4576
 #MODEL=models/granite-4.1-30b
 #MODEL=trainer_output/granite-4.1-30b-zragrtrvr.v2-SFT-sft-20260421-134025-p6-r14-n1-g4130b-3epochs-8192length-rtrvr.v2
-MODEL=ibm-granite/granite-4.2-3b  # GRPO AGENT OK for g423b use_vllm=True num_processes=4 per_device_train_batch_size=8 num_generations=8 vllm_gpu_memory_utilization=0.5
+####MODEL=ibm-granite/granite-4.2-3b  # GRPO AGENT OK for g423b use_vllm=True num_processes=4 per_device_train_batch_size=8 num_generations=8 vllm_gpu_memory_utilization=0.5
+
+#
+# @@@ahoaho UNRESOLVED ERROR as of 20261012
+# The following error occurs for both q306b and g423b with trl1150.
+#
+# [rank0]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/examples_mtake/grpo_sql_agent/grpo_sql_agent_separate_mtake.py", line 464, in <module>
+# [rank0]:     trainer.train(resume_from_checkpoint=resume_from_checkpoint)
+# [rank0]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/.venv/lib/python3.12/site-packages/transformers/trainer.py", line 1520, in train
+# [rank0]:     return inner_training_loop(
+# [rank0]:            ^^^^^^^^^^^^^^^^^^^^
+# [rank0]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/.venv/lib/python3.12/site-packages/transformers/trainer.py", line 1602, in _inner_training_loop
+# [rank0]:     self._run_epoch(
+# [rank0]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/.venv/lib/python3.12/site-packages/transformers/trainer.py", line 1883, in _run_epoch
+# [rank0]:     self._maybe_log_save_evaluate(
+# [rank0]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/.venv/lib/python3.12/site-packages/transformers/trainer.py", line 2192, in _maybe_log_save_evaluate
+# [rank0]:     self.log(logs, start_time)
+# [rank0]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/trl/trainer/grpo_trainer.py", line 3254, in log
+# [rank0]:     print_prompt_completions_sample(
+# [rank0]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/trl/trainer/utils.py", line 850, in print_prompt_completions_sample
+# [rank0]:     row = [format_entry(prompts[i]), format_entry(completions[i]), *reward_values]
+# [rank0]:                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# [rank0]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/trl/trainer/utils.py", line 809, in format_entry
+# [rank0]:     if block.get("type") == "text":
+# [rank0]:        ^^^^^^^^^
+# [rank0]: AttributeError: 'tuple' object has no attribute 'get'
+
 #MODEL=ibm-granite/granite-4.2-8b  # GRPO OK? for g428b(preemptable) use_vllm=True num_processes=8 per_device_train_batch_size=8 num_generations=8 vllm_gpu_memory_utilization=0.5 save_strategy=steps save_steps=50 resume_from_checkpoint=True, GRPO AGENT OK for g428b use_vllm=True num_processes=8 per_device_train_batch_size=8 num_generations=8 vllm_gpu_memory_utilization=0.5
 
 # [rank2]:   File "/proj/dmfexp/granite_ja/mtake/w/trl-command/trl/examples/scripts_mtake/grpo_sql_agent_mtake.py", line 340, in <module>
