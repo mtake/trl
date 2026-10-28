@@ -68,7 +68,6 @@ def main():
         # num_train_epochs=1,  # default: 3
         # gradient_accumulation_steps=8,  # default: 1
         bf16=True,  # default: None
-        # use_liger_kernel=True,
         dataset_num_proc=8,  # default: None
         max_length=20000,  # default: 1024
     )

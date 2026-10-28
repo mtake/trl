@@ -162,7 +162,6 @@ cmd="$cmd --save_strategy epoch"  # default: steps
 #cmd="$cmd --report_to trackio"  # default: none, choices: [none, all, trackio, wandb]
 #cmd="$cmd --project ${BASENAME}"  # default: huggingface. The name of the project to use for logging. Currently, only used by Trackio.
 #cmd="$cmd --learning_rate 5.0e-7"  # default: 1e-06
-#cmd="$cmd --use_liger_kernel True"  # default: False
 cmd="$cmd --dtype bfloat16"
 cmd="$cmd --bf16 True"
 cmd="$cmd --dataset_num_proc 8"

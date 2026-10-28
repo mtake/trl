@@ -68,7 +68,6 @@ def main():
     training_args = SFTConfig(
         output_dir=output_dir,  # default: trainer_output
         bf16=True,  # default: None
-        # use_liger_kernel=True,
         max_length=20000,  # default: 1024
         per_device_train_batch_size=32,  # default: 8  # OK for g338b, g4m, g4hm, g4ht, g418b, g4130b
         # per_device_train_batch_size=16,  # default: 8  # OK for g4hs

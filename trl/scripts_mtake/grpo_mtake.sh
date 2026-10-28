@@ -169,7 +169,6 @@ cmd="$cmd --resume_from_checkpoint True"  # default: None  # GRPO OK for g428bpr
 #cmd="$cmd --report_to trackio"  # default: none, choices: [none, all, trackio, wandb]
 #cmd="$cmd --project ${BASENAME}"  # default: huggingface. The name of the project to use for logging. Currently, only used by Trackio.
 #cmd="$cmd --learning_rate 5.0e-7"  # default: 1e-06
-#cmd="$cmd --use_liger_kernel True"  # default: False
 cmd="$cmd --dtype bfloat16"
 cmd="$cmd --bf16 True"
 #cmd="$cmd --no_remove_unused_columns"  # default: False

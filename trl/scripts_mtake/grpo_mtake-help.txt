@@ -33,8 +33,6 @@ usage: grpo_mtake.py [-h] [--dataset_name DATASET_NAME]
                      [--torch_compile [TORCH_COMPILE]]
                      [--torch_compile_backend TORCH_COMPILE_BACKEND]
                      [--torch_compile_mode TORCH_COMPILE_MODE]
-                     [--use_liger_kernel [USE_LIGER_KERNEL]]
-                     [--liger_kernel_config LIGER_KERNEL_CONFIG]
                      [--use_cache [USE_CACHE]]
                      [--neftune_noise_alpha NEFTUNE_NOISE_ALPHA]
                      [--torch_empty_cache_steps TORCH_EMPTY_CACHE_STEPS]
@@ -340,14 +338,6 @@ options:
   --torch_compile_mode TORCH_COMPILE_MODE, --torch-compile-mode TORCH_COMPILE_MODE
                         Compilation mode for `torch.compile()`. If set,
                         automatically enables `torch_compile`. (default: None)
-  --use_liger_kernel [USE_LIGER_KERNEL], --use-liger-kernel [USE_LIGER_KERNEL]
-                        Enable Liger Kernel optimizations. Increases
-                        throughput by ~20% and reduces memory by ~60%.
-                        (default: False)
-  --liger_kernel_config LIGER_KERNEL_CONFIG, --liger-kernel-config LIGER_KERNEL_CONFIG
-                        Configuration for Liger Kernel. Passed as kwargs to
-                        `_apply_liger_kernel_to_instance()`. If None, uses
-                        default configuration. (default: None)
   --use_cache [USE_CACHE], --use-cache [USE_CACHE]
                         Whether or not to use cache for the model For
                         training, this is usually not needed apart from some

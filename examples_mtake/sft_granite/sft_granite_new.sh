@@ -128,7 +128,6 @@ echo "============================================================" | tee -a ${L
 cmd="${ENV}accelerate launch --config_file ${ACCELERATE_CONFIG}${ACCELERATE_OPT} ${BASENAME}.py --model_name_or_path ${MODEL}"
 cmd="$cmd --output_dir ${OUTPUT_DIR}"
 cmd="$cmd --bf16 True"  # default: None
-# cmd="$cmd --use_liger_kernel True"
 cmd="$cmd --max_length 20000"  # default: 1024
 cmd="$cmd --per_device_train_batch_size 32"  # default: 8, # 32 OK for g338b, g4m, g4hm, g4ht, g418b, g4130b, # 16 OK for g4hs
 # @@@ahoaho XXX NOT TESTED
