@@ -79,9 +79,9 @@ fi
 #MODEL=ibm-granite/granite-4.0-h-micro  # OK with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_2proc.yaml
 #MODEL=ibm-granite/granite-4.0-h-tiny  # OK with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_2proc.yaml
 #MODEL=ibm-granite/granite-4.0-h-small  # OK with per_device_train_batch_size=16, max_length=20000, fsdp2_1node_8proc.yaml  # CUDA OOM with per_device_train_batch_size=32, max_length=20000, fsdp2_1node_8proc.yaml
-#MODEL=ibm-granite/granite-4.1-8b  # OK with per_device_train_batch_size=32, max_length=20000, deepspeed_zero3_1node_4proc.yaml
-MODEL=ibm-granite/granite-4.2-8b  # OK with per_device_train_batch_size=32, max_length=20000, deepspeed_zero3_1node_4proc.yaml
-#MODEL=models/granite-4.1-30b  # OK with per_device_train_batch_size=32, max_length=20000, deepspeed_zero3_1node_8proc_offload.yaml
+#MODEL=ibm-granite/granite-4.1-8b  # OK with per_device_train_batch_size=32, max_length=20000, zero3_1node_4proc.yaml
+MODEL=ibm-granite/granite-4.2-8b  # OK with per_device_train_batch_size=32, max_length=20000, zero3_1node_4proc.yaml
+#MODEL=models/granite-4.1-30b  # OK with per_device_train_batch_size=32, max_length=20000, zero3_1node_8proc_offload.yaml
 
 MODEL_S="${MODEL##*/}"
 MODEL_S="${MODEL_S//./_}"
@@ -97,19 +97,19 @@ MODEL_S="${MODEL_S//./_}"
 ####ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_2proc.yaml  # OK for g338b, g4m, g4hm, g4ht, ERR for g418b
 #ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_4proc.yaml
 #ACCELERATE_CONFIG=accelerate_configs/fsdp2_1node_8proc.yaml  # OK for g4hs
-#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero1_1node_1proc.yaml
-#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero1_1node_2proc.yaml  # CUDA OOM
-#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero1_1node_4proc.yaml
-#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero1_1node_8proc.yaml
-#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero2_1node_1proc.yaml
-#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero2_1node_2proc.yaml  # CUDA OOM
-#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero2_1node_4proc.yaml
-#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero2_1node_8proc.yaml
-#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_1proc.yaml
-#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_2proc.yaml  # CUDA OOM for g338b
-ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_4proc.yaml  # OK for g338b, g418b, g428b
-#ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_8proc.yaml
-# ACCELERATE_CONFIG=accelerate_configs/deepspeed_zero3_1node_8proc_offload.yaml  # OK g4130b
+#ACCELERATE_CONFIG=accelerate_configs/zero1_1node_1proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/zero1_1node_2proc.yaml  # CUDA OOM
+#ACCELERATE_CONFIG=accelerate_configs/zero1_1node_4proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/zero1_1node_8proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/zero2_1node_1proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/zero2_1node_2proc.yaml  # CUDA OOM
+#ACCELERATE_CONFIG=accelerate_configs/zero2_1node_4proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/zero2_1node_8proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/zero3_1node_1proc.yaml
+#ACCELERATE_CONFIG=accelerate_configs/zero3_1node_2proc.yaml  # CUDA OOM for g338b
+ACCELERATE_CONFIG=accelerate_configs/zero3_1node_4proc.yaml  # OK for g338b, g418b, g428b
+#ACCELERATE_CONFIG=accelerate_configs/zero3_1node_8proc.yaml
+# ACCELERATE_CONFIG=accelerate_configs/zero3_1node_8proc_offload.yaml  # OK g4130b
 
 ACCELERATE_OPT=""
 #ACCELERATE_OPT="${ACCELERATE_OPT} --num_processes 2"
