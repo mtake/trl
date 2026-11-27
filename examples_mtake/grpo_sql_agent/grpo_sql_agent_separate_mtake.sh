@@ -88,7 +88,7 @@ REWARD_FUNCS="grpo_sql_agent_separate_lib.correctness_reward grpo_sql_agent_sepa
 
 # @@@ahoaho XXX
 #MODEL=Qwen/Qwen2-0.5B-Instruct
-MODEL=Qwen/Qwen3-0.6B  # GRPO AGENT OK
+MODEL=Qwen/Qwen3-0.6B  # GRPO AGENT OK  # 20261127 trl118 trl119 GRPO AGENT ERR-block_has_no_get for q306b
 #MODEL=ibm-granite/granite-3.3-8b-instruct
 #MODEL=ibm-granite/granite-4.0-micro
 #MODEL=ibm-granite/granite-4.0-h-micro
@@ -101,7 +101,7 @@ MODEL=Qwen/Qwen3-0.6B  # GRPO AGENT OK
 ####MODEL=trainer_output/granite-4.1-8b-retriever_call_train_data.granite4_8b.v2.0406-SFT-sft-20260416-100514-p1-r23-n3-g418b-3epochs-8192length-rtrvr.v2-transformers4576
 #MODEL=models/granite-4.1-30b
 #MODEL=trainer_output/granite-4.1-30b-zragrtrvr.v2-SFT-sft-20260421-134025-p6-r14-n1-g4130b-3epochs-8192length-rtrvr.v2
-####MODEL=ibm-granite/granite-4.2-3b  # GRPO AGENT OK for g423b use_vllm=True num_processes=4 per_device_train_batch_size=8 num_generations=8 vllm_gpu_memory_utilization=0.5
+####MODEL=ibm-granite/granite-4.2-3b  # GRPO AGENT OK for g423b use_vllm=True num_processes=4 per_device_train_batch_size=8 num_generations=8 vllm_gpu_memory_utilization=0.5  # 20261127 trl119 GRPO AGENT ERR-block_has_no_get for g423b
 
 #
 # @@@ahoaho UNRESOLVED ERROR as of 20261012
